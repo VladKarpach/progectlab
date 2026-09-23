@@ -1,0 +1,1422 @@
+<!DOCTYPE html>
+<html lang="ru" id="htmlRoot">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Панель администратора | Fitness Club</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --bg-body: #f0f4f8;
+            --bg-card: #ffffff;
+            --bg-header: #ffffff;
+            --text-primary: #1a202c;
+            --text-secondary: #4a5568;
+            --text-muted: #a0aec0;
+            --border-color: rgba(226, 232, 240, 0.6);
+            --border-card: #e2e8f0;
+            --bg-info: #f7fafc;
+            --shadow: 0 1px 3px rgba(0,0,0,0.06);
+            --badge-bg: #e2e8f0;
+            --badge-text: #4a5568;
+            --input-bg: white;
+            --input-border: #e2e8f0;
+            --hover-bg: #f8fafc;
+            --dropdown-bg: white;
+            --dropdown-shadow: 0 8px 24px rgba(0,0,0,0.1);
+            --toast-bg: white;
+            --toast-shadow: 0 8px 32px rgba(0,0,0,0.15);
+            --stat-card-bg: white;
+            --table-header-bg: #f7fafc;
+            --table-row-hover: #f8fafc;
+            --table-border: #e2e8f0;
+            --filter-bg: #f1f5f9;
+            --filter-btn-bg: white;
+            --filter-btn-hover: white;
+            --filter-btn-active: #2563eb;
+            --filter-btn-active-text: white;
+            --badge-blue-bg: #dbeafe;
+            --badge-blue-text: #1e40af;
+            --badge-purple-bg: #ede9fe;
+            --badge-purple-text: #5b21b6;
+            --decline-item-bg: #f8fafc;
+            --decline-item-hover: #f1f5f9;
+        }
+        
+        [data-theme="dark"] {
+            --bg-body: #0f172a;
+            --bg-card: #1e293b;
+            --bg-header: #1e293b;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --border-color: rgba(51, 65, 85, 0.6);
+            --border-card: #334155;
+            --bg-info: #2d3748;
+            --shadow: 0 1px 3px rgba(0,0,0,0.3);
+            --badge-bg: #334155;
+            --badge-text: #94a3b8;
+            --input-bg: #2d3748;
+            --input-border: #475569;
+            --hover-bg: #2d3748;
+            --dropdown-bg: #1e293b;
+            --dropdown-shadow: 0 8px 24px rgba(0,0,0,0.4);
+            --toast-bg: #1e293b;
+            --toast-shadow: 0 8px 32px rgba(0,0,0,0.4);
+            --stat-card-bg: #1e293b;
+            --table-header-bg: #2d3748;
+            --table-row-hover: #2d3748;
+            --table-border: #334155;
+            --filter-bg: #2d3748;
+            --filter-btn-bg: #1e293b;
+            --filter-btn-hover: #2d3748;
+            --filter-btn-active: #2563eb;
+            --filter-btn-active-text: white;
+            --badge-blue-bg: #1e3a5f;
+            --badge-blue-text: #93c5fd;
+            --badge-purple-bg: #2d1b4e;
+            --badge-purple-text: #c4b5fd;
+            --decline-item-bg: #2d3748;
+            --decline-item-hover: #374151;
+        }
+
+        * { 
+            box-sizing: border-box; 
+            margin: 0; 
+            padding: 0; 
+            font-family: 'Segoe UI', Roboto, sans-serif; 
+            transition: background 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        body { 
+            background: var(--bg-body); 
+            color: var(--text-primary); 
+            padding: 20px; 
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+        .container { max-width: 1280px; margin: 0 auto; }
+        
+        header { 
+            background: var(--bg-header); 
+            border-radius: 16px; 
+            padding: 24px 32px; 
+            margin-bottom: 30px; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            box-shadow: var(--shadow); 
+            border: 1px solid var(--border-color); 
+            flex-wrap: wrap; 
+            gap: 16px; 
+            transition: background 0.3s ease, border-color 0.3s ease;
+        }
+        header h1 { 
+            font-size: 24px; 
+            font-weight: 700; 
+            color: var(--text-primary); 
+            display: flex; 
+            align-items: center; 
+            gap: 10px; 
+        }
+        header h1 span { font-size: 28px; }
+        header .subtitle { color: var(--text-muted); font-size: 14px; }
+        
+        .header-actions { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+        
+        .theme-toggle {
+            background: var(--bg-info);
+            border: 1px solid var(--border-card);
+            border-radius: 50px;
+            width: 44px;
+            height: 44px;
+            cursor: pointer;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            color: var(--text-primary);
+        }
+        .theme-toggle:hover { 
+            transform: translateY(-2px); 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            background: var(--border-card);
+        }
+        .theme-toggle:active { transform: scale(0.93); }
+        
+        .logout-btn {
+            background: #fee2e2;
+            color: #991b1b;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .logout-btn:hover { background: #fecaca; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(239, 68, 68, 0.15); }
+        .logout-btn:active { transform: scale(0.97); }
+        
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-bottom: 30px; }
+        .stat-card { 
+            background: var(--stat-card-bg); 
+            padding: 20px 24px; 
+            border-radius: 14px; 
+            box-shadow: var(--shadow); 
+            border: 1px solid var(--border-card); 
+            border-left-width: 5px; 
+            transition: all 0.2s; 
+            cursor: pointer; 
+            position: relative; 
+        }
+        .stat-card:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+        .stat-card .stat-label { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); margin-bottom: 4px; }
+        .stat-card .stat-value { font-size: 28px; font-weight: 700; color: var(--text-primary); }
+        .stat-card .stat-icon { font-size: 24px; opacity: 0.6; }
+        .stat-card .stat-sub { font-size: 13px; color: var(--text-muted); margin-top: 4px; }
+        .stat-card .click-hint { font-size: 11px; color: var(--text-muted); opacity: 0.7; margin-top: 6px; }
+        .stat-card.revenue { border-left-color: #2563eb; }
+        .stat-card.active { border-left-color: #10b981; }
+        .stat-card.trainers { border-left-color: #8b5cf6; }
+        .stat-card.clients { border-left-color: #f59e0b; }
+        .stat-card.active-card { background: #f0f7ff; border-color: #2563eb; box-shadow: 0 4px 16px rgba(37, 99, 235, 0.15); }
+        .stat-card.active-card-green { background: #f0fdf4; border-color: #10b981; box-shadow: 0 4px 16px rgba(16, 185, 129, 0.15); }
+        .stat-card.active-card-purple { background: #f5f3ff; border-color: #8b5cf6; box-shadow: 0 4px 16px rgba(139, 92, 246, 0.15); }
+        
+        [data-theme="dark"] .stat-card.active-card { background: #1a2744; border-color: #3b82f6; }
+        [data-theme="dark"] .stat-card.active-card-green { background: #0f2922; border-color: #10b981; }
+        [data-theme="dark"] .stat-card.active-card-purple { background: #1f1633; border-color: #8b5cf6; }
+        
+        .main-grid { display: grid; grid-template-columns: 1.5fr 1fr; gap: 24px; margin-bottom: 30px; }
+        @media (max-width: 900px) { .main-grid { grid-template-columns: 1fr; } }
+        
+        .card { 
+            background: var(--bg-card); 
+            padding: 24px; 
+            border-radius: 14px; 
+            box-shadow: var(--shadow); 
+            border: 1px solid var(--border-card); 
+            margin-bottom: 24px; 
+            transition: all 0.2s; 
+        }
+        .card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.06); }
+        .card h2 { 
+            font-size: 18px; 
+            font-weight: 600; 
+            color: var(--text-primary); 
+            margin-bottom: 16px; 
+            display: flex; 
+            align-items: center; 
+            gap: 10px; 
+        }
+        .card h2 .badge { 
+            font-size: 12px; 
+            font-weight: 500; 
+            background: var(--badge-bg); 
+            color: var(--badge-text); 
+            padding: 2px 10px; 
+            border-radius: 50px; 
+        }
+        
+        .search-input { 
+            width: 100%; 
+            padding: 10px 14px; 
+            border: 2px solid var(--input-border); 
+            border-radius: 10px; 
+            font-size: 14px; 
+            outline: none; 
+            transition: all 0.2s; 
+            background: var(--input-bg); 
+            color: var(--text-primary); 
+        }
+        .search-input:focus { border-color: #3b82f6; background: var(--input-bg); box-shadow: 0 0 0 3px rgba(59,130,246,0.1); }
+        .search-input::placeholder { color: var(--text-muted); }
+        
+        .period-buttons { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+        .period-btn { 
+            padding: 6px 18px; 
+            border: 2px solid var(--border-card); 
+            border-radius: 8px; 
+            background: var(--filter-btn-bg); 
+            color: var(--text-secondary); 
+            font-size: 13px; 
+            font-weight: 500; 
+            cursor: pointer; 
+            transition: all 0.2s; 
+        }
+        .period-btn:hover { border-color: var(--text-muted); background: var(--hover-bg); }
+        .period-btn.active { border-color: #2563eb; background: #2563eb; color: white; }
+        
+        .chart-container { height: 280px; position: relative; }
+        .chart-info { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            margin-top: 12px; 
+            padding-top: 12px; 
+            border-top: 1px solid var(--border-card); 
+            flex-wrap: wrap; 
+            gap: 8px; 
+        }
+        .chart-info .period-label { font-size: 13px; color: var(--text-muted); }
+        .chart-info .period-label strong { color: var(--text-primary); }
+        .chart-info .total { font-size: 18px; font-weight: 700; color: #2563eb; }
+        
+        .form-group { margin-bottom: 16px; }
+        .form-group label { 
+            display: block; 
+            font-size: 12px; 
+            font-weight: 600; 
+            color: var(--text-secondary); 
+            text-transform: uppercase; 
+            letter-spacing: 0.5px; 
+            margin-bottom: 4px; 
+        }
+        .form-control { 
+            width: 100%; 
+            padding: 10px 14px; 
+            border: 2px solid var(--input-border); 
+            border-radius: 10px; 
+            font-size: 14px; 
+            outline: none; 
+            transition: border-color 0.2s; 
+            background: var(--input-bg); 
+            color: var(--text-primary); 
+        }
+        .form-control:focus { border-color: #3b82f6; background: var(--input-bg); box-shadow: 0 0 0 3px rgba(59,130,246,0.1); }
+        .form-control::placeholder { color: var(--text-muted); }
+        
+        .btn { 
+            display: inline-block; 
+            width: 100%; 
+            padding: 12px; 
+            background: #3b82f6; 
+            color: white; 
+            border: none; 
+            border-radius: 10px; 
+            font-size: 15px; 
+            font-weight: 600; 
+            cursor: pointer; 
+            transition: all 0.2s; 
+        }
+        .btn:hover { background: #2563eb; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(59,130,246,0.3); }
+        .btn:active { transform: scale(0.98); }
+        .btn-secondary { background: #10b981; }
+        .btn-secondary:hover { background: #059669; box-shadow: 0 4px 12px rgba(16,185,129,0.3); }
+        .btn-danger { 
+            background: #ef4444; 
+            color: white; 
+            border: none; 
+            padding: 4px 12px; 
+            border-radius: 6px; 
+            cursor: pointer; 
+            font-size: 12px; 
+            font-weight: 500; 
+            transition: all 0.2s; 
+        }
+        .btn-danger:hover { background: #dc2626; }
+        .btn-sm { padding: 4px 12px; font-size: 12px; width: auto; border-radius: 6px; }
+        .btn-success { 
+            background: #10b981; 
+            color: white; 
+            border: none; 
+            padding: 4px 12px; 
+            border-radius: 6px; 
+            cursor: pointer; 
+            font-size: 12px; 
+            font-weight: 500; 
+            transition: all 0.2s; 
+        }
+        .btn-success:hover { background: #059669; }
+        
+        table { width: 100%; border-collapse: collapse; font-size: 14px; }
+        th { 
+            background: var(--table-header-bg); 
+            color: var(--text-secondary); 
+            font-size: 11px; 
+            font-weight: 600; 
+            text-transform: uppercase; 
+            letter-spacing: 0.5px; 
+            padding: 12px 14px; 
+            border-bottom: 2px solid var(--table-border); 
+            text-align: left; 
+        }
+        td { 
+            padding: 12px 14px; 
+            border-bottom: 1px solid var(--table-border); 
+            color: var(--text-primary); 
+            vertical-align: middle; 
+        }
+        tr:hover td { background: var(--table-row-hover); }
+        
+        .badge { 
+            background: var(--badge-bg); 
+            padding: 2px 10px; 
+            border-radius: 50px; 
+            font-size: 12px; 
+            font-weight: 500; 
+            display: inline-block; 
+            color: var(--badge-text); 
+        }
+        .badge-success { background: #d1fae5; color: #065f46; }
+        .badge-danger { background: #fee2e2; color: #991b1b; }
+        .badge-warning { background: #fef3c7; color: #92400e; }
+        .badge-info { background: #dbeafe; color: #1e40af; }
+        .badge-purple { background: #ede9fe; color: #5b21b6; }
+        .badge-green { background: #d1fae5; color: #065f46; }
+        
+        [data-theme="dark"] .badge-success { background: #0f2922; color: #6ee7b7; }
+        [data-theme="dark"] .badge-danger { background: #2a0f0f; color: #fca5a5; }
+        [data-theme="dark"] .badge-warning { background: #2a1f0a; color: #fcd34d; }
+        [data-theme="dark"] .badge-info { background: #0f1f3a; color: #93c5fd; }
+        [data-theme="dark"] .badge-purple { background: #1a0f2a; color: #c4b5fd; }
+        [data-theme="dark"] .badge-green { background: #0f2922; color: #6ee7b7; }
+        
+        .text-muted { color: var(--text-muted); text-align: center; padding: 20px 0; }
+        .text-center { text-align: center; }
+        .mt-16 { margin-top: 16px; }
+        .mb-16 { margin-bottom: 16px; }
+        .flex-between { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+        .scroll-table { overflow-x: auto; max-height: 400px; overflow-y: auto; }
+        
+        .alert { 
+            padding: 12px 16px; 
+            border-radius: 10px; 
+            margin-bottom: 16px; 
+            display: none; 
+            font-weight: 500; 
+        }
+        .alert-success { background: #d1fae5; color: #065f46; display: block; }
+        .alert-error { background: #fee2e2; color: #991b1b; display: block; }
+        .alert-info { background: #dbeafe; color: #1e40af; display: block; }
+        
+        .decline-item { 
+            padding: 12px 16px; 
+            background: var(--decline-item-bg); 
+            border-radius: 10px; 
+            margin-bottom: 10px; 
+            border-left: 4px solid #f59e0b; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            flex-wrap: wrap; 
+            gap: 10px; 
+            transition: all 0.2s; 
+        }
+        .decline-item:hover { background: var(--decline-item-hover); }
+        .decline-item .info { display: flex; flex-direction: column; gap: 2px; }
+        .decline-item .info .name { font-weight: 600; color: var(--text-primary); }
+        .decline-item .info .detail { font-size: 13px; color: var(--text-muted); }
+        .decline-item .info .reason { 
+            font-size: 13px; 
+            color: var(--text-secondary); 
+            background: var(--bg-card); 
+            padding: 2px 10px; 
+            border-radius: 6px; 
+            display: inline-block; 
+            margin-top: 4px; 
+        }
+        .decline-item .actions { display: flex; gap: 6px; flex-wrap: wrap; }
+        
+        .empty-state { text-align: center; padding: 30px 20px; color: var(--text-muted); }
+        .empty-state .icon { font-size: 40px; display: block; margin-bottom: 8px; }
+        
+        .section-detail { display: none; }
+        .section-detail.visible { display: block; }
+        
+        .stat-card .close-btn {
+            position: absolute;
+            top: 8px;
+            right: 12px;
+            font-size: 18px;
+            color: var(--text-muted);
+            cursor: pointer;
+            display: none;
+            transition: color 0.2s;
+        }
+        .stat-card .close-btn:hover { color: #ef4444; }
+        .stat-card.active-card .close-btn { display: block; }
+        .stat-card.active-card-green .close-btn { display: block; }
+        .stat-card.active-card-purple .close-btn { display: block; }
+        
+        @media (max-width: 640px) {
+            body { padding: 12px; }
+            header { padding: 16px 20px; flex-direction: column; align-items: flex-start; }
+            .stats-grid { grid-template-columns: 1fr 1fr; }
+            .card { padding: 16px; }
+            .stat-card { padding: 16px; }
+            .decline-item { flex-direction: column; align-items: flex-start; }
+            .decline-item .actions { width: 100%; }
+            .period-buttons { gap: 4px; }
+            .period-btn { padding: 4px 12px; font-size: 12px; }
+            .header-actions { width: 100%; justify-content: flex-start; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    
+    <!-- Header -->
+    <header>
+        <div>
+            <h1>
+                <span>⚙️</span> Панель администратора
+            </h1>
+            <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-top:2px;">
+                <span class="subtitle" id="currentTime"></span>
+                <span style="color:var(--text-muted);">|</span>
+                <span class="subtitle">Управление клубом</span>
+            </div>
+        </div>
+        <div class="header-actions">
+            <button class="theme-toggle" onclick="toggleTheme()" id="themeToggle" title="Переключить тему">
+                <span id="themeIcon">🌙</span>
+            </button>
+            <button onclick="logout()" class="logout-btn">🚪 Выйти</button>
+        </div>
+    </header>
+
+    <!-- Alert -->
+    <div id="alertMessage" class="alert"></div>
+
+    <!-- Stats -->
+    <div class="stats-grid">
+        <div class="stat-card revenue" id="statRevenue" onclick="toggleSection('revenue')">
+            <span class="close-btn" onclick="event.stopPropagation(); closeSection('revenue')">✕</span>
+            <div class="flex-between">
+                <div>
+                    <div class="stat-label">💰 Общая выручка</div>
+                    <div class="stat-value" id="revenue-value">0 Br</div>
+                    <div class="stat-sub" id="revenue-period">За всё время</div>
+                </div>
+                <div class="stat-icon">📈</div>
+            </div>
+            <div class="click-hint">👆 Нажмите для просмотра динамики</div>
+        </div>
+        
+        <div class="stat-card active" id="statActive" onclick="toggleSection('active')">
+            <span class="close-btn" onclick="event.stopPropagation(); closeSection('active')">✕</span>
+            <div class="flex-between">
+                <div>
+                    <div class="stat-label">💪 Активные абонементы</div>
+                    <div class="stat-value" id="active-value">0</div>
+                </div>
+                <div class="stat-icon">🏋️</div>
+            </div>
+            <div class="click-hint">👆 Нажмите для просмотра списка</div>
+        </div>
+        
+        <div class="stat-card trainers" id="statTrainers" onclick="toggleSection('trainers')">
+            <span class="close-btn" onclick="event.stopPropagation(); closeSection('trainers')">✕</span>
+            <div class="flex-between">
+                <div>
+                    <div class="stat-label">👨‍🏫 Тренеры</div>
+                    <div class="stat-value" id="trainers-count">0</div>
+                </div>
+                <div class="stat-icon">👤</div>
+            </div>
+            <div class="click-hint">👆 Нажмите для просмотра списка</div>
+        </div>
+        
+        <div class="stat-card clients">
+            <div class="flex-between">
+                <div>
+                    <div class="stat-label">👥 Всего клиентов</div>
+                    <div class="stat-value" id="clients-count">0</div>
+                </div>
+                <div class="stat-icon">👥</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- РАЗДЕЛ: ГРАФИК ДОХОДОВ -->
+    <!-- ========================================== -->
+    <div class="section-detail" id="sectionRevenue">
+        <div class="card">
+            <div class="flex-between">
+                <h2>📈 Динамика доходов <span class="badge" id="chartPeriodLabel">за месяц</span></h2>
+                <div class="period-buttons">
+                    <button class="period-btn" data-period="day" onclick="changePeriod('day')">📅 Дни</button>
+                    <button class="period-btn active" data-period="month" onclick="changePeriod('month')">📆 Месяцы</button>
+                    <button class="period-btn" data-period="year" onclick="changePeriod('year')">📊 Годы</button>
+                </div>
+            </div>
+            <div class="chart-container">
+                <canvas id="revenueChart"></canvas>
+            </div>
+            <div class="chart-info">
+                <span class="period-label">📅 Период: <strong id="chartPeriodRange">За всё время</strong></span>
+                <span class="total" id="chartTotal">0 Br</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- РАЗДЕЛ: АКТИВНЫЕ АБОНЕМЕНТЫ -->
+    <!-- ========================================== -->
+    <div class="section-detail" id="sectionActive">
+        <div class="card">
+            <h2>💪 Активные абонементы <span class="badge" id="activeListCount">0</span></h2>
+            <input type="text" id="activeSearchInput" class="search-input" placeholder="🔍 Поиск по ФИО, email или тарифу..." oninput="filterActiveClients()">
+            <div class="scroll-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Клиент</th>
+                            <th>Email</th>
+                            <th>Тариф</th>
+                            <th>Действует до</th>
+                            <th>Осталось дней</th>
+                        </tr>
+                    </thead>
+                    <tbody id="active-clients-table">
+                        <tr><td colspan="6" class="text-muted">⏳ Загрузка...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- РАЗДЕЛ: ТРЕНЕРЫ -->
+    <!-- ========================================== -->
+    <div class="section-detail" id="sectionTrainers">
+        <div class="card">
+            <h2>👨‍🏫 Список тренеров <span class="badge" id="trainersListCount">0</span></h2>
+            <input type="text" id="trainersSearchInput" class="search-input" placeholder="🔍 Поиск по ФИО, email или специализации..." oninput="filterTrainers()">
+            <div class="scroll-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>ФИО</th>
+                            <th>Email</th>
+                            <th>Специализация</th>
+                            <th>Клиентов</th>
+                        </tr>
+                    </thead>
+                    <tbody id="trainers-table">
+                        <tr><td colspan="5" class="text-muted">⏳ Загрузка...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Grid -->
+    <div class="main-grid">
+        
+        <!-- Left Column -->
+        <div>
+            <div class="card">
+                <h2>📋 Текущие тарифные планы</h2>
+                <div class="scroll-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Название</th>
+                                <th>Тип</th>
+                                <th>Срок</th>
+                                <th>Цена</th>
+                                <th style="text-align:center;">Действие</th>
+                            </tr>
+                        </thead>
+                        <tbody id="memberships-table-body">
+                            <tr><td colspan="5" class="text-muted">⏳ Загрузка...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>📋 Запросы на отказ от клиентов <span class="badge" id="decline-count">0</span></h2>
+                <div id="declineRequests">
+                    <div class="text-muted">⏳ Загрузка...</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column -->
+        <div>
+            <div class="card">
+                <h2>✨ Новый абонемент</h2>
+                <form id="membershipForm">
+                    <div class="form-group">
+                        <label>Название тарифа</label>
+                        <input type="text" id="name" class="form-control" placeholder="Например: Годовой VIP" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Тип абонемента</label>
+                        <input type="text" id="type" class="form-control" placeholder="VIP, Стандарт, Singles" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Длительность (в днях)</label>
+                        <input type="number" id="duration_days" class="form-control" placeholder="30" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Стоимость (Br)</label>
+                        <input type="number" id="price" class="form-control" placeholder="3000" required>
+                    </div>
+                    <button type="submit" class="btn">➕ Создать тариф</button>
+                </form>
+            </div>
+
+            <div class="card">
+                <h2>💪 Добавить тренера</h2>
+                <form id="trainerForm">
+                    <div class="form-group">
+                        <label>ФИО Тренера</label>
+                        <input type="text" id="trainerName" class="form-control" placeholder="Алексей Петров" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" id="trainerEmail" class="form-control" placeholder="alexey@fitness.ru" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Специализация</label>
+                        <input type="text" id="trainerSpec" class="form-control" placeholder="Тренажерный зал, Кроссфит" required>
+                    </div>
+                    <button type="submit" class="btn btn-secondary">➕ Зарегистрировать тренера</button>
+                </form>
+            </div>
+
+            <div class="card">
+                <h2>🎯 Выдать абонемент тренеру</h2>
+                <p style="font-size:13px;color:var(--text-muted);margin-bottom:16px;">Бесплатный абонемент для тренера</p>
+                <form id="trainerMembershipForm">
+                    <div class="form-group">
+                        <label>Выберите тренера</label>
+                        <select id="tm_trainer" class="form-control" required>
+                            <option value="">Загрузка...</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Выберите тариф</label>
+                        <select id="tm_membership" class="form-control" required>
+                            <option value="">Загрузка...</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Длительность (дней)</label>
+                        <input type="number" id="tm_duration" class="form-control" value="365" required>
+                    </div>
+                    <button type="submit" class="btn" style="background:#8b5cf6;">
+                        🎯 Выдать абонемент
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const API_BASE = "http://127.0.0.1:8000/api/v1";
+    let revenueChart = null;
+    let currentPeriod = 'month';
+    let activeSections = {};
+    let allActiveClients = [];
+    let allTrainers = [];
+
+    // ==========================================
+    // ТЕМА (светлая по умолчанию)
+    // ==========================================
+    function toggleTheme() {
+        var html = document.getElementById('htmlRoot');
+        var currentTheme = html.getAttribute('data-theme');
+        var newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+        html.setAttribute('data-theme', newTheme);
+        localStorage.setItem('theme', newTheme);
+        
+        var icon = document.getElementById('themeIcon');
+        if (newTheme === 'dark') {
+            icon.textContent = '☀️';
+        } else {
+            icon.textContent = '🌙';
+        }
+        
+        // Обновляем график при смене темы
+        if (revenueChart) {
+            loadChartData(currentPeriod);
+        }
+    }
+
+    function loadTheme() {
+        var savedTheme = localStorage.getItem('theme');
+        var html = document.getElementById('htmlRoot');
+        var icon = document.getElementById('themeIcon');
+        
+        // По умолчанию СВЕТЛАЯ тема
+        if (savedTheme === 'dark') {
+            html.setAttribute('data-theme', 'dark');
+            icon.textContent = '☀️';
+        } else {
+            // Светлая тема по умолчанию (даже если в localStorage ничего нет)
+            html.setAttribute('data-theme', 'light');
+            icon.textContent = '🌙';
+            // Сохраняем светлую тему в localStorage, чтобы при обновлении не сбрасывалась
+            if (!savedTheme) {
+                localStorage.setItem('theme', 'light');
+            }
+        }
+    }
+
+    // ==========================================
+    // ВЫХОД
+    // ==========================================
+    function logout() {
+        sessionStorage.removeItem('user');
+        window.location.href = '/login.html';
+    }
+
+    // ==========================================
+    // TOAST
+    // ==========================================
+    function showAlert(message, type = 'success') {
+        const el = document.getElementById('alertMessage');
+        el.textContent = message;
+        el.className = `alert alert-${type}`;
+        setTimeout(() => { el.className = 'alert'; }, 5000);
+    }
+
+    // ==========================================
+    // ЧАСЫ
+    // ==========================================
+    function updateClock() {
+        const now = new Date();
+        document.getElementById('currentTime').textContent = now.toLocaleString('ru-RU', {
+            day: '2-digit', month: 'short', year: 'numeric',
+            hour: '2-digit', minute: '2-digit', second: '2-digit'
+        });
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    // ==========================================
+    // ОТКРЫТИЕ/ЗАКРЫТИЕ РАЗДЕЛОВ
+    // ==========================================
+    function toggleSection(type) {
+        const sectionMap = {
+            'revenue': { id: 'sectionRevenue', card: 'statRevenue', class: 'active-card' },
+            'active': { id: 'sectionActive', card: 'statActive', class: 'active-card-green' },
+            'trainers': { id: 'sectionTrainers', card: 'statTrainers', class: 'active-card-purple' }
+        };
+        
+        const info = sectionMap[type];
+        if (!info) return;
+        
+        const section = document.getElementById(info.id);
+        const card = document.getElementById(info.card);
+        
+        if (activeSections[type]) {
+            closeSection(type);
+            return;
+        }
+        
+        Object.keys(sectionMap).forEach(key => {
+            if (key !== type) closeSection(key);
+        });
+        
+        section.classList.add('visible');
+        card.classList.add(info.class);
+        activeSections[type] = true;
+        
+        if (type === 'revenue') {
+            loadChartData(currentPeriod);
+        } else if (type === 'active') {
+            loadActiveClientsList();
+        } else if (type === 'trainers') {
+            loadTrainersList();
+        }
+    }
+
+    function closeSection(type) {
+        const sectionMap = {
+            'revenue': { id: 'sectionRevenue', card: 'statRevenue', class: 'active-card' },
+            'active': { id: 'sectionActive', card: 'statActive', class: 'active-card-green' },
+            'trainers': { id: 'sectionTrainers', card: 'statTrainers', class: 'active-card-purple' }
+        };
+        
+        const info = sectionMap[type];
+        if (!info) return;
+        
+        const section = document.getElementById(info.id);
+        const card = document.getElementById(info.card);
+        
+        section.classList.remove('visible');
+        card.classList.remove(info.class);
+        activeSections[type] = false;
+    }
+
+    // ==========================================
+    // ГРАФИК
+    // ==========================================
+    function changePeriod(period) {
+        currentPeriod = period;
+        document.querySelectorAll('.period-btn').forEach(btn => {
+            btn.classList.remove('active');
+            if (btn.dataset.period === period) btn.classList.add('active');
+        });
+        const labels = { 'day': 'за день', 'month': 'за месяц', 'year': 'за год' };
+        document.getElementById('chartPeriodLabel').textContent = labels[period] || 'за месяц';
+        loadChartData(period);
+    }
+
+    async function loadChartData(period) {
+        try {
+            const response = await fetch(`${API_BASE}/admin/chart-data?period=${period}`);
+            const data = await response.json();
+            if (data.status === 'success') {
+                renderChart(data.labels, data.values, data.period_label, data.total);
+                document.getElementById('chartPeriodRange').textContent = data.period_range || 'За всё время';
+                document.getElementById('chartTotal').textContent = data.total.toLocaleString() + ' Br';
+            }
+        } catch (error) {
+            console.error('Ошибка загрузки данных для графика:', error);
+            showAlert('Не удалось загрузить данные для графика', 'error');
+        }
+    }
+
+    function renderChart(labels, values, periodLabel, total) {
+        const ctx = document.getElementById('revenueChart').getContext('2d');
+        if (revenueChart) { revenueChart.destroy(); }
+        
+        const isDark = document.getElementById('htmlRoot').getAttribute('data-theme') === 'dark';
+        const textColor = isDark ? '#94a3b8' : '#64748b';
+        const gridColor = isDark ? '#334155' : '#f1f5f9';
+        
+        revenueChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{ 
+                    label: 'Выручка (Br)', 
+                    data: values, 
+                    backgroundColor: values.map(v => v === 0 ? 'rgba(200, 200, 200, 0.2)' : 'rgba(37, 99, 235, 0.7)'),
+                    borderColor: values.map(v => v === 0 ? 'rgba(200, 200, 200, 0.3)' : '#2563eb'),
+                    borderWidth: 2,
+                    borderRadius: 6,
+                    barPercentage: 0.7
+                }]
+            },
+            options: { 
+                responsive: true, 
+                maintainAspectRatio: false,
+                plugins: { 
+                    legend: { display: false },
+                    tooltip: {
+                        backgroundColor: isDark ? '#1e293b' : 'white',
+                        titleColor: isDark ? '#f1f5f9' : '#1e293b',
+                        bodyColor: isDark ? '#94a3b8' : '#475569',
+                        borderColor: isDark ? '#334155' : '#e2e8f0',
+                        borderWidth: 1,
+                        cornerRadius: 10,
+                        padding: 12,
+                        callbacks: {
+                            label: function(context) {
+                                const value = context.parsed.y || 0;
+                                return value === 0 ? 'Нет продаж' : value.toLocaleString() + ' Br';
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: { 
+                        beginAtZero: true, 
+                        grid: { color: gridColor }, 
+                        ticks: { 
+                            color: textColor,
+                            callback: v => v === 0 ? '0' : v.toLocaleString() 
+                        } 
+                    },
+                    x: { 
+                        grid: { display: false }, 
+                        ticks: { 
+                            color: textColor,
+                            maxRotation: 45, 
+                            minRotation: 0, 
+                            font: { size: 11 } 
+                        } 
+                    }
+                },
+                animation: { duration: 800, easing: 'easeOutQuart' }
+            }
+        });
+    }
+
+    // ==========================================
+    // АКТИВНЫЕ АБОНЕМЕНТЫ
+    // ==========================================
+    async function loadActiveClientsList() {
+        try {
+            const response = await fetch(`${API_BASE}/admin/active-clients-list`);
+            const data = await response.json();
+            if (data.status === 'success') {
+                allActiveClients = data.data || [];
+                document.getElementById('activeListCount').textContent = allActiveClients.length;
+                renderActiveClients(allActiveClients);
+            }
+        } catch (error) {
+            console.error('Ошибка загрузки активных клиентов:', error);
+            document.getElementById('active-clients-table').innerHTML = `<tr><td colspan="6" class="text-muted">❌ Ошибка загрузки</td></tr>`;
+        }
+    }
+
+    function filterActiveClients() {
+        const query = document.getElementById('activeSearchInput').value.toLowerCase().trim();
+        if (!query) {
+            renderActiveClients(allActiveClients);
+            return;
+        }
+        const filtered = allActiveClients.filter(c => 
+            (c.client_name || '').toLowerCase().includes(query) ||
+            (c.client_email || '').toLowerCase().includes(query) ||
+            (c.membership_name || '').toLowerCase().includes(query)
+        );
+        renderActiveClients(filtered);
+    }
+
+    function renderActiveClients(clients) {
+        const tbody = document.getElementById('active-clients-table');
+        if (!clients || clients.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="6" class="text-muted">📭 Нет активных абонементов</td></tr>`;
+            return;
+        }
+        let html = '';
+        clients.forEach(c => {
+            const daysLeft = c.days_left || 0;
+            const badgeColor = daysLeft <= 3 ? 'badge-danger' : daysLeft <= 7 ? 'badge-warning' : 'badge-success';
+            html += `
+                <tr>
+                    <td>#${c.user_id}</td>
+                    <td><strong>${c.client_name || '—'}</strong></td>
+                    <td>${c.client_email || '—'}</td>
+                    <td><span class="badge badge-info">${c.membership_name || '—'}</span></td>
+                    <td>${c.end_date || '—'}</td>
+                    <td><span class="badge ${badgeColor}">${daysLeft} дн.</span></td>
+                </tr>
+            `;
+        });
+        tbody.innerHTML = html;
+    }
+
+    // ==========================================
+    // ТРЕНЕРЫ
+    // ==========================================
+    async function loadTrainersList() {
+        try {
+            const response = await fetch(`${API_BASE}/admin/trainers-list`);
+            const data = await response.json();
+            if (data.status === 'success') {
+                allTrainers = data.data || [];
+                document.getElementById('trainersListCount').textContent = allTrainers.length;
+                renderTrainers(allTrainers);
+            }
+        } catch (error) {
+            console.error('Ошибка загрузки тренеров:', error);
+            document.getElementById('trainers-table').innerHTML = `<tr><td colspan="5" class="text-muted">❌ Ошибка загрузки</td></tr>`;
+        }
+    }
+
+    function filterTrainers() {
+        const query = document.getElementById('trainersSearchInput').value.toLowerCase().trim();
+        if (!query) {
+            renderTrainers(allTrainers);
+            return;
+        }
+        const filtered = allTrainers.filter(t => 
+            (t.name || '').toLowerCase().includes(query) ||
+            (t.email || '').toLowerCase().includes(query) ||
+            (t.specialization || '').toLowerCase().includes(query)
+        );
+        renderTrainers(filtered);
+    }
+
+    function renderTrainers(trainers) {
+        const tbody = document.getElementById('trainers-table');
+        if (!trainers || trainers.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="5" class="text-muted">👤 Нет тренеров</td></tr>`;
+            return;
+        }
+        let html = '';
+        trainers.forEach(t => {
+            html += `
+                <tr>
+                    <td>#${t.coach_id || t.id}</td>
+                    <td><strong>${t.name || '—'}</strong></td>
+                    <td>${t.email || '—'}</td>
+                    <td><span class="badge badge-purple">${t.specialization || '—'}</span></td>
+                    <td>${t.clients_count || 0}</td>
+                </tr>
+            `;
+        });
+        tbody.innerHTML = html;
+    }
+
+    // ==========================================
+    // ВЫДАЧА АБОНЕМЕНТА ТРЕНЕРУ
+    // ==========================================
+    async function loadTrainersForMembership() {
+        try {
+            const response = await fetch(`${API_BASE}/admin/trainers-for-membership`);
+            const result = await response.json();
+            const select = document.getElementById('tm_trainer');
+            if (result.status === 'success' && result.data && result.data.length > 0) {
+                let html = '<option value="">-- Выберите тренера --</option>';
+                result.data.forEach(t => {
+                    const status = t.has_active_membership ? '✅ Активен' : '❌ Нет абонемента';
+                    html += `<option value="${t.user_id}">${t.name} (${t.email}) — ${t.specialization || 'Без спец.'} — ${status}</option>`;
+                });
+                select.innerHTML = html;
+            } else {
+                select.innerHTML = '<option value="">❌ Нет тренеров</option>';
+            }
+        } catch (error) {
+            console.error('Ошибка загрузки тренеров:', error);
+            document.getElementById('tm_trainer').innerHTML = '<option value="">❌ Ошибка загрузки</option>';
+        }
+    }
+
+    async function loadMembershipsForTrainers() {
+        try {
+            const response = await fetch(`${API_BASE}/admin/memberships-for-trainers`);
+            const memberships = await response.json();
+            const select = document.getElementById('tm_membership');
+            if (memberships && memberships.length > 0) {
+                let html = '<option value="">-- Выберите тариф --</option>';
+                memberships.forEach(m => {
+                    html += `<option value="${m.id}" data-days="${m.duration_days}">${m.name} — ${m.price} Br (${m.duration_days} дн.)</option>`;
+                });
+                select.innerHTML = html;
+                select.onchange = function() {
+                    const selected = this.options[this.selectedIndex];
+                    const days = selected.getAttribute('data-days');
+                    if (days) document.getElementById('tm_duration').value = days;
+                };
+            } else {
+                select.innerHTML = '<option value="">❌ Нет тарифов</option>';
+            }
+        } catch (error) {
+            console.error('Ошибка загрузки тарифов:', error);
+            document.getElementById('tm_membership').innerHTML = '<option value="">❌ Ошибка загрузки</option>';
+        }
+    }
+
+    document.getElementById('trainerMembershipForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const userId = document.getElementById('tm_trainer').value;
+        const membershipId = document.getElementById('tm_membership').value;
+        const durationDays = parseInt(document.getElementById('tm_duration').value);
+        if (!userId || !membershipId) {
+            showAlert('Выберите тренера и тариф', 'error');
+            return;
+        }
+        if (!durationDays || durationDays < 1) {
+            showAlert('Введите корректную длительность', 'error');
+            return;
+        }
+        const btn = e.target.querySelector('button[type="submit"]');
+        btn.disabled = true;
+        btn.textContent = '⏳ Выдача...';
+        try {
+            const response = await fetch(`${API_BASE}/admin/give-trainer-membership`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    user_id: parseInt(userId),
+                    membership_id: parseInt(membershipId),
+                    duration_days: durationDays
+                })
+            });
+            const result = await response.json();
+            if (response.ok) {
+                showAlert('✅ ' + result.message, 'success');
+                document.getElementById('trainerMembershipForm').reset();
+                document.getElementById('tm_duration').value = 365;
+                loadTrainersForMembership();
+                loadDashboardStats();
+            } else {
+                showAlert('❌ ' + (result.detail || 'Ошибка'), 'error');
+            }
+        } catch (error) {
+            console.error(error);
+            showAlert('❌ Не удалось выдать абонемент', 'error');
+        } finally {
+            btn.disabled = false;
+            btn.textContent = '🎯 Выдать абонемент';
+        }
+    });
+
+    // ==========================================
+    // СТАТИСТИКА
+    // ==========================================
+    async function loadDashboardStats() {
+        try {
+            const response = await fetch(`${API_BASE}/admin/stats`);
+            if (!response.ok) throw new Error('Ошибка загрузки статистики');
+            const data = await response.json();
+            document.getElementById('revenue-value').textContent = `${data.revenue.toLocaleString()} Br`;
+            document.getElementById('revenue-period').textContent = 'За всё время';
+            document.getElementById('active-value').textContent = data.active_memberships || 0;
+            loadAdditionalStats();
+        } catch (error) {
+            console.error("Ошибка статистики:", error);
+            showAlert('Не удалось загрузить статистику', 'error');
+        }
+    }
+
+    async function loadAdditionalStats() {
+        try {
+            const trainersRes = await fetch(`${API_BASE}/admin/trainers-count`);
+            if (trainersRes.ok) {
+                const data = await trainersRes.json();
+                document.getElementById('trainers-count').textContent = data.count || 0;
+            }
+            const clientsRes = await fetch(`${API_BASE}/admin/clients-count`);
+            if (clientsRes.ok) {
+                const data = await clientsRes.json();
+                document.getElementById('clients-count').textContent = data.count || 0;
+            }
+        } catch (e) {
+            console.error('Ошибка загрузки дополнительной статистики:', e);
+        }
+    }
+
+    // ==========================================
+    // ТАРИФЫ
+    // ==========================================
+    async function loadMemberships() {
+        try {
+            const response = await fetch(`${API_BASE}/admin/memberships`);
+            if (!response.ok) throw new Error('Ошибка загрузки тарифов');
+            const data = await response.json();
+            const tbody = document.getElementById('memberships-table-body');
+            tbody.innerHTML = "";
+            if (!data || data.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="text-muted">📭 Тарифы отсутствуют</td></tr>`;
+                return;
+            }
+            data.forEach(m => {
+                const typeColors = {
+                    'VIP': 'badge-purple',
+                    'Стандарт': 'badge-info',
+                    'Singles': 'badge-warning',
+                    'Премиум': 'badge-success'
+                };
+                const typeClass = typeColors[m.type] || 'badge';
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><strong>${m.name || 'Без названия'}</strong></td>
+                    <td><span class="badge ${typeClass}">${m.type || 'Не указан'}</span></td>
+                    <td>${m.duration_days || 0} дн.</td>
+                    <td><strong>${m.price || 0} Br</strong></td>
+                    <td style="text-align:center;">
+                        <button class="btn-danger" onclick="deleteMembership(${m.id})">🗑️ Удалить</button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        } catch (error) {
+            console.error("Ошибка загрузки тарифов:", error);
+            document.getElementById('memberships-table-body').innerHTML = 
+                `<tr><td colspan="5" class="text-muted">❌ Ошибка загрузки тарифов</td></tr>`;
+        }
+    }
+
+    async function deleteMembership(id) {
+        if (!confirm("Вы уверены, что хотите удалить этот тариф?")) return;
+        try {
+            const response = await fetch(`${API_BASE}/admin/memberships/${id}`, { 
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json' }
+            });
+            const result = await response.json();
+            if (!response.ok) throw new Error(result.detail || 'Ошибка при удалении');
+            showAlert('✅ Тариф успешно удален!', 'success');
+            await loadMemberships();
+            await loadDashboardStats();
+        } catch (error) {
+            showAlert(error.message || 'Не удалось удалить тариф', 'error');
+        }
+    }
+
+    // ==========================================
+    // ЗАПРОСЫ НА ОТКАЗ
+    // ==========================================
+    async function loadDeclineRequests() {
+        try {
+            const response = await fetch(`${API_BASE}/admin/decline-requests`);
+            const result = await response.json();
+            const container = document.getElementById('declineRequests');
+            const countBadge = document.getElementById('decline-count');
+            if (result.status === 'success' && result.data && result.data.length > 0) {
+                countBadge.textContent = result.data.length;
+                let html = '';
+                result.data.forEach(r => {
+                    html += `
+                        <div class="decline-item">
+                            <div class="info">
+                                <div class="name">👨‍🏫 ${r.coach_name || '—'} → 👤 ${r.client_name || '—'}</div>
+                                <div class="detail">📧 ${r.client_email || ''}</div>
+                                ${r.reason ? `<div class="reason">💬 Причина: ${r.reason}</div>` : ''}
+                                <div class="detail" style="font-size:12px;color:var(--text-muted);">📅 ${new Date(r.created_at).toLocaleString('ru-RU')}</div>
+                            </div>
+                            <div class="actions">
+                                <button class="btn-success btn-sm" onclick="approveDecline(${r.request_id})">✅ Одобрить</button>
+                                <button class="btn-danger btn-sm" onclick="rejectDecline(${r.request_id})">❌ Отклонить</button>
+                            </div>
+                        </div>
+                    `;
+                });
+                container.innerHTML = html;
+            } else {
+                countBadge.textContent = '0';
+                container.innerHTML = `<div class="empty-state"><span class="icon">✅</span>Нет активных запросов на отказ</div>`;
+            }
+        } catch (error) {
+            console.error('Ошибка загрузки запросов:', error);
+            document.getElementById('declineRequests').innerHTML = `<div class="text-muted">❌ Ошибка загрузки</div>`;
+        }
+    }
+
+    async function approveDecline(requestId) {
+        if (!confirm('Одобрить отказ тренера от клиента?')) return;
+        try {
+            const response = await fetch(`${API_BASE}/admin/decline-requests/${requestId}/approve`, { method: 'POST' });
+            const result = await response.json();
+            if (response.ok) {
+                showAlert('✅ Отказ одобрен!', 'success');
+                loadDeclineRequests();
+            } else {
+                showAlert('❌ ' + (result.detail || 'Ошибка'), 'error');
+            }
+        } catch (e) {
+            showAlert('❌ Ошибка: ' + e.message, 'error');
+        }
+    }
+
+    async function rejectDecline(requestId) {
+        if (!confirm('Отклонить отказ тренера от клиента?')) return;
+        try {
+            const response = await fetch(`${API_BASE}/admin/decline-requests/${requestId}/reject`, { method: 'POST' });
+            const result = await response.json();
+            if (response.ok) {
+                showAlert('✅ Отказ отклонен!', 'success');
+                loadDeclineRequests();
+            } else {
+                showAlert('❌ ' + (result.detail || 'Ошибка'), 'error');
+            }
+        } catch (e) {
+            showAlert('❌ Ошибка: ' + e.message, 'error');
+        }
+    }
+
+    // ==========================================
+    // ФОРМЫ
+    // ==========================================
+    document.getElementById('membershipForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const payload = {
+            name: document.getElementById('name').value.trim(),
+            type: document.getElementById('type').value.trim(),
+            duration_days: parseInt(document.getElementById('duration_days').value),
+            price: parseFloat(document.getElementById('price').value),
+            description: null
+        };
+        const btn = e.target.querySelector('button[type="submit"]');
+        btn.disabled = true;
+        btn.textContent = '⏳ Создание...';
+        try {
+            const response = await fetch(`${API_BASE}/admin/memberships`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            const result = await response.json();
+            if (response.ok) {
+                showAlert('✅ Тариф создан!', 'success');
+                document.getElementById('membershipForm').reset();
+                await loadMemberships();
+                await loadDashboardStats();
+            } else {
+                showAlert('❌ ' + (result.detail || 'Ошибка'), 'error');
+            }
+        } catch (error) {
+            showAlert('❌ Не удалось создать тариф', 'error');
+        } finally {
+            btn.disabled = false;
+            btn.textContent = '➕ Создать тариф';
+        }
+    });
+
+    document.getElementById('trainerForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const name = document.getElementById('trainerName').value.trim();
+        const email = document.getElementById('trainerEmail').value.trim();
+        const specialization = document.getElementById('trainerSpec').value.trim();
+        if (!name || name.length < 2 || !email || !email.includes('@') || !specialization || specialization.length < 2) {
+            showAlert('Заполните все поля корректно', 'error');
+            return;
+        }
+        const btn = e.target.querySelector('button[type="submit"]');
+        btn.disabled = true;
+        btn.textContent = '⏳ Регистрация...';
+        try {
+            const response = await fetch(`${API_BASE}/admin/trainers`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, email, specialization })
+            });
+            const result = await response.json();
+            if (response.ok) {
+                showAlert(`✅ Тренер "${name}" добавлен!`, 'success');
+                document.getElementById('trainerForm').reset();
+                await loadDashboardStats();
+                if (activeSections.trainers) loadTrainersList();
+            } else {
+                showAlert('❌ ' + (result.detail || 'Ошибка'), 'error');
+            }
+        } catch (error) {
+            showAlert('❌ Не удалось добавить тренера', 'error');
+        } finally {
+            btn.disabled = false;
+            btn.textContent = '➕ Зарегистрировать тренера';
+        }
+    });
+
+    // ==========================================
+    // ЗАПУСК
+    // ==========================================
+    window.onload = function() {
+        loadTheme(); // Загружаем тему (светлая по умолчанию)
+        
+        var userData = sessionStorage.getItem('user');
+        if (!userData) {
+            window.location.href = '/login.html';
+            return;
+        }
+        
+        try {
+            var user = JSON.parse(userData);
+            if (user.role !== 'admin') {
+                window.location.href = '/login.html';
+                return;
+            }
+        } catch (e) {
+            console.error(e);
+        }
+        
+        loadDashboardStats();
+        loadMemberships();
+        loadDeclineRequests();
+        loadTrainersForMembership();
+        loadMembershipsForTrainers();
+    };
+</script>
+</body>
+</html>

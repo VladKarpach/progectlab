@@ -1,0 +1,1881 @@
+<!DOCTYPE html>
+<html lang="ru" id="htmlRoot">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Рабочее место Кассира | Fitness Club</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+        
+        :root {
+            --bg-body: #f0f4f8;
+            --bg-card: #ffffff;
+            --bg-header: #ffffff;
+            --text-primary: #1a202c;
+            --text-secondary: #4a5568;
+            --text-muted: #a0aec0;
+            --border-color: rgba(226, 232, 240, 0.6);
+            --border-card: #e2e8f0;
+            --bg-info: #f7fafc;
+            --shadow: 0 1px 3px rgba(0,0,0,0.06);
+            --badge-bg: #e2e8f0;
+            --badge-text: #4a5568;
+            --input-bg: white;
+            --input-border: #e2e8f0;
+            --selected-bg: #f0fdf4;
+            --selected-text: #065f46;
+            --hover-bg: #f8fafc;
+            --dropdown-bg: white;
+            --dropdown-shadow: 0 8px 24px rgba(0,0,0,0.1);
+            --toast-bg: white;
+            --toast-shadow: 0 8px 32px rgba(0,0,0,0.15);
+            --stat-card-bg: white;
+            --table-header-bg: #f7fafc;
+            --table-row-hover: #f8fafc;
+            --table-border: #e2e8f0;
+            --filter-bg: #f1f5f9;
+            --filter-btn-bg: white;
+            --filter-btn-hover: white;
+            --filter-btn-active: #2563eb;
+            --filter-btn-active-text: white;
+            --badge-blue-bg: #dbeafe;
+            --badge-blue-text: #1e40af;
+            --badge-purple-bg: #ede9fe;
+            --badge-purple-text: #5b21b6;
+            --pass-item-bg: #f8fafc;
+            --pass-item-hover: #f1f5f9;
+            --pass-header-bg: #f8fafc;
+        }
+        
+        [data-theme="dark"] {
+            --bg-body: #0f172a;
+            --bg-card: #1e293b;
+            --bg-header: #1e293b;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --border-color: rgba(51, 65, 85, 0.6);
+            --border-card: #334155;
+            --bg-info: #2d3748;
+            --shadow: 0 1px 3px rgba(0,0,0,0.3);
+            --badge-bg: #334155;
+            --badge-text: #94a3b8;
+            --input-bg: #2d3748;
+            --input-border: #475569;
+            --selected-bg: #1a3a2a;
+            --selected-text: #6ee7b7;
+            --hover-bg: #2d3748;
+            --dropdown-bg: #1e293b;
+            --dropdown-shadow: 0 8px 24px rgba(0,0,0,0.4);
+            --toast-bg: #1e293b;
+            --toast-shadow: 0 8px 32px rgba(0,0,0,0.4);
+            --stat-card-bg: #1e293b;
+            --table-header-bg: #2d3748;
+            --table-row-hover: #2d3748;
+            --table-border: #334155;
+            --filter-bg: #2d3748;
+            --filter-btn-bg: #1e293b;
+            --filter-btn-hover: #2d3748;
+            --filter-btn-active: #2563eb;
+            --filter-btn-active-text: white;
+            --badge-blue-bg: #1e3a5f;
+            --badge-blue-text: #93c5fd;
+            --badge-purple-bg: #2d1b4e;
+            --badge-purple-text: #c4b5fd;
+            --pass-item-bg: #2d3748;
+            --pass-item-hover: #374151;
+            --pass-header-bg: #2d3748;
+        }
+        
+        * { 
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; 
+            transition: background 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        body { 
+            background: var(--bg-body); 
+            color: var(--text-primary); 
+            min-height: 100vh; 
+            padding: 24px; 
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+        
+        .slide-in { animation: slideIn 0.3s ease-out; }
+        @keyframes slideIn { from { transform: translateX(100px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        
+        .toast {
+            position: fixed;
+            top: 24px;
+            right: 24px;
+            padding: 16px 24px;
+            border-radius: 16px;
+            color: white;
+            font-weight: 600;
+            font-size: 14px;
+            box-shadow: var(--toast-shadow);
+            z-index: 1000;
+            animation: slideIn 0.3s ease-out;
+            max-width: 400px;
+        }
+        .toast-success { background: linear-gradient(135deg, #10b981, #059669); }
+        .toast-error { background: linear-gradient(135deg, #ef4444, #dc2626); }
+        .toast-info { background: linear-gradient(135deg, #3b82f6, #2563eb); }
+        
+        .stat-card { 
+            background: var(--stat-card-bg); 
+            border-radius: 12px; 
+            padding: 20px; 
+            box-shadow: var(--shadow); 
+            border: 1px solid var(--border-card); 
+            transition: all 0.2s ease, background 0.3s ease, border-color 0.3s ease;
+        }
+        .stat-card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.08); }
+        .stat-card .stat-label { color: var(--text-muted); }
+        .stat-card .stat-value { color: var(--text-primary); }
+        
+        .table-row { transition: all 0.15s ease; }
+        .table-row:hover { background: var(--table-row-hover) !important; }
+        
+        .btn { transition: all 0.2s ease; }
+        .btn:hover { transform: translateY(-1px); }
+        .btn:active { transform: scale(0.97); }
+        
+        .search-box { 
+            transition: all 0.3s ease; 
+            background: var(--input-bg) !important;
+            color: var(--text-primary) !important;
+            border-color: var(--input-border) !important;
+        }
+        .search-box:focus { 
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3); 
+            border-color: #3b82f6; 
+        }
+        .search-box::placeholder { color: var(--text-muted) !important; }
+        
+        .highlight { background: #fef3c7; font-weight: 600; }
+        [data-theme="dark"] .highlight { background: #4a3a1a; color: #fbbf24; }
+        
+        .table-container { max-height: 500px; overflow-y: auto; }
+        
+        /* Filter buttons */
+        .filter-btn-group { 
+            background: var(--filter-bg) !important; 
+            border-radius: 8px; 
+            padding: 4px;
+        }
+        .filter-btn {
+            padding: 4px 12px;
+            font-size: 12px;
+            font-weight: 500;
+            border-radius: 6px;
+            background: transparent;
+            color: var(--text-secondary);
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .filter-btn:hover { 
+            background: var(--filter-btn-hover) !important; 
+            color: var(--text-primary);
+        }
+        .filter-btn.active {
+            background: var(--filter-btn-active) !important;
+            color: var(--filter-btn-active-text) !important;
+        }
+        
+        .search-select-wrapper { position: relative; }
+        .search-select-wrapper input {
+            width: 100%;
+            padding: 10px 14px;
+            border: 2px solid var(--input-border);
+            border-radius: 10px;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.2s, background 0.3s ease, color 0.3s ease;
+            background: var(--input-bg) !important;
+            color: var(--text-primary) !important;
+        }
+        .search-select-wrapper input:focus { border-color: #667eea; box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1); }
+        .search-select-wrapper input::placeholder { color: var(--text-muted) !important; }
+        
+        .search-select-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: var(--dropdown-bg) !important;
+            border: 2px solid var(--border-card);
+            border-top: none;
+            border-radius: 0 0 10px 10px;
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 50;
+            display: none;
+            box-shadow: var(--dropdown-shadow);
+        }
+        .search-select-dropdown.show { display: block; }
+        .search-select-dropdown .item {
+            padding: 10px 14px;
+            cursor: pointer;
+            border-bottom: 1px solid var(--border-card);
+            transition: background 0.15s;
+            color: var(--text-primary) !important;
+        }
+        .search-select-dropdown .item:hover { background: var(--hover-bg) !important; }
+        .search-select-dropdown .item .name { font-weight: 500; color: var(--text-primary) !important; }
+        .search-select-dropdown .item .sub { font-size: 12px; color: var(--text-muted) !important; margin-left: 8px; }
+        .search-select-dropdown .item .badge {
+            font-size: 10px;
+            background: var(--badge-bg) !important;
+            padding: 2px 8px;
+            border-radius: 50px;
+            color: var(--badge-text) !important;
+            margin-left: 8px;
+        }
+        
+        .search-select-wrapper .clear-btn {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted) !important;
+            cursor: pointer;
+            font-size: 18px;
+            display: none;
+        }
+        .search-select-wrapper .clear-btn:hover { color: #ef4444 !important; }
+        
+        .selected-display {
+            margin-top: 6px;
+            padding: 8px 12px;
+            background: var(--selected-bg) !important;
+            border-radius: 8px;
+            font-size: 13px;
+            color: var(--selected-text) !important;
+            display: none;
+        }
+        .selected-display .name { font-weight: 600; }
+        .selected-display .sub { color: var(--text-muted) !important; font-size: 12px; }
+        
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: var(--bg-info) !important; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb { background: var(--border-card) !important; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--text-muted) !important; }
+        
+        /* Header */
+        .header { 
+            background: var(--bg-header) !important; 
+            border-radius: 16px; 
+            padding: 24px 32px; 
+            margin-bottom: 24px; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            flex-wrap: wrap; 
+            gap: 16px; 
+            box-shadow: var(--shadow); 
+            border: 1px solid var(--border-color); 
+            transition: background 0.3s ease, border-color 0.3s ease;
+        }
+        .header-actions { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+        
+        .theme-toggle {
+            background: var(--bg-info) !important;
+            border: 1px solid var(--border-card);
+            border-radius: 50px;
+            width: 44px;
+            height: 44px;
+            cursor: pointer;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            color: var(--text-primary) !important;
+        }
+        .theme-toggle:hover { 
+            transform: translateY(-2px); 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            background: var(--border-card) !important;
+        }
+        .theme-toggle:active { transform: scale(0.93); }
+        
+        .logout-btn {
+            background: #fee2e2 !important;
+            color: #991b1b !important;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .logout-btn:hover { background: #fecaca !important; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(239, 68, 68, 0.15); }
+        .logout-btn:active { transform: scale(0.97); }
+
+        .status-dot { width: 10px; height: 10px; border-radius: 50%; background: #48bb78; display: inline-block; animation: pulse 2s infinite; }
+        @keyframes pulse { 0% { opacity: 1; transform: scale(1); } 50% { opacity: 0.6; transform: scale(0.9); } 100% { opacity: 1; transform: scale(1); } }
+
+        .card {
+            background: var(--bg-card) !important;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-card);
+            transition: background 0.3s ease, border-color 0.3s ease;
+        }
+        
+        .card-title { color: var(--text-primary) !important; }
+        .card-subtitle { color: var(--text-muted) !important; }
+        
+        .form-label { color: var(--text-secondary) !important; }
+        .form-input {
+            background: var(--input-bg) !important;
+            color: var(--text-primary) !important;
+            border-color: var(--input-border) !important;
+        }
+        .form-input:focus { border-color: #667eea !important; }
+        .form-input::placeholder { color: var(--text-muted) !important; }
+        
+        /* Table styles */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            color: var(--text-primary) !important;
+        }
+        table th {
+            background: var(--table-header-bg) !important;
+            color: var(--text-secondary) !important;
+            border-bottom: 2px solid var(--table-border) !important;
+            padding: 16px;
+            text-align: left;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        table td {
+            padding: 16px;
+            border-bottom: 1px solid var(--table-border) !important;
+            color: var(--text-primary) !important;
+        }
+        table tbody tr:hover td {
+            background: var(--table-row-hover) !important;
+        }
+        
+        .badge-blue {
+            background: var(--badge-blue-bg) !important;
+            color: var(--badge-blue-text) !important;
+            padding: 2px 10px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        .badge-purple {
+            background: var(--badge-purple-bg) !important;
+            color: var(--badge-purple-text) !important;
+            padding: 2px 10px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        /* Pass items */
+        .pass-item {
+            background: var(--pass-item-bg) !important;
+            border-radius: 12px;
+            padding: 12px 16px;
+            transition: background 0.3s ease;
+        }
+        .pass-item:hover {
+            background: var(--pass-item-hover) !important;
+        }
+        .pass-item .name { color: var(--text-primary) !important; }
+        .pass-item .time { color: var(--text-muted) !important; }
+        
+        /* Pass system header */
+        .pass-system-header {
+            background: var(--pass-header-bg) !important;
+            border-bottom: 1px solid var(--border-card) !important;
+            padding: 16px 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            transition: background 0.3s ease, border-color 0.3s ease;
+        }
+        @media (min-width: 640px) {
+            .pass-system-header {
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+                gap: 16px;
+            }
+        }
+        .pass-system-header .title { 
+            color: var(--text-primary) !important; 
+            font-size: 18px;
+            font-weight: 700;
+        }
+        .pass-system-header .subtitle { 
+            color: var(--text-muted) !important; 
+            font-size: 12px;
+            margin-top: 2px;
+        }
+        .pass-system-header .badge-filter {
+            background: var(--badge-blue-bg) !important;
+            color: var(--badge-blue-text) !important;
+            padding: 2px 10px;
+            border-radius: 9999px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        /* Tailwind overrides */
+        .bg-white { background: var(--bg-card) !important; }
+        .bg-slate-50 { background: var(--bg-body) !important; }
+        .bg-slate-100 { background: var(--bg-info) !important; }
+        .bg-slate-200 { background: var(--border-card) !important; }
+        .border-slate-200 { border-color: var(--border-card) !important; }
+        .border-slate-100 { border-color: var(--border-card) !important; }
+        .text-slate-800 { color: var(--text-primary) !important; }
+        .text-slate-900 { color: var(--text-primary) !important; }
+        .text-slate-700 { color: var(--text-secondary) !important; }
+        .text-slate-600 { color: var(--text-secondary) !important; }
+        .text-slate-500 { color: var(--text-secondary) !important; }
+        .text-slate-400 { color: var(--text-muted) !important; }
+        .text-slate-300 { color: var(--text-muted) !important; }
+        .hover\:bg-slate-100:hover { background: var(--hover-bg) !important; }
+        .hover\:bg-white:hover { background: var(--bg-card) !important; }
+        .bg-emerald-50 { background: #ecfdf5 !important; }
+        .text-emerald-700 { color: #047857 !important; }
+        .border-emerald-200 { border-color: #a7f3d0 !important; }
+        .bg-blue-50 { background: #eff6ff !important; }
+        .text-blue-600 { color: #2563eb !important; }
+        .text-blue-700 { color: #1d4ed8 !important; }
+        .bg-blue-100 { background: #dbeafe !important; }
+        .hover\:bg-blue-100:hover { background: #dbeafe !important; }
+        .bg-purple-50 { background: #f3e8ff !important; }
+        .text-purple-500 { color: #8b5cf6 !important; }
+        .text-purple-700 { color: #6d28d9 !important; }
+        .bg-purple-100 { background: #ede9fe !important; }
+        .shadow-sm { box-shadow: var(--shadow) !important; }
+        .shadow-lg { box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05) !important; }
+        .divide-slate-100 > :not([hidden]) ~ :not([hidden]) { border-color: var(--border-card) !important; }
+        .bg-gradient-to-r { background-image: linear-gradient(to right, var(--tw-gradient-stops)) !important; }
+        
+        /* Form inputs */
+        input, select, textarea {
+            background: var(--input-bg) !important;
+            color: var(--text-primary) !important;
+            border-color: var(--input-border) !important;
+        }
+        input:focus, select:focus, textarea:focus {
+            border-color: #667eea !important;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1) !important;
+        }
+        input::placeholder, textarea::placeholder {
+            color: var(--text-muted) !important;
+        }
+        option {
+            background: var(--bg-card) !important;
+            color: var(--text-primary) !important;
+        }
+        
+        /* Scrollbar for dark theme */
+        [data-theme="dark"] ::-webkit-scrollbar-track { background: #1e293b !important; }
+        [data-theme="dark"] ::-webkit-scrollbar-thumb { background: #475569 !important; }
+        [data-theme="dark"] ::-webkit-scrollbar-thumb:hover { background: #64748b !important; }
+
+        @media (max-width: 640px) { 
+            body { padding: 16px; } 
+            .header { padding: 16px 20px; } 
+            .card { padding: 16px; } 
+            table th, table td { padding: 10px 12px; font-size: 13px; }
+            .pass-system-header { padding: 12px 16px; }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 font-sans min-h-screen p-4 md:p-8">
+
+    <div class="max-w-7xl mx-auto">
+        
+        <!-- Header -->
+        <div class="header">
+            <div class="flex items-center gap-4">
+                <div class="w-12 h-12 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center text-white text-2xl shadow-lg shadow-blue-100">
+                    🏪
+                </div>
+                <div>
+                    <h1 class="text-2xl font-extrabold text-slate-800 tracking-tight">Фронт-офис: Кассир</h1>
+                    <p class="text-sm text-slate-500 mt-0.5">Регистрация, оформление продаж и пропускной контроль</p>
+                </div>
+            </div>
+            <div class="header-actions">
+                <button class="theme-toggle" onclick="toggleTheme()" id="themeToggle" title="Переключить тему">
+                    <span id="themeIcon">🌙</span>
+                </button>
+                <div class="flex items-center gap-2 bg-emerald-50 px-4 py-2 rounded-full border border-emerald-200">
+                    <span class="w-2.5 h-2.5 bg-emerald-500 rounded-full animate-pulse"></span>
+                    <span class="text-sm font-semibold text-emerald-700">Смена открыта</span>
+                </div>
+                <span class="text-sm text-slate-400 hidden sm:block">|</span>
+                <span class="text-sm text-slate-500 hidden sm:block" id="currentTime"></span>
+                <button onclick="logout()" class="logout-btn">🚪 Выйти</button>
+            </div>
+        </div>
+
+        <!-- Toast контейнер -->
+        <div id="toastContainer"></div>
+
+        <!-- Stats -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+            <div class="stat-card">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="stat-label text-xs font-semibold uppercase tracking-wider">Клиентов в базе</p>
+                        <p class="stat-value text-2xl font-bold mt-1" id="totalUsers">0</p>
+                    </div>
+                    <div class="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center text-blue-500 text-xl">👤</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="stat-label text-xs font-semibold uppercase tracking-wider">Активных абонементов</p>
+                        <p class="stat-value text-2xl font-bold mt-1" id="activeMemberships">0</p>
+                    </div>
+                    <div class="w-12 h-12 bg-emerald-50 rounded-xl flex items-center justify-center text-emerald-500 text-xl">💪</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="stat-label text-xs font-semibold uppercase tracking-wider">Сегодня пропусков</p>
+                        <p class="stat-value text-2xl font-bold mt-1" id="todayPasses">0</p>
+                    </div>
+                    <div class="w-12 h-12 bg-purple-50 rounded-xl flex items-center justify-center text-purple-500 text-xl">🏋️</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            
+            <!-- Left Column -->
+            <div class="lg:col-span-1 space-y-6">
+                
+                <!-- Быстрая регистрация -->
+                <div class="card">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center text-white text-lg shadow-sm">📝</div>
+                        <div>
+                            <h2 class="card-title text-base font-bold">Быстрая регистрация</h2>
+                            <p class="card-subtitle text-xs">Добавьте нового клиента</p>
+                        </div>
+                    </div>
+                    <form id="userForm" class="space-y-3">
+                        <div>
+                            <label class="form-label block text-xs font-semibold uppercase tracking-wider mb-1">ФИО Клиента</label>
+                            <input type="text" id="u_name" required placeholder="Иванов Иван Иванович" 
+                                   class="form-input w-full px-4 py-2.5 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
+                        </div>
+                        <div>
+                            <label class="form-label block text-xs font-semibold uppercase tracking-wider mb-1">Email</label>
+                            <input type="email" id="u_email" required placeholder="ivan@mail.ru" 
+                                   class="form-input w-full px-4 py-2.5 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
+                        </div>
+                        <button type="submit" 
+                                class="btn w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold py-2.5 rounded-xl text-sm transition-all shadow-sm shadow-blue-100">
+                            ➕ Добавить в базу
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Оформление продажи -->
+                <div class="card">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-10 h-10 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl flex items-center justify-center text-white text-lg shadow-sm">🛒</div>
+                        <div>
+                            <h2 class="card-title text-base font-bold">Оформить продажу</h2>
+                            <p class="card-subtitle text-xs">Активировать абонемент</p>
+                        </div>
+                    </div>
+                    <form id="purchaseForm" class="space-y-4">
+                        <div>
+                            <label class="form-label block text-xs font-semibold uppercase tracking-wider mb-1">Клиент</label>
+                            <div class="search-select-wrapper" id="clientSearchWrapper">
+                                <input type="text" id="clientSearchInput" 
+                                       placeholder="🔍 Введите имя или email..." 
+                                       class="form-input w-full px-4 py-2.5 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                                       autocomplete="off">
+                                <span class="clear-btn" id="clientClearBtn" onclick="clearClientSearch()">✕</span>
+                                <input type="hidden" id="p_user" value="">
+                                <div class="search-select-dropdown" id="clientDropdown"></div>
+                            </div>
+                            <div id="selectedClientDisplay" class="selected-display">
+                                Выбран: <span class="name" id="selectedClientName"></span>
+                                <span class="sub" id="selectedClientEmail"></span>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="form-label block text-xs font-semibold uppercase tracking-wider mb-1">Тариф</label>
+                            <select id="p_membership" required 
+                                    class="form-input w-full px-4 py-2.5 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
+                                <option value="">-- Выберите тариф --</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="form-label block text-xs font-semibold uppercase tracking-wider mb-1">Сумма (Br)</label>
+                            <input type="number" id="p_price" required placeholder="0" step="0.01"
+                                   class="form-input w-full px-4 py-2.5 border rounded-xl text-sm font-semibold text-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
+                        </div>
+
+                        <div>
+                            <label class="form-label block text-xs font-semibold uppercase tracking-wider mb-1">Назначить тренера</label>
+                            <div class="search-select-wrapper" id="coachSearchWrapper">
+                                <input type="text" id="coachSearchInput" 
+                                       placeholder="🔍 Введите имя тренера..." 
+                                       class="form-input w-full px-4 py-2.5 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                                       autocomplete="off">
+                                <span class="clear-btn" id="coachClearBtn" onclick="clearCoachSearch()">✕</span>
+                                <input type="hidden" id="p_coach" value="">
+                                <div class="search-select-dropdown" id="coachDropdown"></div>
+                            </div>
+                            <div id="selectedCoachDisplay" class="selected-display">
+                                Выбран: <span class="name" id="selectedCoachName"></span>
+                                <span class="sub" id="selectedCoachSpec"></span>
+                            </div>
+                            <p class="text-xs text-slate-400 mt-1">Опционально: выберите тренера для клиента</p>
+                        </div>
+
+                        <button type="submit" 
+                                class="btn w-full bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white font-semibold py-2.5 rounded-xl text-sm transition-all shadow-sm shadow-emerald-100">
+                            ✔️ Активировать абонемент
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Назначить тренера -->
+                <div class="card">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-10 h-10 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center text-white text-lg shadow-sm">👨‍🏫</div>
+                        <div>
+                            <h2 class="card-title text-base font-bold">Назначить тренера</h2>
+                            <p class="card-subtitle text-xs">Клиентам без тренера</p>
+                        </div>
+                    </div>
+                    <form id="assignTrainerForm" class="space-y-4">
+                        <div>
+                            <label class="form-label block text-xs font-semibold uppercase tracking-wider mb-1">Клиент без тренера</label>
+                            <div class="search-select-wrapper" id="assignClientWrapper">
+                                <input type="text" id="assignClientInput" 
+                                       placeholder="🔍 Введите имя или email..." 
+                                       class="form-input w-full px-4 py-2.5 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                                       autocomplete="off">
+                                <span class="clear-btn" id="assignClientClearBtn" onclick="clearAssignClient()">✕</span>
+                                <input type="hidden" id="at_client" value="">
+                                <div class="search-select-dropdown" id="assignClientDropdown"></div>
+                            </div>
+                            <div id="selectedAssignClientDisplay" class="selected-display" style="background:#f3e8ff; color:#5b21b6;">
+                                Выбран: <span class="name" id="selectedAssignClientName"></span>
+                                <span class="sub" id="selectedAssignClientSub"></span>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="form-label block text-xs font-semibold uppercase tracking-wider mb-1">Назначить тренера</label>
+                            <div class="search-select-wrapper" id="assignCoachWrapper">
+                                <input type="text" id="assignCoachInput" 
+                                       placeholder="🔍 Введите имя тренера..." 
+                                       class="form-input w-full px-4 py-2.5 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                                       autocomplete="off">
+                                <span class="clear-btn" id="assignCoachClearBtn" onclick="clearAssignCoach()">✕</span>
+                                <input type="hidden" id="at_coach" value="">
+                                <div class="search-select-dropdown" id="assignCoachDropdown"></div>
+                            </div>
+                            <div id="selectedAssignCoachDisplay" class="selected-display" style="background:#f3e8ff; color:#5b21b6;">
+                                Выбран: <span class="name" id="selectedAssignCoachName"></span>
+                                <span class="sub" id="selectedAssignCoachSpec"></span>
+                            </div>
+                        </div>
+
+                        <button type="submit" 
+                                class="btn w-full bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white font-semibold py-2.5 rounded-xl text-sm transition-all shadow-sm shadow-purple-100">
+                            👨‍🏫 Назначить тренера
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Right Column - Active Clients -->
+            <div class="lg:col-span-2">
+                <div class="card overflow-hidden">
+                    <!-- Пропускная система - заголовок -->
+                    <div class="pass-system-header">
+                        <div>
+                            <h2 class="title flex items-center gap-2">
+                                🔍 Пропускная система
+                                <span class="badge-filter" id="filterLabel">Все</span>
+                            </h2>
+                            <p class="subtitle">Клиенты с действующим абонементом</p>
+                        </div>
+                        <div class="flex items-center gap-2 flex-wrap">
+                            <!-- Переключатель -->
+                            <div class="filter-btn-group">
+                                <button onclick="setFilter('all')" id="filterAll" class="filter-btn active">Все</button>
+                                <button onclick="setFilter('clients')" id="filterClients" class="filter-btn">👤 Клиенты</button>
+                                <button onclick="setFilter('trainers')" id="filterTrainers" class="filter-btn">👨‍🏫 Тренеры</button>
+                            </div>
+                            
+                            <input type="text" id="searchInput" 
+                                   placeholder="🔍 Поиск по ФИО..." 
+                                   class="search-box px-4 py-1.5 border rounded-lg text-sm focus:outline-none w-40 md:w-48 transition-all"
+                                   oninput="filterClients()">
+                            <button onclick="loadAllData()" 
+                                    class="btn text-xs bg-blue-50 text-blue-600 hover:bg-blue-100 px-4 py-1.5 rounded-lg font-medium transition-all flex items-center gap-1.5">
+                                🔄 Обновить
+                            </button>
+                            <span class="text-xs text-slate-400" id="clientsCount">0 клиентов</span>
+                        </div>
+                    </div>
+                    
+                    <div class="overflow-x-auto table-container">
+                        <table class="w-full text-left border-collapse">
+                            <thead class="sticky top-0 z-10">
+                                <tr>
+                                    <th class="p-4 w-12">#</th>
+                                    <th class="p-4">Клиент</th>
+                                    <th class="p-4 hidden sm:table-cell">Email</th>
+                                    <th class="p-4">Тариф</th>
+                                    <th class="p-4 text-right hidden md:table-cell">Действует до</th>
+                                    <th class="p-4 text-center">Действие</th>
+                                </tr>
+                            </thead>
+                            <tbody id="active-clients-table-body" class="divide-y text-sm">
+                                <tr>
+                                    <td colspan="6" class="p-8 text-center text-slate-400">
+                                        <div class="flex flex-col items-center gap-2">
+                                            <span class="text-3xl">⏳</span>
+                                            <span>Загрузка списка...</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Recent Passes -->
+                <div class="card mt-6">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl flex items-center justify-center text-white text-lg shadow-sm">📋</div>
+                            <div>
+                                <h2 class="card-title text-base font-bold">Сегодняшние пропуски</h2>
+                                <p class="card-subtitle text-xs">Последние посещения</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <input type="text" id="passesSearchInput" 
+                                   placeholder="🔍 Поиск по имени..." 
+                                   class="search-box px-4 py-1.5 border rounded-lg text-sm focus:outline-none w-40 md:w-48 transition-all"
+                                   oninput="filterPasses()">
+                            <span class="text-xs text-slate-400" id="passesCount">0 пропусков</span>
+                        </div>
+                    </div>
+                    <div id="recentPasses" class="space-y-2">
+                        <p class="text-slate-400 text-sm text-center py-4">Загрузка...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Заявки на абонемент -->
+<div class="card mt-6">
+    <div class="pass-system-header">
+        <div>
+            <h2 class="title flex items-center gap-2">
+                📋 Заявки на абонемент
+                <span class="badge-filter" id="applicationsCount">0</span>
+            </h2>
+            <p class="subtitle">Заявки от зарегистрированных клиентов</p>
+        </div>
+        <button onclick="loadApplications()" 
+                class="btn text-xs bg-blue-50 text-blue-600 hover:bg-blue-100 px-4 py-1.5 rounded-lg font-medium transition-all">
+            🔄 Обновить
+        </button>
+    </div>
+    <div id="applicationsList" class="space-y-3 p-4">
+        <p class="text-slate-400 text-sm text-center py-4">Загрузка заявок...</p>
+    </div>
+</div>
+    </div>
+
+    <script>
+        // ==========================================
+        // ТЕМА
+        // ==========================================
+        function toggleTheme() {
+            var html = document.getElementById('htmlRoot');
+            var currentTheme = html.getAttribute('data-theme');
+            var newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            
+            var icon = document.getElementById('themeIcon');
+            if (newTheme === 'dark') {
+                icon.textContent = '☀️';
+            } else {
+                icon.textContent = '🌙';
+            }
+        }
+       // ========== ЗАГРУЗКА ЗАЯВОК ==========
+async function loadApplications() {
+    try {
+        const response = await fetch(API_BASE + '/cashier/applications');
+        const result = await response.json();
+        const container = document.getElementById('applicationsList');
+        const countBadge = document.getElementById('applicationsCount');
+        
+        if (!container) return;
+        
+        if (result.status === 'success' && result.data && result.data.length > 0) {
+            countBadge.textContent = result.data.length;
+            
+            let html = '';
+            for (let i = 0; i < result.data.length; i++) {
+                const app = result.data[i];
+                const created = new Date(app.created_at).toLocaleString('ru-RU');
+                
+                html += `
+                    <div class="pass-item flex flex-col md:flex-row justify-between items-start md:items-center gap-3 p-4 border border-slate-200 rounded-xl">
+                        <div class="flex-1">
+                            <div class="flex items-center gap-3 flex-wrap">
+                                <span class="font-semibold text-slate-800">${app.name}</span>
+                                <span class="text-sm text-slate-500">📧 ${app.email}</span>
+                            </div>
+                            <div class="flex items-center gap-3 mt-1 flex-wrap">
+                                <span class="text-sm bg-blue-50 text-blue-700 px-2 py-0.5 rounded">🎫 ${app.membership_name}</span>
+                                <span class="text-sm bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded">💰 ${app.membership_price} руб</span>
+                                <span class="text-xs text-slate-400">📅 ${created}</span>
+                                <span class="text-xs bg-yellow-100 text-yellow-700 px-2 py-0.5 rounded">⏳ Ожидает</span>
+                            </div>
+                        </div>
+                        <div class="flex gap-2 flex-wrap">
+                            <button onclick="approveApplication(${app.id})" 
+                                    class="btn bg-emerald-500 hover:bg-emerald-600 text-white text-sm px-4 py-1.5 rounded-lg font-medium">
+                                ✅ Одобрить
+                            </button>
+                            <button onclick="rejectApplication(${app.id})" 
+                                    class="btn bg-red-500 hover:bg-red-600 text-white text-sm px-4 py-1.5 rounded-lg font-medium">
+                                ❌ Отклонить
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }
+            container.innerHTML = html;
+        } else {
+            countBadge.textContent = '0';
+            container.innerHTML = `
+                <div class="text-center py-8 text-slate-400">
+                    <span class="text-3xl block mb-2">📭</span>
+                    <p>Нет новых заявок</p>
+                </div>
+            `;
+        }
+    } catch (error) {
+        console.error('❌ Ошибка загрузки заявок:', error);
+        document.getElementById('applicationsList').innerHTML = 
+            '<p class="text-red-500 text-center py-4">❌ Ошибка загрузки заявок</p>';
+    }
+}
+
+// ========== ОДОБРИТЬ ЗАЯВКУ ==========
+async function approveApplication(appId) {
+    if (!confirm('✅ Одобрить заявку и выдать абонемент?')) return;
+    
+    try {
+        const userData = JSON.parse(sessionStorage.getItem('user') || '{}');
+        
+        const response = await fetch(API_BASE + '/cashier/applications/' + appId + '/approve', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ processed_by: userData.id })
+        });
+        
+        const result = await response.json();
+        
+        if (response.ok) {
+            showToast('✅ ' + result.message, 'success');
+            await loadApplications();
+            await loadAllData();
+        } else {
+            showToast('❌ ' + (result.detail || 'Ошибка'), 'error');
+        }
+    } catch (error) {
+        console.error('❌ Ошибка:', error);
+        showToast('❌ Не удалось одобрить заявку', 'error');
+    }
+}
+
+// ========== ОТКЛОНИТЬ ЗАЯВКУ ==========
+async function rejectApplication(appId) {
+    if (!confirm('❌ Отклонить заявку?')) return;
+    
+    try {
+        const userData = JSON.parse(sessionStorage.getItem('user') || '{}');
+        
+        const response = await fetch(API_BASE + '/cashier/applications/' + appId + '/reject', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ processed_by: userData.id })
+        });
+        
+        const result = await response.json();
+        
+        if (response.ok) {
+            showToast('❌ Заявка отклонена', 'info');
+            await loadApplications();
+        } else {
+            showToast('❌ ' + (result.detail || 'Ошибка'), 'error');
+        }
+    } catch (error) {
+        console.error('❌ Ошибка:', error);
+        showToast('❌ Не удалось отклонить заявку', 'error');
+    }
+}
+
+// ========== ДОБАВИТЬ В ЗАГРУЗКУ ==========
+// В функции loadAllData() добавьте:
+async function loadAllData() {
+    await loadStats();
+    await loadFormData();
+    await loadCoaches();
+    await loadActiveClients();
+    await loadTodayPasses();
+    await loadClientsWithoutTrainer();
+    await loadApplications(); // <-- ДОБАВИТЬ
+}
+
+
+function loadTheme() {
+            var savedTheme = localStorage.getItem('theme');
+            var html = document.getElementById('htmlRoot');
+            var icon = document.getElementById('themeIcon');
+            
+            if (savedTheme === 'dark') {
+                html.setAttribute('data-theme', 'dark');
+                icon.textContent = '☀️';
+            } else {
+                html.setAttribute('data-theme', 'light');
+                icon.textContent = '🌙';
+            }
+        }
+
+        // ==========================================
+        // ВЫХОД
+        // ==========================================
+        function logout() {
+            sessionStorage.removeItem('user');
+            window.location.href = '/login.html';
+        }
+
+        // ==========================================
+        // КОНФИГУРАЦИЯ
+        // ==========================================
+        var API_BASE = "http://127.0.0.1:8000/api/v1";
+        var allClients = [];
+        var allUsers = [];
+        var allCoaches = [];
+        var allClientsWithoutTrainer = [];
+        var allPasses = [];
+        var currentFilter = 'all';
+
+        // ==========================================
+        // TOAST УВЕДОМЛЕНИЯ
+        // ==========================================
+        function showToast(message, type) {
+            type = type || 'success';
+            var container = document.getElementById('toastContainer');
+            if (!container) {
+                var div = document.createElement('div');
+                div.id = 'toastContainer';
+                document.body.appendChild(div);
+                container = div;
+            }
+            var toast = document.createElement('div');
+            toast.className = 'toast toast-' + type + ' slide-in';
+            toast.textContent = message;
+            container.appendChild(toast);
+            setTimeout(function() {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateX(100px)';
+                setTimeout(function() { if (toast.parentNode) toast.remove(); }, 300);
+            }, 4000);
+        }
+
+        // ==========================================
+        // ЧАСЫ
+        // ==========================================
+        function updateClock() {
+            var now = new Date();
+            var el = document.getElementById('currentTime');
+            if (el) {
+                el.textContent = now.toLocaleTimeString('ru-RU', { 
+                    hour: '2-digit', minute: '2-digit', second: '2-digit'
+                });
+            }
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        // ==========================================
+        // ФИЛЬТР (ПРОПУСКНАЯ СИСТЕМА)
+        // ==========================================
+        function setFilter(filter) {
+            currentFilter = filter;
+            
+            document.querySelectorAll('.filter-btn').forEach(function(btn) {
+                btn.classList.remove('active');
+            });
+            
+            var btnMap = {
+                'all': 'filterAll',
+                'clients': 'filterClients',
+                'trainers': 'filterTrainers'
+            };
+            
+            var activeBtn = document.getElementById(btnMap[filter]);
+            if (activeBtn) {
+                activeBtn.classList.add('active');
+            }
+            
+            document.getElementById('filterLabel').textContent = 
+                filter === 'all' ? 'Все' : 
+                filter === 'clients' ? '👤 Клиенты' : 
+                '👨‍🏫 Тренеры';
+            
+            loadActiveClients();
+        }
+
+        // ==========================================
+        // ПОИСК КЛИЕНТОВ ДЛЯ ОФОРМЛЕНИЯ
+        // ==========================================
+        function initClientSearch() {
+            var input = document.getElementById('clientSearchInput');
+            var dropdown = document.getElementById('clientDropdown');
+            var clearBtn = document.getElementById('clientClearBtn');
+            
+            input.addEventListener('input', function() {
+                var query = this.value.toLowerCase().trim();
+                if (query.length === 0) {
+                    dropdown.classList.remove('show');
+                    clearBtn.style.display = 'none';
+                    return;
+                }
+                clearBtn.style.display = 'block';
+                
+                var filtered = allUsers.filter(function(u) {
+                    var name = (u.name || '').toLowerCase();
+                    var email = (u.email || '').toLowerCase();
+                    return name.indexOf(query) !== -1 || email.indexOf(query) !== -1;
+                });
+                
+                if (filtered.length === 0) {
+                    dropdown.innerHTML = '<div class="item text-slate-400">Ничего не найдено</div>';
+                } else {
+                    var html = '';
+                    for (var i = 0; i < Math.min(filtered.length, 10); i++) {
+                        var u = filtered[i];
+                        var nameHighlight = u.name || '—';
+                        var emailHighlight = u.email || '—';
+                        if (query.length > 0) {
+                            var regex = new RegExp('(' + query + ')', 'gi');
+                            nameHighlight = nameHighlight.replace(regex, '<span class="highlight">$1</span>');
+                            emailHighlight = emailHighlight.replace(regex, '<span class="highlight">$1</span>');
+                        }
+                        html += '<div class="item" onclick="selectClient(' + u.id + ', \'' + (u.name || '') + '\', \'' + (u.email || '') + '\')">';
+                        html += '<span class="name">' + nameHighlight + '</span>';
+                        html += '<span class="sub">' + emailHighlight + '</span>';
+                        html += '</div>';
+                    }
+                    if (filtered.length > 10) {
+                        html += '<div class="item text-slate-400 text-center">Показаны первые 10 из ' + filtered.length + '</div>';
+                    }
+                    dropdown.innerHTML = html;
+                }
+                dropdown.classList.add('show');
+            });
+            
+            input.addEventListener('focus', function() {
+                if (this.value.length > 0) {
+                    this.dispatchEvent(new Event('input'));
+                }
+            });
+            
+            document.addEventListener('click', function(e) {
+                if (!document.getElementById('clientSearchWrapper').contains(e.target)) {
+                    dropdown.classList.remove('show');
+                }
+            });
+        }
+
+        function selectClient(id, name, email) {
+            document.getElementById('clientSearchInput').value = name;
+            document.getElementById('p_user').value = id;
+            document.getElementById('clientDropdown').classList.remove('show');
+            document.getElementById('clientClearBtn').style.display = 'block';
+            
+            var display = document.getElementById('selectedClientDisplay');
+            document.getElementById('selectedClientName').textContent = name;
+            document.getElementById('selectedClientEmail').textContent = '(' + email + ')';
+            display.style.display = 'block';
+        }
+
+        function clearClientSearch() {
+            document.getElementById('clientSearchInput').value = '';
+            document.getElementById('p_user').value = '';
+            document.getElementById('clientDropdown').classList.remove('show');
+            document.getElementById('clientClearBtn').style.display = 'none';
+            document.getElementById('selectedClientDisplay').style.display = 'none';
+        }
+
+        // ==========================================
+        // ПОИСК ТРЕНЕРОВ ДЛЯ ОФОРМЛЕНИЯ
+        // ==========================================
+        function initCoachSearch() {
+            var input = document.getElementById('coachSearchInput');
+            var dropdown = document.getElementById('coachDropdown');
+            var clearBtn = document.getElementById('coachClearBtn');
+            
+            input.addEventListener('input', function() {
+                var query = this.value.toLowerCase().trim();
+                if (query.length === 0) {
+                    dropdown.classList.remove('show');
+                    clearBtn.style.display = 'none';
+                    return;
+                }
+                clearBtn.style.display = 'block';
+                
+                var filtered = allCoaches.filter(function(c) {
+                    var name = (c.coach_name || '').toLowerCase();
+                    var spec = (c.specialization || '').toLowerCase();
+                    return name.indexOf(query) !== -1 || spec.indexOf(query) !== -1;
+                });
+                
+                if (filtered.length === 0) {
+                    dropdown.innerHTML = '<div class="item text-slate-400">Ничего не найдено</div>';
+                } else {
+                    var html = '';
+                    for (var i = 0; i < Math.min(filtered.length, 10); i++) {
+                        var c = filtered[i];
+                        var nameHighlight = c.coach_name || '—';
+                        var specHighlight = c.specialization || '';
+                        if (query.length > 0) {
+                            var regex = new RegExp('(' + query + ')', 'gi');
+                            nameHighlight = nameHighlight.replace(regex, '<span class="highlight">$1</span>');
+                            specHighlight = specHighlight.replace(regex, '<span class="highlight">$1</span>');
+                        }
+                        html += '<div class="item" onclick="selectCoach(' + c.coach_id + ', \'' + (c.coach_name || '') + '\', \'' + (c.specialization || '') + '\')">';
+                        html += '<span class="name">' + nameHighlight + '</span>';
+                        if (specHighlight) {
+                            html += '<span class="badge">' + specHighlight + '</span>';
+                        }
+                        html += '</div>';
+                    }
+                    if (filtered.length > 10) {
+                        html += '<div class="item text-slate-400 text-center">Показаны первые 10 из ' + filtered.length + '</div>';
+                    }
+                    dropdown.innerHTML = html;
+                }
+                dropdown.classList.add('show');
+            });
+            
+            input.addEventListener('focus', function() {
+                if (this.value.length > 0) {
+                    this.dispatchEvent(new Event('input'));
+                }
+            });
+            
+            document.addEventListener('click', function(e) {
+                if (!document.getElementById('coachSearchWrapper').contains(e.target)) {
+                    dropdown.classList.remove('show');
+                }
+            });
+        }
+
+        function selectCoach(id, name, spec) {
+            document.getElementById('coachSearchInput').value = name;
+            document.getElementById('p_coach').value = id;
+            document.getElementById('coachDropdown').classList.remove('show');
+            document.getElementById('coachClearBtn').style.display = 'block';
+            
+            var display = document.getElementById('selectedCoachDisplay');
+            document.getElementById('selectedCoachName').textContent = name;
+            document.getElementById('selectedCoachSpec').textContent = spec ? '(' + spec + ')' : '';
+            display.style.display = 'block';
+        }
+
+        function clearCoachSearch() {
+            document.getElementById('coachSearchInput').value = '';
+            document.getElementById('p_coach').value = '';
+            document.getElementById('coachDropdown').classList.remove('show');
+            document.getElementById('coachClearBtn').style.display = 'none';
+            document.getElementById('selectedCoachDisplay').style.display = 'none';
+        }
+
+        // ==========================================
+        // ПОИСК КЛИЕНТОВ БЕЗ ТРЕНЕРА ДЛЯ НАЗНАЧЕНИЯ
+        // ==========================================
+        function initAssignClientSearch() {
+            var input = document.getElementById('assignClientInput');
+            var dropdown = document.getElementById('assignClientDropdown');
+            var clearBtn = document.getElementById('assignClientClearBtn');
+            
+            input.addEventListener('input', function() {
+                var query = this.value.toLowerCase().trim();
+                if (query.length === 0) {
+                    dropdown.classList.remove('show');
+                    clearBtn.style.display = 'none';
+                    return;
+                }
+                clearBtn.style.display = 'block';
+                
+                var filtered = allClientsWithoutTrainer.filter(function(c) {
+                    var name = (c.client_name || '').toLowerCase();
+                    var email = (c.client_email || '').toLowerCase();
+                    return name.indexOf(query) !== -1 || email.indexOf(query) !== -1;
+                });
+                
+                if (filtered.length === 0) {
+                    dropdown.innerHTML = '<div class="item text-slate-400">✅ Все клиенты имеют тренера</div>';
+                } else {
+                    var html = '';
+                    for (var i = 0; i < Math.min(filtered.length, 10); i++) {
+                        var c = filtered[i];
+                        var nameHighlight = c.client_name || '—';
+                        var emailHighlight = c.client_email || '—';
+                        if (query.length > 0) {
+                            var regex = new RegExp('(' + query + ')', 'gi');
+                            nameHighlight = nameHighlight.replace(regex, '<span class="highlight">$1</span>');
+                            emailHighlight = emailHighlight.replace(regex, '<span class="highlight">$1</span>');
+                        }
+                        html += '<div class="item" onclick="selectAssignClient(' + c.user_id + ', \'' + (c.client_name || '') + '\', \'' + (c.client_email || '') + '\', \'' + (c.membership_name || '') + '\')">';
+                        html += '<span class="name">' + nameHighlight + '</span>';
+                        html += '<span class="sub">' + emailHighlight + '</span>';
+                        if (c.membership_name) {
+                            html += '<span class="badge">🎫 ' + c.membership_name + '</span>';
+                        }
+                        html += '</div>';
+                    }
+                    if (filtered.length > 10) {
+                        html += '<div class="item text-slate-400 text-center">Показаны первые 10 из ' + filtered.length + '</div>';
+                    }
+                    dropdown.innerHTML = html;
+                }
+                dropdown.classList.add('show');
+            });
+            
+            input.addEventListener('focus', function() {
+                if (this.value.length > 0) {
+                    this.dispatchEvent(new Event('input'));
+                }
+            });
+            
+            document.addEventListener('click', function(e) {
+                if (!document.getElementById('assignClientWrapper').contains(e.target)) {
+                    dropdown.classList.remove('show');
+                }
+            });
+        }
+
+        function selectAssignClient(id, name, email, membership) {
+            document.getElementById('assignClientInput').value = name;
+            document.getElementById('at_client').value = id;
+            document.getElementById('assignClientDropdown').classList.remove('show');
+            document.getElementById('assignClientClearBtn').style.display = 'block';
+            
+            var display = document.getElementById('selectedAssignClientDisplay');
+            document.getElementById('selectedAssignClientName').textContent = name;
+            document.getElementById('selectedAssignClientSub').textContent = email + (membership ? ' | 🎫 ' + membership : '');
+            display.style.display = 'block';
+        }
+
+        function clearAssignClient() {
+            document.getElementById('assignClientInput').value = '';
+            document.getElementById('at_client').value = '';
+            document.getElementById('assignClientDropdown').classList.remove('show');
+            document.getElementById('assignClientClearBtn').style.display = 'none';
+            document.getElementById('selectedAssignClientDisplay').style.display = 'none';
+        }
+
+        // ==========================================
+        // ПОИСК ТРЕНЕРОВ ДЛЯ НАЗНАЧЕНИЯ
+        // ==========================================
+        function initAssignCoachSearch() {
+            var input = document.getElementById('assignCoachInput');
+            var dropdown = document.getElementById('assignCoachDropdown');
+            var clearBtn = document.getElementById('assignCoachClearBtn');
+            
+            input.addEventListener('input', function() {
+                var query = this.value.toLowerCase().trim();
+                if (query.length === 0) {
+                    dropdown.classList.remove('show');
+                    clearBtn.style.display = 'none';
+                    return;
+                }
+                clearBtn.style.display = 'block';
+                
+                var filtered = allCoaches.filter(function(c) {
+                    var name = (c.coach_name || '').toLowerCase();
+                    var spec = (c.specialization || '').toLowerCase();
+                    return name.indexOf(query) !== -1 || spec.indexOf(query) !== -1;
+                });
+                
+                if (filtered.length === 0) {
+                    dropdown.innerHTML = '<div class="item text-slate-400">❌ Нет тренеров</div>';
+                } else {
+                    var html = '';
+                    for (var i = 0; i < Math.min(filtered.length, 10); i++) {
+                        var c = filtered[i];
+                        var nameHighlight = c.coach_name || '—';
+                        var specHighlight = c.specialization || '';
+                        if (query.length > 0) {
+                            var regex = new RegExp('(' + query + ')', 'gi');
+                            nameHighlight = nameHighlight.replace(regex, '<span class="highlight">$1</span>');
+                            specHighlight = specHighlight.replace(regex, '<span class="highlight">$1</span>');
+                        }
+                        html += '<div class="item" onclick="selectAssignCoach(' + c.coach_id + ', \'' + (c.coach_name || '') + '\', \'' + (c.specialization || '') + '\')">';
+                        html += '<span class="name">' + nameHighlight + '</span>';
+                        if (specHighlight) {
+                            html += '<span class="badge">' + specHighlight + '</span>';
+                        }
+                        html += '</div>';
+                    }
+                    if (filtered.length > 10) {
+                        html += '<div class="item text-slate-400 text-center">Показаны первые 10 из ' + filtered.length + '</div>';
+                    }
+                    dropdown.innerHTML = html;
+                }
+                dropdown.classList.add('show');
+            });
+            
+            input.addEventListener('focus', function() {
+                if (this.value.length > 0) {
+                    this.dispatchEvent(new Event('input'));
+                }
+            });
+            
+            document.addEventListener('click', function(e) {
+                if (!document.getElementById('assignCoachWrapper').contains(e.target)) {
+                    dropdown.classList.remove('show');
+                }
+            });
+        }
+
+        function selectAssignCoach(id, name, spec) {
+            document.getElementById('assignCoachInput').value = name;
+            document.getElementById('at_coach').value = id;
+            document.getElementById('assignCoachDropdown').classList.remove('show');
+            document.getElementById('assignCoachClearBtn').style.display = 'block';
+            
+            var display = document.getElementById('selectedAssignCoachDisplay');
+            document.getElementById('selectedAssignCoachName').textContent = name;
+            document.getElementById('selectedAssignCoachSpec').textContent = spec ? '(' + spec + ')' : '';
+            display.style.display = 'block';
+        }
+
+        function clearAssignCoach() {
+            document.getElementById('assignCoachInput').value = '';
+            document.getElementById('at_coach').value = '';
+            document.getElementById('assignCoachDropdown').classList.remove('show');
+            document.getElementById('assignCoachClearBtn').style.display = 'none';
+            document.getElementById('selectedAssignCoachDisplay').style.display = 'none';
+        }
+
+        // ==========================================
+        // ФИЛЬТРАЦИЯ КЛИЕНТОВ В ТАБЛИЦЕ
+        // ==========================================
+        function filterClients() {
+            var searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
+            renderClientsTable(searchTerm);
+        }
+
+        function renderClientsTable(searchTerm) {
+            var tableBody = document.getElementById('active-clients-table-body');
+            
+            var filteredClients = allClients;
+            if (searchTerm && searchTerm.length > 0) {
+                filteredClients = allClients.filter(function(c) {
+                    var name = (c.client_name || '').toLowerCase();
+                    return name.indexOf(searchTerm) !== -1;
+                });
+            }
+            
+            if (!filteredClients || filteredClients.length === 0) {
+                var message = searchTerm ? 'По вашему запросу ничего не найдено' : 'В зале тихо. Нет активных абонементов.';
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="6" class="p-8 text-center text-slate-400">
+                            <div class="flex flex-col items-center gap-2">
+                                <span class="text-3xl">${searchTerm ? '🔍' : '🏠'}</span>
+                                <span>${message}</span>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                document.getElementById('clientsCount').textContent = filteredClients.length + ' клиентов';
+                return;
+            }
+
+            document.getElementById('clientsCount').textContent = filteredClients.length + ' клиентов';
+
+            var html = '';
+            for (var i = 0; i < filteredClients.length; i++) {
+                var c = filteredClients[i];
+                var name = c.client_name || '—';
+                
+                if (searchTerm && searchTerm.length > 0) {
+                    var regex = new RegExp('(' + searchTerm + ')', 'gi');
+                    name = name.replace(regex, '<span class="highlight">$1</span>');
+                }
+                
+                var isTrainer = false;
+                for (var j = 0; j < allCoaches.length; j++) {
+                    if (allCoaches[j].coach_name === c.client_name) {
+                        isTrainer = true;
+                        break;
+                    }
+                }
+                
+                var trainerBadge = isTrainer ? '<span class="badge-purple text-xs px-2 py-0.5 rounded ml-1">👨‍🏫 Тренер</span>' : '';
+                
+                html += `
+                    <tr class="table-row">
+                        <td class="p-4 text-slate-400 font-mono text-xs">#${c.user_id}</td>
+                        <td class="p-4 font-semibold">${name} ${trainerBadge}</td>
+                        <td class="p-4 text-slate-500 text-xs hidden sm:table-cell">${c.client_email || '—'}</td>
+                        <td class="p-4">
+                            <span class="badge-blue">${c.membership_name || '—'}</span>
+                        </td>
+                        <td class="p-4 text-right font-medium text-emerald-600 hidden md:table-cell">${c.end_date || '—'}</td>
+                        <td class="p-4 text-center">
+                            <button onclick="grantAccess('${c.client_name}', ${c.user_id})" 
+                                    class="btn bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white text-xs px-4 py-1.5 rounded-lg font-medium shadow-sm shadow-emerald-100">
+                                🏋️ Пропустить
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            }
+            tableBody.innerHTML = html;
+        }
+
+        // ==========================================
+        // ПРОПУСКИ ЗА СЕГОДНЯ (с поиском)
+        // ==========================================
+        function filterPasses() {
+            var query = document.getElementById('passesSearchInput').value.toLowerCase().trim();
+            if (!query) {
+                renderPasses(allPasses);
+                return;
+            }
+            var filtered = allPasses.filter(function(p) {
+                var name = (p.client_name || '').toLowerCase();
+                return name.indexOf(query) !== -1;
+            });
+            renderPasses(filtered);
+        }
+
+        function renderPasses(passes) {
+            var container = document.getElementById('recentPasses');
+            document.getElementById('passesCount').textContent = passes.length + ' пропусков';
+
+            if (!passes || passes.length === 0) {
+                container.innerHTML = '<p class="text-slate-400 text-sm text-center py-4">Нет записей за сегодня</p>';
+                return;
+            }
+
+            var html = '';
+            for (var i = 0; i < passes.length; i++) {
+                var p = passes[i];
+                var name = p.client_name || '—';
+                
+                var query = document.getElementById('passesSearchInput').value.toLowerCase().trim();
+                if (query) {
+                    var regex = new RegExp('(' + query + ')', 'gi');
+                    name = name.replace(regex, '<span class="highlight">$1</span>');
+                }
+                
+                html += '<div class="pass-item flex items-center justify-between">';
+                html += '<span class="name font-medium">' + name + '</span>';
+                html += '<span class="time text-sm">🕐 ' + (p.visit_time_formatted || p.visit_datetime) + '</span>';
+                html += '</div>';
+            }
+            container.innerHTML = html;
+        }
+
+        
+
+        // ==========================================
+        // 0. СТАТИСТИКА
+        // ==========================================
+        async function loadStats() {
+            try {
+                var response = await fetch(API_BASE + '/cashier/stats');
+                var stats = await response.json();
+                
+                document.getElementById('totalUsers').textContent = stats.total_users || 0;
+                document.getElementById('activeMemberships').textContent = stats.active_memberships || 0;
+                document.getElementById('todayPasses').textContent = stats.today_passes || 0;
+            } catch (error) {
+                console.error('Ошибка загрузки статистики:', error);
+            }
+        }
+
+        // ==========================================
+        // 1. ЗАГРУЗКА ДАННЫХ ДЛЯ ПОИСКА
+        // ==========================================
+        async function loadFormData() {
+            try {
+                var resUsers = await fetch(API_BASE + '/cashier/users');
+                allUsers = await resUsers.json();
+                
+                var resMemberships = await fetch(API_BASE + '/cashier/memberships');
+                var memberships = await resMemberships.json();
+                var memSelect = document.getElementById('p_membership');
+                memSelect.innerHTML = '<option value="">-- Выберите тариф --</option>';
+                for (var i = 0; i < memberships.length; i++) {
+                    var m = memberships[i];
+                    memSelect.innerHTML += '<option value="' + m.id + '" data-price="' + m.price + '">' + m.name + ' — ' + m.price + ' Br</option>';
+                }
+
+                memSelect.onchange = function() {
+                    var selectedOption = this.options[this.selectedIndex];
+                    var price = selectedOption.getAttribute('data-price');
+                    document.getElementById('p_price').value = price ? price : '';
+                };
+
+            } catch (error) {
+                console.error('Ошибка загрузки списков:', error);
+                showToast('Не удалось загрузить данные', 'error');
+            }
+        }
+
+        // ==========================================
+        // 1.5 ЗАГРУЗКА ТРЕНЕРОВ
+        // ==========================================
+        async function loadCoaches() {
+            try {
+                var response = await fetch(API_BASE + '/cashier/coaches');
+                allCoaches = await response.json();
+            } catch (error) {
+                console.error('Ошибка загрузки тренеров:', error);
+            }
+        }
+
+        // ==========================================
+        // 1.6 ЗАГРУЗКА КЛИЕНТОВ БЕЗ ТРЕНЕРА
+        // ==========================================
+        async function loadClientsWithoutTrainer() {
+            try {
+                var response = await fetch(API_BASE + '/cashier/clients-without-trainer');
+                allClientsWithoutTrainer = await response.json();
+            } catch (error) {
+                console.error('Ошибка загрузки клиентов без тренера:', error);
+            }
+        }
+
+        // ==========================================
+        // 2. АКТИВНЫЕ КЛИЕНТЫ (с фильтром)
+        // ==========================================
+        async function loadActiveClients() {
+            try {
+                var url = API_BASE + '/cashier/active-clients';
+                if (currentFilter !== 'all') {
+                    url += '?user_type=' + currentFilter;
+                }
+                
+                var response = await fetch(url);
+                var clients = await response.json();
+                
+                allClients = clients || [];
+                renderClientsTable('');
+                
+                document.getElementById('activeMemberships').textContent = allClients.length || 0;
+
+            } catch (error) {
+                console.error('Ошибка загрузки активных клиентов:', error);
+                showToast('Не удалось загрузить список клиентов', 'error');
+            }
+        }
+
+        // ==========================================
+        // 3. ПРОПУСК КЛИЕНТА
+        // ==========================================
+        async function grantAccess(clientName, userId) {
+            if (!confirm('🏋️ Пропустить ' + clientName + '?\n\nБудет создана запись о тренировке.')) return;
+            
+            var btn = document.activeElement;
+            if (btn) {
+                btn.disabled = true;
+                btn.textContent = '⏳...';
+            }
+            
+            try {
+                var response = await fetch(API_BASE + '/cashier/create-session', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        user_id: userId,
+                        duration_minutes: 60,
+                        session_type: 'Силовая'
+                    })
+                });
+                
+                var result = await response.json();
+                console.log('📦 Ответ сервера:', result);
+                
+                if (response.ok) {
+                    await fetch(API_BASE + '/cashier/log-pass', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            user_id: userId,
+                            client_name: clientName
+                        })
+                    });
+                    
+                    showToast('✅ ' + clientName + ' пропущен! Тренировка создана.', 'success');
+                    await loadAllData();
+                } else {
+                    showToast('❌ Ошибка: ' + (result.detail || 'Не удалось создать тренировку'), 'error');
+                }
+            } catch (error) {
+                console.error('Ошибка:', error);
+                showToast('❌ Не удалось создать тренировку', 'error');
+            } finally {
+                if (btn) {
+                    btn.disabled = false;
+                    btn.textContent = '🏋️ Пропустить';
+                }
+            }
+        }
+
+        // ==========================================
+        // 4. ПОЛУЧИТЬ ПРОПУСКИ ЗА СЕГОДНЯ
+        // ==========================================
+        async function loadTodayPasses() {
+            try {
+                var response = await fetch(API_BASE + '/cashier/today-passes');
+                allPasses = await response.json();
+                renderPasses(allPasses);
+            } catch (error) {
+                console.error('Ошибка загрузки пропусков:', error);
+                document.getElementById('recentPasses').innerHTML = '<p class="text-slate-400 text-sm text-center py-4">Ошибка загрузки</p>';
+            }
+        }
+
+        // ==========================================
+        // 5. ОТПРАВКА: СОЗДАНИЕ КЛИЕНТА
+        // ==========================================
+        document.getElementById('userForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            var name = document.getElementById('u_name').value.trim();
+            var email = document.getElementById('u_email').value.trim();
+            
+            if (!name || !email) {
+                showToast('Заполните все поля', 'error');
+                return;
+            }
+            
+            var btn = e.target.querySelector('button[type="submit"]');
+            if (btn) {
+                btn.disabled = true;
+                btn.textContent = '⏳ Сохранение...';
+            }
+            
+            try {
+                var response = await fetch(API_BASE + '/cashier/users', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name: name, email: email })
+                });
+                
+                var result = await response.json();
+
+                if (response.ok) {
+                    showToast('✅ Клиент "' + name + '" успешно добавлен! ID: ' + result.id, 'success');
+                    document.getElementById('userForm').reset();
+                    await loadAllData();
+                } else {
+                    showToast('❌ ' + (result.detail || 'Ошибка регистрации'), 'error');
+                }
+            } catch (error) {
+                console.error(error);
+                showToast('❌ Не удалось зарегистрировать клиента', 'error');
+            } finally {
+                if (btn) {
+                    btn.disabled = false;
+                    btn.textContent = '➕ Добавить в базу';
+                }
+            }
+        });
+
+        // ==========================================
+        // 6. ОТПРАВКА: ОФОРМЛЕНИЕ ПРОДАЖИ
+        // ==========================================
+        document.getElementById('purchaseForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            var userId = parseInt(document.getElementById('p_user').value);
+            var membershipId = parseInt(document.getElementById('p_membership').value);
+            var price = parseFloat(document.getElementById('p_price').value);
+            var coachId = document.getElementById('p_coach').value;
+            
+            if (!userId || !membershipId || !price) {
+                showToast('Выберите клиента, тариф и укажите сумму', 'error');
+                return;
+            }
+            
+            var btn = e.target.querySelector('button[type="submit"]');
+            if (btn) {
+                btn.disabled = true;
+                btn.textContent = '⏳ Оформление...';
+            }
+            
+            var payload = {
+                user_id: userId,
+                membership_id: membershipId,
+                price_paid: price
+            };
+            
+            if (coachId) {
+                payload.coach_id = parseInt(coachId);
+            }
+            
+            try {
+                var response = await fetch(API_BASE + '/cashier/purchases', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                var result = await response.json();
+                
+                if (response.ok) {
+                    var coachMsg = coachId ? ' Тренер назначен!' : '';
+                    showToast('✅ Абонемент успешно оформлен!' + coachMsg, 'success');
+                    document.getElementById('purchaseForm').reset();
+                    document.getElementById('p_price').value = '';
+                    clearClientSearch();
+                    clearCoachSearch();
+                    await loadAllData();
+                } else {
+                    showToast('❌ ' + (result.detail || 'Ошибка оформления'), 'error');
+                }
+            } catch (error) {
+                console.error(error);
+                showToast('❌ Не удалось оформить продажу', 'error');
+            } finally {
+                if (btn) {
+                    btn.disabled = false;
+                    btn.textContent = '✔️ Активировать абонемент';
+                }
+            }
+        });
+
+        // ==========================================
+        // 7. НАЗНАЧЕНИЕ ТРЕНЕРА
+        // ==========================================
+        document.getElementById('assignTrainerForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            var clientId = document.getElementById('at_client').value;
+            var coachId = document.getElementById('at_coach').value;
+            
+            if (!clientId || !coachId) {
+                showToast('Выберите клиента и тренера', 'error');
+                return;
+            }
+            
+            var btn = e.target.querySelector('button[type="submit"]');
+            if (btn) {
+                btn.disabled = true;
+                btn.textContent = '⏳ Назначение...';
+            }
+            
+            try {
+                var response = await fetch(API_BASE + '/cashier/assign-trainer', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        client_id: parseInt(clientId),
+                        coach_id: parseInt(coachId)
+                    })
+                });
+                
+                var result = await response.json();
+                
+                if (response.ok) {
+                    showToast('✅ ' + result.message, 'success');
+                    document.getElementById('assignTrainerForm').reset();
+                    clearAssignClient();
+                    clearAssignCoach();
+                    await loadAllData();
+                } else {
+                    showToast('❌ ' + (result.detail || 'Ошибка назначения'), 'error');
+                }
+            } catch (error) {
+                console.error(error);
+                showToast('❌ Не удалось назначить тренера', 'error');
+            } finally {
+                if (btn) {
+                    btn.disabled = false;
+                    btn.textContent = '👨‍🏫 Назначить тренера';
+                }
+            }
+        });
+
+        // ==========================================
+        // 8. ИНИЦИАЛИЗАЦИЯ
+        // ==========================================
+        window.onload = function() {
+            // Загружаем тему
+            loadTheme();
+            
+            // Проверяем авторизацию
+            var userData = sessionStorage.getItem('user');
+            if (!userData) {
+                window.location.href = '/login.html';
+                return;
+            }
+            
+            try {
+                var user = JSON.parse(userData);
+                if (user.role !== 'cashier') {
+                    window.location.href = '/login.html';
+                    return;
+                }
+            } catch (e) {
+                console.error(e);
+            }
+            
+            initClientSearch();
+            initCoachSearch();
+            initAssignClientSearch();
+            initAssignCoachSearch();
+            loadAllData();
+            setFilter('all');
+        };
+    </script>
+</body>
+</html>

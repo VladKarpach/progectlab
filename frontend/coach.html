@@ -1,0 +1,2016 @@
+<!DOCTYPE html>
+<html lang="ru" id="htmlRoot">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Панель тренера | Fitness Club</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root {
+            --bg-body: #f0f4f8;
+            --bg-card: #ffffff;
+            --bg-header: #ffffff;
+            --text-primary: #1a202c;
+            --text-secondary: #4a5568;
+            --text-muted: #a0aec0;
+            --border-color: rgba(226, 232, 240, 0.6);
+            --border-card: #e2e8f0;
+            --bg-info: #f7fafc;
+            --shadow: 0 1px 3px rgba(0,0,0,0.06);
+            --badge-bg: #e2e8f0;
+            --badge-text: #4a5568;
+            --trainer-bg: #f7fafc;
+            --goal-bg: #f7fafc;
+            --input-bg: white;
+            --input-border: #e2e8f0;
+            --session-hover: #f7fafc;
+            --feedback-bg: #f7fafc;
+            --modal-bg: white;
+            --modal-shadow: 0 8px 32px rgba(0,0,0,0.2);
+            --exercise-row: #f8fafc;
+            --toast-bg: white;
+            --toast-shadow: 0 8px 32px rgba(0,0,0,0.15);
+        }
+        
+        [data-theme="dark"] {
+            --bg-body: #0f172a;
+            --bg-card: #1e293b;
+            --bg-header: #1e293b;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --border-color: rgba(51, 65, 85, 0.6);
+            --border-card: #334155;
+            --bg-info: #2d3748;
+            --shadow: 0 1px 3px rgba(0,0,0,0.3);
+            --badge-bg: #334155;
+            --badge-text: #94a3b8;
+            --trainer-bg: #2d3748;
+            --goal-bg: #2d3748;
+            --input-bg: #2d3748;
+            --input-border: #475569;
+            --session-hover: #2d3748;
+            --feedback-bg: #2d3748;
+            --modal-bg: #1e293b;
+            --modal-shadow: 0 8px 32px rgba(0,0,0,0.4);
+            --exercise-row: #2d3748;
+            --toast-bg: #1e293b;
+            --toast-shadow: 0 8px 32px rgba(0,0,0,0.4);
+        }
+        
+        * { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; transition: background 0.3s ease, color 0.3s ease, border-color 0.3s ease; }
+        
+        body { 
+            background: var(--bg-body); 
+            color: var(--text-primary); 
+            padding: 24px; 
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+        
+        .slide-in { animation: slideIn 0.3s ease-out; }
+        @keyframes slideIn { from { transform: translateX(100px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        
+        .toast {
+            position: fixed;
+            top: 24px;
+            right: 24px;
+            padding: 16px 24px;
+            border-radius: 16px;
+            color: white;
+            font-weight: 600;
+            font-size: 14px;
+            box-shadow: var(--toast-shadow);
+            z-index: 1000;
+            animation: slideIn 0.3s ease-out;
+            max-width: 400px;
+        }
+        .toast-success { background: linear-gradient(135deg, #10b981, #059669); }
+        .toast-error { background: linear-gradient(135deg, #ef4444, #dc2626); }
+        .toast-info { background: linear-gradient(135deg, #3b82f6, #2563eb); }
+        
+        .tab-btn {
+            padding: 10px 24px;
+            border: none;
+            background: transparent;
+            font-weight: 600;
+            font-size: 14px;
+            color: var(--text-muted);
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.2s;
+        }
+        .tab-btn:hover { color: var(--text-primary); }
+        .tab-btn.active { color: #2563eb; border-bottom-color: #2563eb; }
+        
+        .client-card { transition: all 0.2s; cursor: pointer; }
+        .client-card:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+        
+        .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        @media (max-width: 640px) { .info-grid { grid-template-columns: 1fr; } }
+        
+        .info-item { background: var(--bg-info); padding: 12px 16px; border-radius: 12px; }
+        .info-item .label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); }
+        .info-item .value { font-size: 16px; font-weight: 600; color: var(--text-primary); margin-top: 4px; }
+        .info-item .value .badge { font-size: 12px; font-weight: 600; padding: 2px 10px; border-radius: 50px; display: inline-block; }
+        
+        .badge-success { background: #c6f6d5; color: #22543d; }
+        .badge-danger { background: #fed7d7; color: #9b2c2c; }
+        .badge-info { background: #bee3f8; color: #2a4365; }
+        .badge-warning { background: #feebc8; color: #7b341e; }
+        
+        .card-header-icon { width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+        .card-header-icon.purple { background: #f3e8ff; }
+        .card-header-icon.green { background: #e6fffa; }
+        .card-header-icon.blue { background: #ebf8ff; }
+        .card-header-icon.orange { background: #fffaeb; }
+        .card-header-icon.pink { background: #fce4ec; }
+        
+        .membership-card { border-left: 5px solid #48bb78; }
+        .membership-card.expired { border-left-color: #fc8181; }
+        
+        .progress-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+        .progress-table th { background: var(--bg-info); padding: 10px 12px; text-align: left; font-weight: 600; font-size: 12px; text-transform: uppercase; color: var(--text-secondary); border-bottom: 2px solid var(--border-card); }
+        .progress-table td { padding: 10px 12px; border-bottom: 1px solid var(--border-card); color: var(--text-primary); }
+        .progress-table tr:hover td { background: var(--bg-info); }
+        
+        .progress-positive { color: #10b981; font-weight: 600; }
+        .progress-negative { color: #ef4444; font-weight: 600; }
+        .progress-neutral { color: var(--text-muted); font-weight: 600; }
+        
+        .stats-summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px; margin-bottom: 16px; }
+        .stat-summary-item { background: var(--bg-info); padding: 12px 14px; border-radius: 12px; text-align: center; }
+        .stat-summary-item .number { font-size: 20px; font-weight: 700; color: var(--text-primary); }
+        .stat-summary-item .label { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+        
+        .exercise-selector { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; padding: 8px 12px; background: var(--bg-info); border-radius: 10px; border: 1px solid var(--border-card); align-items: center; }
+        .exercise-btn { padding: 4px 14px; border: 2px solid var(--border-card); border-radius: 50px; font-size: 12px; font-weight: 500; background: var(--bg-card); cursor: pointer; transition: all 0.2s; color: var(--text-secondary); }
+        .exercise-btn:hover { border-color: var(--text-muted); background: var(--bg-info); }
+        .exercise-btn.active { background: #2563eb; color: white; border-color: #2563eb; }
+        
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(4px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        .modal-content {
+            background: var(--modal-bg);
+            border-radius: 20px;
+            padding: 24px;
+            max-width: 700px;
+            width: 95%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: var(--modal-shadow);
+            border: 1px solid var(--border-card);
+        }
+        
+        .exercise-row { background: var(--exercise-row); border-radius: 8px; padding: 12px; margin-bottom: 8px; border: 1px solid var(--border-card); }
+        .exercise-input { 
+            padding: 6px 10px; 
+            border: 2px solid var(--input-border); 
+            border-radius: 6px; 
+            font-size: 14px; 
+            outline: none; 
+            transition: border-color 0.2s, background 0.3s ease, color 0.3s ease; 
+            background: var(--input-bg); 
+            color: var(--text-primary);
+        }
+        .exercise-input:focus { border-color: #3b82f6; }
+        
+        .btn { transition: all 0.2s; }
+        .btn:hover { transform: translateY(-1px); }
+        .btn:active { transform: scale(0.97); }
+        
+        .session-card { border-left: 4px solid #f59e0b; transition: all 0.2s; }
+        .session-card:hover { background: var(--bg-info); }
+        
+        .status-badge { padding: 2px 12px; border-radius: 50px; font-size: 12px; font-weight: 600; }
+        .status-badge.pending { background: #fef3c7; color: #92400e; }
+        .status-badge.in_progress { background: #dbeafe; color: #1e40af; }
+        .status-badge.completed { background: #d1fae5; color: #065f46; }
+        
+        .feedback-item { background: var(--feedback-bg); border-radius: 12px; padding: 12px 16px; border-left: 4px solid #3b82f6; }
+        .feedback-item .stars { color: #f59e0b; }
+        
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: var(--bg-info); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb { background: var(--border-card); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+        
+        .hidden { display: none; }
+        .sets-container { margin-left: 24px; }
+
+        .header { 
+            background: var(--bg-header); 
+            border-radius: 20px; 
+            padding: 24px 32px; 
+            margin-bottom: 24px; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            flex-wrap: wrap; 
+            gap: 16px; 
+            box-shadow: var(--shadow); 
+            border: 1px solid var(--border-color); 
+        }
+        .header-actions { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+        
+        .theme-toggle {
+            background: var(--bg-info);
+            border: 1px solid var(--border-card);
+            border-radius: 50px;
+            width: 44px;
+            height: 44px;
+            cursor: pointer;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            color: var(--text-primary);
+        }
+        .theme-toggle:hover { 
+            transform: translateY(-2px); 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            background: var(--border-card);
+        }
+        .theme-toggle:active { transform: scale(0.93); }
+
+        .logout-btn {
+            background: #fee2e2;
+            color: #991b1b;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .logout-btn:hover { background: #fecaca; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(239, 68, 68, 0.15); }
+        .logout-btn:active { transform: scale(0.97); }
+
+        .status-dot { width: 10px; height: 10px; border-radius: 50%; background: #48bb78; display: inline-block; animation: pulse 2s infinite; }
+        @keyframes pulse { 0% { opacity: 1; transform: scale(1); } 50% { opacity: 0.6; transform: scale(0.9); } 100% { opacity: 1; transform: scale(1); } }
+
+        .card { 
+            background: var(--bg-card); 
+            border-radius: 20px; 
+            padding: 24px; 
+            box-shadow: var(--shadow); 
+            border: 1px solid var(--border-card); 
+            transition: background 0.3s ease, border-color 0.3s ease;
+        }
+        .card-header { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--border-card); }
+        .card-header h2 { font-size: 18px; font-weight: 700; color: var(--text-primary); }
+        .card-header .subtitle { font-size: 13px; color: var(--text-muted); font-weight: 400; margin-top: 1px; }
+
+        .text-muted { color: var(--text-muted); text-align: center; padding: 20px 0; }
+
+        .bg-slate-50 { background: var(--bg-body) !important; }
+        .bg-white { background: var(--bg-card) !important; }
+        .border-slate-200 { border-color: var(--border-card) !important; }
+        .text-slate-800 { color: var(--text-primary) !important; }
+        .text-slate-500 { color: var(--text-secondary) !important; }
+        .text-slate-400 { color: var(--text-muted) !important; }
+        .text-slate-700 { color: var(--text-secondary) !important; }
+        .bg-slate-50 { background: var(--bg-info) !important; }
+        .bg-slate-100 { background: var(--bg-info) !important; }
+        .bg-slate-200 { background: var(--border-card) !important; }
+        .hover\:bg-slate-100:hover { background: var(--bg-info) !important; }
+        .hover\:bg-slate-200:hover { background: var(--border-card) !important; }
+        .bg-emerald-50 { background: #ecfdf5 !important; }
+        .text-emerald-700 { color: #047857 !important; }
+        .border-emerald-200 { border-color: #a7f3d0 !important; }
+        .bg-blue-50 { background: #eff6ff !important; }
+        .text-blue-600 { color: #2563eb !important; }
+        .hover\:bg-blue-100:hover { background: #dbeafe !important; }
+        .shadow-sm { box-shadow: var(--shadow) !important; }
+        .shadow-lg { box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05) !important; }
+
+        @media (max-width: 640px) { body { padding: 16px; } .header { padding: 16px 20px; } .card { padding: 16px; } .modal-content { padding: 16px; } }
+    </style>
+</head>
+<body class="bg-slate-50 p-4 md:p-8">
+
+<div class="max-w-7xl mx-auto">
+    
+    <!-- Header -->
+    <div class="header">
+        <div class="flex items-center gap-4">
+            <div class="w-12 h-12 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl flex items-center justify-center text-white text-2xl shadow-lg shadow-emerald-100">
+                👨‍🏫
+            </div>
+            <div>
+                <h1 class="text-2xl font-extrabold text-slate-800">Панель тренера</h1>
+                <p class="text-sm text-slate-500 mt-0.5" id="coachNameDisplay">Загрузка...</p>
+            </div>
+        </div>
+        <div class="header-actions">
+            <button class="theme-toggle" onclick="toggleTheme()" id="themeToggle" title="Переключить тему">
+                <span id="themeIcon">🌙</span>
+            </button>
+            <div class="flex items-center gap-2 bg-emerald-50 px-4 py-2 rounded-full border border-emerald-200">
+                <span class="w-2.5 h-2.5 bg-emerald-500 rounded-full animate-pulse"></span>
+                <span class="text-sm font-semibold text-emerald-700">На работе</span>
+            </div>
+            <span class="text-sm text-slate-400 hidden sm:block">|</span>
+            <span class="text-sm text-slate-500 hidden sm:block" id="currentTime"></span>
+            <button onclick="logout()" class="logout-btn">🚪 Выйти</button>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div id="toastContainer"></div>
+
+    <!-- Tabs -->
+    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-2 mb-6 flex overflow-x-auto">
+        <button class="tab-btn active" onclick="switchTab('profile')">👤 Профиль</button>
+        <button class="tab-btn" onclick="switchTab('clients')">📋 Мои клиенты</button>
+        <button class="tab-btn" onclick="switchTab('sessions')">🏋️ Тренировки</button>
+        <button class="tab-btn" onclick="switchTab('goals')">🎯 Цели</button>
+        <button class="tab-btn" onclick="switchTab('feedback')">💬 Отзывы</button>
+    </div>
+
+    <!-- ID тренера -->
+    <input type="hidden" id="coachId" value="">
+
+    <!-- ========================================== -->
+    <!-- TAB 1: ПРОФИЛЬ -->
+    <!-- ========================================== -->
+    <div id="tab-profile" class="tab-content">
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+            <div class="flex items-center gap-3 mb-4">
+                <div class="card-header-icon purple">👤</div>
+                <div>
+                    <h2 class="text-lg font-bold text-slate-800">Мой профиль</h2>
+                    <p class="text-xs text-slate-400">Информация о тренере</p>
+                </div>
+            </div>
+            <div id="coachProfile"><div class="text-center py-8 text-slate-400">⏳ Загрузка...</div></div>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 mt-6 membership-card">
+            <div class="flex items-center gap-3 mb-4">
+                <div class="card-header-icon green">🎫</div>
+                <div>
+                    <h2 class="text-lg font-bold text-slate-800">Мой абонемент</h2>
+                    <p class="text-xs text-slate-400">Информация о действующем тарифе</p>
+                </div>
+            </div>
+            <div id="coachMembershipInfo"><div class="text-center py-8 text-slate-400">⏳ Загрузка...</div></div>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 mt-6">
+            <div class="flex items-center gap-3 mb-4">
+                <div class="card-header-icon blue">📊</div>
+                <div>
+                    <h2 class="text-lg font-bold text-slate-800">Мой прогресс</h2>
+                    <p class="text-xs text-slate-400">Динамика силовых показателей</p>
+                </div>
+            </div>
+            <div id="coachProgress"><div class="text-center py-8 text-slate-400">⏳ Загрузка...</div></div>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- TAB 2: КЛИЕНТЫ -->
+    <!-- ========================================== -->
+    <div id="tab-clients" class="tab-content" style="display:none;">
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-bold text-slate-800">👥 Мои клиенты</h2>
+                <button onclick="loadClients()" class="text-sm bg-blue-50 text-blue-600 px-4 py-1.5 rounded-lg hover:bg-blue-100 transition">🔄 Обновить</button>
+            </div>
+            <div id="clientsList"><div class="text-center py-8 text-slate-400">⏳ Загрузка...</div></div>
+        </div>
+
+        <div id="clientDetails" class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 mt-6" style="display:none;">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-bold text-slate-800" id="clientDetailName">Информация о клиенте</h2>
+                <button onclick="closeClientDetails()" class="text-sm text-red-500 hover:text-red-600 transition">✕ Закрыть</button>
+            </div>
+            <div id="clientDetailContent"><div class="text-center py-8 text-slate-400">⏳ Загрузка...</div></div>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- TAB 3: ТРЕНИРОВКИ -->
+    <!-- ========================================== -->
+    <div id="tab-sessions" class="tab-content" style="display:none;">
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-bold text-slate-800">🏋️ Активные тренировки</h2>
+                <button onclick="loadActiveSessions()" class="text-sm bg-blue-50 text-blue-600 px-4 py-1.5 rounded-lg hover:bg-blue-100 transition">🔄 Обновить</button>
+            </div>
+            <div id="activeSessions"><div class="text-center py-8 text-slate-400">⏳ Загрузка...</div></div>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- TAB 4: ЦЕЛИ ТРЕНЕРА -->
+    <!-- ========================================== -->
+    <div id="tab-goals" class="tab-content" style="display:none;">
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+            <div class="flex items-center gap-3 mb-4">
+                <div class="card-header-icon purple">🎯</div>
+                <div>
+                    <h2 class="text-xl font-bold text-slate-800">Мои цели</h2>
+                    <p class="text-xs text-slate-400">Ставьте цели и отслеживайте прогресс</p>
+                </div>
+            </div>
+
+            <!-- Форма создания цели -->
+            <div class="bg-slate-50 rounded-xl p-4 mb-4">
+                <h4 class="font-semibold text-slate-800 mb-3 text-sm">➕ Новая цель</h4>
+                <form id="coachGoalForm" class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="text-xs font-semibold text-slate-500 block mb-1">Упражнение</label>
+                        <input type="text" id="coachGoalExercise" class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm bg-white" placeholder="Жим лежа">
+                    </div>
+                    <div>
+                        <label class="text-xs font-semibold text-slate-500 block mb-1">Тип цели</label>
+                        <select id="coachGoalType" class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm bg-white">
+                            <option value="weight">Вес (кг)</option>
+                            <option value="reps">Количество повторений</option>
+                            <option value="time">Время (мин)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="text-xs font-semibold text-slate-500 block mb-1">Целевое значение</label>
+                        <input type="number" id="coachGoalTarget" class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm bg-white" placeholder="100" step="0.5">
+                    </div>
+                    <div>
+                        <label class="text-xs font-semibold text-slate-500 block mb-1">Дата достижения</label>
+                        <input type="date" id="coachGoalDate" class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm bg-white">
+                    </div>
+                    <div class="col-span-2">
+                        <label class="text-xs font-semibold text-slate-500 block mb-1">Описание</label>
+                        <input type="text" id="coachGoalDesc" class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm bg-white" placeholder="Достичь результата к концу месяца">
+                    </div>
+                    <div class="col-span-2">
+                        <button type="submit" class="w-full bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white font-semibold py-2 rounded-lg text-sm transition-all">
+                            🎯 Создать цель
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Список целей -->
+            <div id="coachGoalsList">
+                <div class="text-center py-8 text-slate-400">⏳ Загрузка целей...</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- TAB 5: ОТЗЫВЫ -->
+    <!-- ========================================== -->
+    <div id="tab-feedback" class="tab-content" style="display:none;">
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+            <div class="flex items-center gap-3 mb-4">
+                <div class="card-header-icon pink">💬</div>
+                <div>
+                    <h2 class="text-xl font-bold text-slate-800">Все отзывы</h2>
+                    <p class="text-xs text-slate-400">Ваши отзывы и отзывы ваших клиентов</p>
+                </div>
+            </div>
+
+            <!-- Фильтр отзывов -->
+            <div class="flex flex-wrap gap-2 mb-4">
+                <button onclick="filterFeedback('all')" id="fbFilterAll" class="filter-btn px-4 py-1.5 rounded-lg text-sm font-medium bg-blue-500 text-white hover:bg-blue-600 transition">Все отзывы</button>
+                <button onclick="filterFeedback('my')" id="fbFilterMy" class="filter-btn px-4 py-1.5 rounded-lg text-sm font-medium bg-slate-200 text-slate-700 hover:bg-slate-300 transition">Мои отзывы</button>
+                <button onclick="filterFeedback('client')" id="fbFilterClient" class="filter-btn px-4 py-1.5 rounded-lg text-sm font-medium bg-slate-200 text-slate-700 hover:bg-slate-300 transition">Отзывы клиентов</button>
+                <span class="text-xs text-slate-400 ml-2 flex items-center" id="feedbackCount">0 отзывов</span>
+            </div>
+
+            <!-- Форма отзыва -->
+            <div class="bg-slate-50 rounded-xl p-4 mb-4">
+                <h4 class="font-semibold text-slate-800 mb-3 text-sm">✏️ Оставить отзыв</h4>
+                <form id="coachFeedbackForm" class="grid grid-cols-2 gap-3">
+                    <div class="col-span-2">
+                        <label class="text-xs font-semibold text-slate-500 block mb-1">Выберите тренировку</label>
+                        <select id="coachFeedbackSession" class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm bg-white">
+                            <option value="">-- Выберите тренировку --</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="text-xs font-semibold text-slate-500 block mb-1">Оценка</label>
+                        <select id="coachFeedbackScore" class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm bg-white">
+                            <option value="5">⭐⭐⭐⭐⭐ Отлично</option>
+                            <option value="4">⭐⭐⭐⭐ Хорошо</option>
+                            <option value="3">⭐⭐⭐ Средне</option>
+                            <option value="2">⭐⭐ Плохо</option>
+                            <option value="1">⭐ Ужасно</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="text-xs font-semibold text-slate-500 block mb-1">Тренер</label>
+                        <input type="text" id="coachFeedbackTrainer" class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm bg-slate-100" placeholder="Ваше имя" readonly>
+                    </div>
+                    <div class="col-span-2">
+                        <label class="text-xs font-semibold text-slate-500 block mb-1">Комментарий</label>
+                        <textarea id="coachFeedbackText" class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm bg-white" rows="2" placeholder="Напишите, как прошла тренировка..."></textarea>
+                    </div>
+                    <div class="col-span-2">
+                        <button type="submit" class="w-full bg-gradient-to-r from-pink-500 to-pink-600 hover:from-pink-600 hover:to-pink-700 text-white font-semibold py-2 rounded-lg text-sm transition-all">
+                            📝 Отправить отзыв
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Список отзывов -->
+            <div id="coachFeedbackList">
+                <div class="text-center py-8 text-slate-400">⏳ Загрузка отзывов...</div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- ========================================== -->
+<!-- МОДАЛ: ПРОВЕДЕНИЕ ТРЕНИРОВКИ -->
+<!-- ========================================== -->
+<div id="sessionModal" class="modal-overlay" style="display:none;">
+    <div class="modal-content">
+        <div class="flex justify-between items-center mb-4">
+            <h2 class="text-xl font-bold text-slate-800" id="modalTitle">🏋️ Проведение тренировки</h2>
+            <button onclick="closeSessionModal()" class="text-slate-400 hover:text-slate-600 text-2xl">✕</button>
+        </div>
+        <div id="sessionModalContent">
+            <div class="text-center py-8 text-slate-400">⏳ Загрузка...</div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ==========================================
+    // КОНФИГУРАЦИЯ
+    // ==========================================
+    var API_BASE = "http://127.0.0.1:8000/api/v1";
+    var currentCoachId = null;
+    var currentSessionId = null;
+    var finishButtonAdded = false;
+    var currentUser = null;
+    var allFeedbacks = [];
+    var currentFeedbackFilter = 'all';
+
+    // ==========================================
+    // ТЕМА
+    // ==========================================
+    function toggleTheme() {
+        var html = document.getElementById('htmlRoot');
+        var currentTheme = html.getAttribute('data-theme');
+        var newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+        html.setAttribute('data-theme', newTheme);
+        localStorage.setItem('theme', newTheme);
+        
+        var icon = document.getElementById('themeIcon');
+        if (newTheme === 'dark') {
+            icon.textContent = '☀️';
+        } else {
+            icon.textContent = '🌙';
+        }
+    }
+
+    function loadTheme() {
+        var savedTheme = localStorage.getItem('theme');
+        var html = document.getElementById('htmlRoot');
+        var icon = document.getElementById('themeIcon');
+        
+        if (savedTheme === 'dark') {
+            html.setAttribute('data-theme', 'dark');
+            icon.textContent = '☀️';
+        } else {
+            html.setAttribute('data-theme', 'light');
+            icon.textContent = '🌙';
+        }
+    }
+
+    // ==========================================
+    // TOAST
+    // ==========================================
+    function showToast(message, type) {
+        type = type || 'success';
+        var container = document.getElementById('toastContainer');
+        if (!container) {
+            var div = document.createElement('div');
+            div.id = 'toastContainer';
+            document.body.appendChild(div);
+            container = div;
+        }
+        var toast = document.createElement('div');
+        toast.className = 'toast toast-' + type + ' slide-in';
+        toast.textContent = message;
+        container.appendChild(toast);
+        setTimeout(function() {
+            toast.style.opacity = '0';
+            toast.style.transform = 'translateX(100px)';
+            setTimeout(function() { if (toast.parentNode) toast.remove(); }, 300);
+        }, 4000);
+    }
+
+    function logout() {
+        sessionStorage.removeItem('user');
+        window.location.href = '/login.html';
+    }
+
+    // ==========================================
+    // ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ
+    // ==========================================
+    function formatDate(dateStr) {
+        if (!dateStr) return '—';
+        var d = new Date(dateStr);
+        return d.toLocaleDateString('ru-RU', { day: '2-digit', month: 'short', year: 'numeric' });
+    }
+
+    function formatDateTime(dateStr) {
+        if (!dateStr) return '—';
+        var d = new Date(dateStr);
+        return d.toLocaleDateString('ru-RU', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+    }
+
+    function getInitials(name) {
+        if (!name) return 'Т';
+        var parts = name.trim().split(' ');
+        if (parts.length >= 2) return (parts[0][0] + parts[1][0]).toUpperCase();
+        return name.charAt(0).toUpperCase();
+    }
+
+    function getStars(score) {
+        if (!score) return '☆☆☆☆☆';
+        return '⭐'.repeat(score) + '☆'.repeat(5 - score);
+    }
+
+    function updateClock() {
+        var now = new Date();
+        var el = document.getElementById('currentTime');
+        if (el) {
+            el.textContent = now.toLocaleTimeString('ru-RU', {
+                hour: '2-digit', minute: '2-digit', second: '2-digit'
+            });
+        }
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    // ==========================================
+    // ПОЛУЧЕНИЕ ID ТРЕНЕРА
+    // ==========================================
+    async function getCoachIdFromUser(userId) {
+        try {
+            console.log('🔍 Получение coach_id для user_id:', userId);
+            var response = await fetch(API_BASE + '/coach/by-user/' + userId);
+            var result = await response.json();
+            console.log('📦 Ответ:', result);
+            
+            if (result.status === 'success' && result.coach_id) {
+                return result.coach_id;
+            }
+            return null;
+        } catch (error) {
+            console.error('❌ Ошибка получения coach_id:', error);
+            return null;
+        }
+    }
+
+    // ==========================================
+    // ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК
+    // ==========================================
+    function switchTab(tab) {
+        var tabs = document.querySelectorAll('.tab-content');
+        for (var i = 0; i < tabs.length; i++) {
+            tabs[i].style.display = 'none';
+        }
+        var btns = document.querySelectorAll('.tab-btn');
+        for (var i = 0; i < btns.length; i++) {
+            btns[i].classList.remove('active');
+        }
+        var target = document.getElementById('tab-' + tab);
+        if (target) target.style.display = 'block';
+        
+        var activeBtn = document.querySelector('.tab-btn[onclick="switchTab(\'' + tab + '\')"]');
+        if (activeBtn) activeBtn.classList.add('active');
+        
+        if (tab === 'profile') loadCoachFullProfile();
+        else if (tab === 'clients') loadClients();
+        else if (tab === 'sessions') loadActiveSessions();
+        else if (tab === 'goals') loadCoachGoals();
+        else if (tab === 'feedback') { 
+            loadAllCoachFeedback(); 
+            loadCoachSessionsForFeedback(); 
+        }
+    }
+
+    // ==========================================
+    // 1. ПРОФИЛЬ ТРЕНЕРА
+    // ==========================================
+    async function loadCoachFullProfile() {
+        if (!currentCoachId) return;
+        await loadCoachProfile();
+        await loadCoachMembership();
+        await loadCoachProgress();
+    }
+
+    async function loadCoachProfile() {
+        if (!currentCoachId) return;
+        try {
+            var res = await fetch(API_BASE + '/coach/' + currentCoachId + '/profile');
+            var result = await res.json();
+            
+            var nameDisplay = document.getElementById('coachNameDisplay');
+            var profile = document.getElementById('coachProfile');
+            
+            if (result.status === 'success' && result.data) {
+                var d = result.data;
+                if (nameDisplay) nameDisplay.textContent = d.name + ' — ' + (d.specialization || 'Тренер');
+                if (currentUser) {
+                    var trainerInput = document.getElementById('coachFeedbackTrainer');
+                    if (trainerInput) trainerInput.value = currentUser.name || '';
+                }
+                
+                if (profile) {
+                    profile.innerHTML = 
+                        '<div class="flex flex-col md:flex-row items-center gap-6">' +
+                            '<div class="w-24 h-24 rounded-full bg-gradient-to-br from-emerald-500 to-emerald-600 flex items-center justify-center text-white text-3xl font-bold shadow-lg">' + getInitials(d.name) + '</div>' +
+                            '<div class="flex-1">' +
+                                '<h3 class="text-2xl font-bold text-slate-800">' + (d.name || '—') + '</h3>' +
+                                '<p class="text-slate-500">' + (d.email || 'Email не указан') + '</p>' +
+                                '<div class="flex flex-wrap gap-2 mt-3">' +
+                                    '<span class="bg-blue-50 text-blue-700 px-3 py-1 rounded-full text-sm font-medium">' + (d.specialization || 'Без специализации') + '</span>' +
+                                    '<span class="bg-purple-50 text-purple-700 px-3 py-1 rounded-full text-sm font-medium">👥 ' + (d.total_clients || 0) + ' клиентов</span>' +
+                                '</div>' +
+                            '</div>' +
+                        '</div>';
+                }
+            }
+        } catch (e) { console.error(e); }
+    }
+
+    async function loadCoachMembership() {
+        if (!currentCoachId) return;
+        try {
+            var res = await fetch(API_BASE + '/coach/' + currentCoachId + '/membership');
+            var result = await res.json();
+            var container = document.getElementById('coachMembershipInfo');
+            if (!container) return;
+            
+            if (!result.has_membership) {
+                container.innerHTML = '<div class="text-center py-4 text-slate-400"><span class="text-2xl block mb-2">⚠️</span><p>Нет активного абонемента</p></div>';
+                return;
+            }
+            var d = result.data;
+            var daysLeft = d.days_left || 0;
+            var badge = daysLeft > 0 ? 'badge-success' : 'badge-danger';
+            var statusText = daysLeft > 0 ? '✅ Активен' : '❌ Истек';
+            
+            container.innerHTML = 
+                '<div class="info-grid">' +
+                    '<div class="info-item"><div class="label">Название</div><div class="value">' + (d.membership_name || '—') + '</div></div>' +
+                    '<div class="info-item"><div class="label">Тип</div><div class="value"><span class="badge badge-info">' + (d.membership_type || '—') + '</span></div></div>' +
+                    '<div class="info-item"><div class="label">Стоимость</div><div class="value">' + (d.membership_price || 0) + ' Br</div></div>' +
+                    '<div class="info-item"><div class="label">Осталось дней</div><div class="value"><span class="badge ' + badge + '">' + daysLeft + ' дн.</span></div></div>' +
+                    '<div class="info-item"><div class="label">Начало</div><div class="value">' + formatDate(d.start_date) + '</div></div>' +
+                    '<div class="info-item"><div class="label">Окончание</div><div class="value">' + formatDate(d.end_date) + '</div></div>' +
+                    '<div class="info-item" style="grid-column:1/-1;"><div class="label">Статус</div><div class="value"><span class="badge ' + badge + '">' + statusText + '</span></div></div>' +
+                '</div>';
+        } catch (e) { console.error(e); }
+    }
+
+    // ==========================================
+    // ПРОГРЕСС ТРЕНЕРА
+    // ==========================================
+    async function loadCoachProgress() {
+        if (!currentCoachId) return;
+        try {
+            var res = await fetch(API_BASE + '/coach/' + currentCoachId + '/progress');
+            var result = await res.json();
+            var container = document.getElementById('coachProgress');
+            if (!container) return;
+            
+            if (!result.has_data || !result.data || result.data.length === 0) {
+                container.innerHTML = '<div class="text-center py-4 text-slate-400"><span class="text-2xl block mb-2">📊</span><p>Нет данных о тренировках</p></div>';
+                return;
+            }
+            
+            var exercises = result.available_exercises || [];
+            var currentEx = result.current_exercise || (exercises.length > 0 ? exercises[0] : '');
+            var filteredData = result.data || [];
+            
+            var first = filteredData.length > 0 ? filteredData[0] : {};
+            var last = filteredData.length > 0 ? filteredData[filteredData.length - 1] : {};
+            var change = (last.max_weight || 0) - (first.max_weight || 0);
+            var percent = first.max_weight > 0 ? (change / first.max_weight * 100) : 0;
+            var maxWeight = 0, maxReps = 0, totalWeight = 0;
+            for (var i = 0; i < filteredData.length; i++) {
+                var item = filteredData[i];
+                if (item.max_weight > maxWeight) maxWeight = item.max_weight;
+                if (item.max_reps > maxReps) maxReps = item.max_reps;
+                totalWeight += (item.max_weight || 0);
+            }
+            var avgWeight = filteredData.length > 0 ? totalWeight / filteredData.length : 0;
+            
+            var exerciseButtons = '';
+            for (var i = 0; i < exercises.length; i++) {
+                var ex = exercises[i];
+                var activeClass = (ex === currentEx) ? ' active' : '';
+                exerciseButtons += '<button class="exercise-btn' + activeClass + '" onclick="loadCoachExerciseProgress(\'' + ex + '\')">' + ex + '</button>';
+            }
+            
+            var html = '';
+            html += '<div class="exercise-selector"><span style="font-size: 12px; color: var(--text-muted); font-weight: 500; margin-right: 4px;">🏋️ Упражнение:</span>';
+            html += (exercises.length > 0 ? exerciseButtons : '<span style="font-size: 12px; color: var(--text-muted);">Нет доступных упражнений</span>');
+            html += '</div>';
+            
+            html += '<div class="stats-summary" id="coachStats">';
+            html += '<div class="stat-summary-item"><div class="number ' + (change > 0 ? 'text-emerald-600' : change < 0 ? 'text-red-600' : 'text-slate-400') + '">' + (change > 0 ? '+' : '') + change.toFixed(1) + ' кг</div><div class="label">Изменение</div></div>';
+            html += '<div class="stat-summary-item"><div class="number ' + (percent > 0 ? 'text-emerald-600' : percent < 0 ? 'text-red-600' : 'text-slate-400') + '">' + percent.toFixed(1) + '%</div><div class="label">Прогресс</div></div>';
+            html += '<div class="stat-summary-item"><div class="number">' + maxWeight.toFixed(1) + ' кг</div><div class="label">Макс. вес</div></div>';
+            html += '<div class="stat-summary-item"><div class="number">' + maxReps + '</div><div class="label">Макс. повторений</div></div>';
+            html += '<div class="stat-summary-item"><div class="number">' + filteredData.length + '</div><div class="label">Тренировок</div></div>';
+            html += '<div class="stat-summary-item"><div class="number">' + avgWeight.toFixed(1) + ' кг</div><div class="label">Средний вес</div></div>';
+            html += '</div>';
+            
+            html += '<div id="coachProgressContainer"><div class="overflow-x-auto"><table class="progress-table"><thead><tr><th>Дата</th><th>Упражнение</th><th>Макс. вес (кг)</th><th>Повторения</th><th>Прогресс</th></tr></thead><tbody>';
+            for (var i = 0; i < filteredData.length; i++) {
+                var item = filteredData[i];
+                var prevItem = i > 0 ? filteredData[i - 1] : null;
+                var progressCell = '';
+                if (prevItem) {
+                    var diff = (item.max_weight || 0) - (prevItem.max_weight || 0);
+                    if (diff > 0) progressCell = '<span class="progress-positive">📈 +' + diff.toFixed(1) + ' кг</span>';
+                    else if (diff < 0) progressCell = '<span class="progress-negative">📉 ' + diff.toFixed(1) + ' кг</span>';
+                    else progressCell = '<span class="progress-neutral">➖ 0 кг</span>';
+                } else {
+                    progressCell = '<span class="progress-neutral">— Начало</span>';
+                }
+                html += '<tr><td>' + formatDate(item.date) + '</td><td class="font-medium">' + (currentEx || '—') + '</td><td class="font-semibold">' + (item.max_weight || 0).toFixed(1) + ' кг</td><td>' + (item.max_reps || 0) + '</td><td>' + progressCell + '</td></tr>';
+            }
+            html += '</tbody></table></div></div>';
+            container.innerHTML = html;
+        } catch (e) { 
+            console.error('❌ Ошибка загрузки прогресса тренера:', e);
+            var container = document.getElementById('coachProgress');
+            if (container) container.innerHTML = '<div class="text-center py-4 text-red-500">❌ Ошибка загрузки</div>';
+        }
+    }
+
+    async function loadCoachExerciseProgress(exerciseName) {
+        if (!exerciseName || !currentCoachId) return;
+        try {
+            var res = await fetch(API_BASE + '/coach/' + currentCoachId + '/progress?exercise_name=' + encodeURIComponent(exerciseName));
+            var result = await res.json();
+            if (result.status === 'success' && result.has_data) {
+                var container = document.getElementById('coachProgressContainer');
+                var statsContainer = document.getElementById('coachStats');
+                var filteredData = result.data || [];
+                
+                var first = filteredData.length > 0 ? filteredData[0] : {};
+                var last = filteredData.length > 0 ? filteredData[filteredData.length - 1] : {};
+                var change = (last.max_weight || 0) - (first.max_weight || 0);
+                var percent = first.max_weight > 0 ? (change / first.max_weight * 100) : 0;
+                var maxWeight = 0, maxReps = 0, totalWeight = 0;
+                for (var i = 0; i < filteredData.length; i++) {
+                    var item = filteredData[i];
+                    if (item.max_weight > maxWeight) maxWeight = item.max_weight;
+                    if (item.max_reps > maxReps) maxReps = item.max_reps;
+                    totalWeight += (item.max_weight || 0);
+                }
+                var avgWeight = filteredData.length > 0 ? totalWeight / filteredData.length : 0;
+                
+                if (statsContainer) {
+                    statsContainer.innerHTML = 
+                        '<div class="stat-summary-item"><div class="number ' + (change > 0 ? 'text-emerald-600' : change < 0 ? 'text-red-600' : 'text-slate-400') + '">' + (change > 0 ? '+' : '') + change.toFixed(1) + ' кг</div><div class="label">Изменение</div></div>' +
+                        '<div class="stat-summary-item"><div class="number ' + (percent > 0 ? 'text-emerald-600' : percent < 0 ? 'text-red-600' : 'text-slate-400') + '">' + percent.toFixed(1) + '%</div><div class="label">Прогресс</div></div>' +
+                        '<div class="stat-summary-item"><div class="number">' + maxWeight.toFixed(1) + ' кг</div><div class="label">Макс. вес</div></div>' +
+                        '<div class="stat-summary-item"><div class="number">' + maxReps + '</div><div class="label">Макс. повторений</div></div>' +
+                        '<div class="stat-summary-item"><div class="number">' + filteredData.length + '</div><div class="label">Тренировок</div></div>' +
+                        '<div class="stat-summary-item"><div class="number">' + avgWeight.toFixed(1) + ' кг</div><div class="label">Средний вес</div></div>';
+                }
+                
+                var html = '<div class="overflow-x-auto"><table class="progress-table"><thead><tr><th>Дата</th><th>Упражнение</th><th>Макс. вес (кг)</th><th>Повторения</th><th>Прогресс</th></tr></thead><tbody>';
+                for (var i = 0; i < filteredData.length; i++) {
+                    var item = filteredData[i];
+                    var prevItem = i > 0 ? filteredData[i - 1] : null;
+                    var progressCell = '';
+                    if (prevItem) {
+                        var diff = (item.max_weight || 0) - (prevItem.max_weight || 0);
+                        if (diff > 0) progressCell = '<span class="progress-positive">📈 +' + diff.toFixed(1) + ' кг</span>';
+                        else if (diff < 0) progressCell = '<span class="progress-negative">📉 ' + diff.toFixed(1) + ' кг</span>';
+                        else progressCell = '<span class="progress-neutral">➖ 0 кг</span>';
+                    } else {
+                        progressCell = '<span class="progress-neutral">— Начало</span>';
+                    }
+                    html += '<tr><td>' + formatDate(item.date) + '</td><td class="font-medium">' + (exerciseName || '—') + '</td><td class="font-semibold">' + (item.max_weight || 0).toFixed(1) + ' кг</td><td>' + (item.max_reps || 0) + '</td><td>' + progressCell + '</td></tr>';
+                }
+                html += '</tbody></table></div>';
+                container.innerHTML = html;
+                
+                var btns = document.querySelectorAll('#coachProgress .exercise-btn');
+                for (var i = 0; i < btns.length; i++) {
+                    btns[i].classList.remove('active');
+                    if (btns[i].textContent.trim() === exerciseName) {
+                        btns[i].classList.add('active');
+                    }
+                }
+            }
+        } catch (e) {
+            console.error('❌ Ошибка загрузки прогресса по упражнению:', e);
+            showToast('Ошибка загрузки прогресса', 'error');
+        }
+    }
+
+    // ==========================================
+    // 2. КЛИЕНТЫ
+    // ==========================================
+    // ==========================================
+// 2. КЛИЕНТЫ (с статусом абонемента)
+// ==========================================
+async function loadClients() {
+    if (!currentCoachId) return;
+    try {
+        // Загружаем количество клиентов
+        var countRes = await fetch(API_BASE + '/coach/' + currentCoachId + '/clients-count');
+        var countData = await countRes.json();
+        var totalClients = countData.count || 0;
+        
+        // Загружаем список клиентов с статусом
+        var res = await fetch(API_BASE + '/coach/' + currentCoachId + '/clients-with-status');
+        var result = await res.json();
+        var container = document.getElementById('clientsList');
+        if (!container) return;
+        
+        // Показываем счетчик
+        var header = document.querySelector('#tab-clients .flex.justify-between');
+        if (header) {
+            var counter = header.querySelector('.clients-counter');
+            if (!counter) {
+                counter = document.createElement('span');
+                counter.className = 'clients-counter text-sm font-medium';
+                header.appendChild(counter);
+            }
+            var remaining = 30 - totalClients;
+            var color = remaining <= 3 ? 'text-red-500' : remaining <= 8 ? 'text-orange-500' : 'text-emerald-500';
+            counter.innerHTML = `👥 ${totalClients}/30 клиентов <span class="text-xs ${color}">(свободно ${remaining})</span>`;
+        }
+        
+        if (result.status === 'success' && result.data && result.data.length > 0) {
+            var clients = result.data;
+            var activeClients = [], expiredClients = [], noMembershipClients = [];
+            
+            for (var i = 0; i < clients.length; i++) {
+                var c = clients[i];
+                if (c.membership_status === 'active') {
+                    activeClients.push(c);
+                } else if (c.membership_status === 'expired') {
+                    expiredClients.push(c);
+                } else {
+                    noMembershipClients.push(c);
+                }
+            }
+            
+            var html = '';
+            
+            // Активные
+            if (activeClients.length > 0) {
+                html += '<div class="mb-6"><div class="flex items-center gap-2 mb-3"><span class="text-lg">🟢</span><h3 class="text-md font-bold text-slate-800">Активные абонементы <span class="text-sm font-normal text-slate-400">(' + activeClients.length + ')</span></h3></div>';
+                html += '<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">';
+                for (var i = 0; i < activeClients.length; i++) {
+                    var c = activeClients[i];
+                    var endDate = new Date(c.membership_end_date);
+                    endDate.setHours(0, 0, 0, 0);
+                    var today = new Date();
+                    today.setHours(0, 0, 0, 0);
+                    var daysLeft = Math.ceil((endDate - today) / (1000 * 60 * 60 * 24));
+                    var daysBadge = daysLeft <= 3 ? '<span class="bg-red-100 text-red-700 px-2 py-0.5 rounded text-xs">⚠️ ' + daysLeft + ' дн.</span>' :
+                                    daysLeft <= 7 ? '<span class="bg-orange-100 text-orange-700 px-2 py-0.5 rounded text-xs">' + daysLeft + ' дн.</span>' :
+                                    '<span class="bg-green-100 text-green-700 px-2 py-0.5 rounded text-xs">✅ ' + daysLeft + ' дн.</span>';
+                    
+                    html += '<div class="client-card bg-slate-50 rounded-xl p-4 border border-emerald-200 hover:border-emerald-400 hover:shadow-md transition-all" onclick="showClientDetails(' + c.client_id + ')">' +
+                        '<div class="flex items-center gap-3">' +
+                            '<div class="w-12 h-12 rounded-full bg-gradient-to-br from-emerald-500 to-emerald-600 flex items-center justify-center text-white font-bold text-lg">' + (c.client_name ? c.client_name.charAt(0).toUpperCase() : 'К') + '</div>' +
+                            '<div class="flex-1 min-w-0"><h4 class="font-semibold text-slate-800 truncate">' + (c.client_name || '—') + '</h4><p class="text-sm text-slate-500 truncate">' + (c.client_email || '—') + '</p></div>' +
+                        '</div>' +
+                        '<div class="mt-3 flex flex-wrap gap-2 text-xs">' +
+                            '<span class="bg-blue-50 text-blue-700 px-2 py-1 rounded">📊 ' + (c.total_sessions || 0) + ' тренировок</span>' +
+                            (c.membership_name ? '<span class="bg-emerald-50 text-emerald-700 px-2 py-1 rounded">🎫 ' + c.membership_name + '</span>' : '') +
+                            (c.membership_end_date ? '<span class="bg-green-50 text-green-700 px-2 py-1 rounded">📅 до ' + formatDate(c.membership_end_date) + '</span>' : '') + daysBadge +
+                        '</div>' +
+                    '</div>';
+                }
+                html += '</div></div>';
+            }
+            
+            // Просроченные
+            if (expiredClients.length > 0) {
+                html += '<div class="mt-4"><div class="flex items-center gap-2 mb-3"><span class="text-lg">🔴</span><h3 class="text-md font-bold text-slate-800">Просроченные абонементы <span class="text-sm font-normal text-slate-400">(' + expiredClients.length + ')</span></h3></div>';
+                html += '<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">';
+                for (var i = 0; i < expiredClients.length; i++) {
+                    var c = expiredClients[i];
+                    var daysOverdue = 0;
+                    if (c.membership_end_date) {
+                        var endDate = new Date(c.membership_end_date);
+                        endDate.setHours(0, 0, 0, 0);
+                        var today = new Date();
+                        today.setHours(0, 0, 0, 0);
+                        daysOverdue = Math.ceil((today - endDate) / (1000 * 60 * 60 * 24));
+                    }
+                    var overdueBadge = daysOverdue > 0 ? '<span class="bg-red-100 text-red-700 px-2 py-0.5 rounded text-xs">🔴 просрочка ' + daysOverdue + ' дн.</span>' : '';
+                    
+                    html += '<div class="client-card bg-slate-50 rounded-xl p-4 border border-red-200 hover:border-red-400 hover:shadow-md transition-all opacity-80" onclick="showClientDetails(' + c.client_id + ')">' +
+                        '<div class="flex items-center gap-3">' +
+                            '<div class="w-12 h-12 rounded-full bg-gradient-to-br from-red-400 to-red-500 flex items-center justify-center text-white font-bold text-lg">' + (c.client_name ? c.client_name.charAt(0).toUpperCase() : 'К') + '</div>' +
+                            '<div class="flex-1 min-w-0"><h4 class="font-semibold text-slate-800 truncate">' + (c.client_name || '—') + '</h4><p class="text-sm text-slate-500 truncate">' + (c.client_email || '—') + '</p></div>' +
+                            '<span class="text-xs bg-red-100 text-red-700 px-2 py-0.5 rounded-full">Истек</span>' +
+                        '</div>' +
+                        '<div class="mt-3 flex flex-wrap gap-2 text-xs">' +
+                            '<span class="bg-blue-50 text-blue-700 px-2 py-1 rounded">📊 ' + (c.total_sessions || 0) + ' тренировок</span>' +
+                            (c.membership_name ? '<span class="bg-slate-200 text-slate-600 px-2 py-1 rounded line-through">🎫 ' + c.membership_name + '</span>' : '') +
+                            (c.membership_end_date ? '<span class="bg-red-50 text-red-600 px-2 py-1 rounded">📅 истек ' + formatDate(c.membership_end_date) + '</span>' : '<span class="bg-red-50 text-red-600 px-2 py-1 rounded">❌ Нет абонемента</span>') + overdueBadge +
+                        '</div>' +
+                    '</div>';
+                }
+                html += '</div></div>';
+            }
+            
+            // Без абонемента
+            if (noMembershipClients.length > 0) {
+                html += '<div class="mt-4"><div class="flex items-center gap-2 mb-3"><span class="text-lg">⚪</span><h3 class="text-md font-bold text-slate-800">Без абонемента <span class="text-sm font-normal text-slate-400">(' + noMembershipClients.length + ')</span></h3></div>';
+                html += '<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">';
+                for (var i = 0; i < noMembershipClients.length; i++) {
+                    var c = noMembershipClients[i];
+                    html += '<div class="client-card bg-slate-50 rounded-xl p-4 border border-slate-200 hover:border-slate-400 hover:shadow-md transition-all opacity-60" onclick="showClientDetails(' + c.client_id + ')">' +
+                        '<div class="flex items-center gap-3">' +
+                            '<div class="w-12 h-12 rounded-full bg-gradient-to-br from-slate-400 to-slate-500 flex items-center justify-center text-white font-bold text-lg">' + (c.client_name ? c.client_name.charAt(0).toUpperCase() : 'К') + '</div>' +
+                            '<div class="flex-1 min-w-0"><h4 class="font-semibold text-slate-800 truncate">' + (c.client_name || '—') + '</h4><p class="text-sm text-slate-500 truncate">' + (c.client_email || '—') + '</p></div>' +
+                            '<span class="text-xs bg-slate-200 text-slate-600 px-2 py-0.5 rounded-full">Нет абонемента</span>' +
+                        '</div>' +
+                        '<div class="mt-3 flex flex-wrap gap-2 text-xs">' +
+                            '<span class="bg-blue-50 text-blue-700 px-2 py-1 rounded">📊 ' + (c.total_sessions || 0) + ' тренировок</span>' +
+                            '<span class="bg-slate-100 text-slate-500 px-2 py-1 rounded">❌ Нет активного абонемента</span>' +
+                        '</div>' +
+                    '</div>';
+                }
+                html += '</div></div>';
+            }
+            
+            container.innerHTML = html;
+        } else {
+            container.innerHTML = '<div class="text-center py-12 text-slate-400"><span class="text-4xl block mb-3">👤</span><p class="text-lg font-medium">У вас пока нет клиентов</p></div>';
+        }
+    } catch (e) { 
+        console.error(e);
+        var container = document.getElementById('clientsList');
+        if (container) container.innerHTML = '<div class="text-center py-8 text-red-500">❌ Ошибка загрузки</div>';
+    }
+}
+    // ==========================================
+    // 2.1 ДЕТАЛИ КЛИЕНТА
+    // ==========================================
+    async function showClientDetails(clientId) {
+        var container = document.getElementById('clientDetailContent');
+        var title = document.getElementById('clientDetailName');
+        var detailsDiv = document.getElementById('clientDetails');
+        
+        if (!container || !title || !detailsDiv) {
+            var clientsContainer = document.getElementById('clientsList');
+            if (clientsContainer) {
+                var html = '<div id="clientDetails" class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 mt-6" style="display:block;">';
+                html += '<div class="flex justify-between items-center mb-4"><h2 class="text-xl font-bold text-slate-800" id="clientDetailName">Информация о клиенте</h2><button onclick="closeClientDetails()" class="text-sm text-red-500 hover:text-red-600 transition">✕ Закрыть</button></div>';
+                html += '<div id="clientDetailContent"><div class="text-center py-8 text-slate-400">⏳ Загрузка...</div></div></div>';
+                clientsContainer.insertAdjacentHTML('afterend', html);
+                container = document.getElementById('clientDetailContent');
+                title = document.getElementById('clientDetailName');
+                detailsDiv = document.getElementById('clientDetails');
+            }
+        }
+        
+        if (detailsDiv) detailsDiv.style.display = 'block';
+        if (container) container.innerHTML = '<div class="text-center py-8 text-slate-400">⏳ Загрузка...</div>';
+        
+        try {
+            var infoRes = await fetch(API_BASE + '/coach/clients/' + clientId + '/info');
+            var membershipRes = await fetch(API_BASE + '/client/' + clientId + '/membership');
+            var progressRes = await fetch(API_BASE + '/coach/clients/' + clientId + '/progress');
+            var trainerRes = await fetch(API_BASE + '/client/' + clientId + '/trainer');
+            
+            var info = await infoRes.json();
+            var membership = await membershipRes.json();
+            var progress = await progressRes.json();
+            var trainer = await trainerRes.json();
+            
+            var html = '';
+            
+            if (info.status === 'success') {
+                var d = info.data;
+                if (title) title.textContent = '👤 ' + (d.name || 'Клиент');
+                html += '<div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">' +
+                    '<div class="bg-slate-50 rounded-lg p-3 text-center"><div class="text-lg font-bold text-slate-800">' + (d.total_sessions || 0) + '</div><div class="text-xs text-slate-500">Всего тренировок</div></div>' +
+                    '<div class="bg-slate-50 rounded-lg p-3 text-center"><div class="text-lg font-bold text-slate-800 truncate">' + (d.membership_name || 'Нет') + '</div><div class="text-xs text-slate-500">Абонемент</div></div>' +
+                    '<div class="bg-slate-50 rounded-lg p-3 text-center"><div class="text-lg font-bold text-slate-800">' + (d.membership_end_date ? formatDate(d.membership_end_date) : '—') + '</div><div class="text-xs text-slate-500">Действует до</div></div>' +
+                    '<div class="bg-slate-50 rounded-lg p-3 text-center"><div class="text-sm font-semibold text-slate-800 truncate">' + (d.email || '—') + '</div><div class="text-xs text-slate-500">Email</div></div></div>';
+            }
+            
+            if (trainer.status === 'success' && trainer.has_trainer) {
+                var t = trainer.data;
+                html += '<div class="bg-slate-50 rounded-lg p-3 mb-4 flex items-center gap-3"><span class="text-lg">👨‍🏫</span><div><span class="font-medium">Тренер: ' + t.trainer_name + '</span>' + (t.specialization ? '<span class="text-xs bg-blue-50 text-blue-700 px-2 py-0.5 rounded ml-2">' + t.specialization + '</span>' : '') + '</div></div>';
+            }
+            
+            if (membership.has_membership) {
+                var m = membership.data;
+                var daysLeft = m.days_left || 0;
+                var badgeClass = daysLeft > 0 ? 'badge-success' : 'badge-danger';
+                html += '<div class="bg-white rounded-xl border border-slate-200 p-4 mb-4"><div class="flex items-center gap-2 mb-3"><span class="text-lg">🎫</span><h4 class="font-bold text-slate-800">Абонемент</h4></div>' +
+                    '<div class="grid grid-cols-2 md:grid-cols-4 gap-3">' +
+                        '<div class="info-item"><div class="label">Название</div><div class="value text-sm">' + (m.membership_name || '—') + '</div></div>' +
+                        '<div class="info-item"><div class="label">Тип</div><div class="value text-sm"><span class="badge badge-info">' + (m.membership_type || '—') + '</span></div></div>' +
+                        '<div class="info-item"><div class="label">До</div><div class="value text-sm">' + formatDate(m.end_date) + '</div></div>' +
+                        '<div class="info-item"><div class="label">Осталось</div><div class="value text-sm"><span class="badge ' + badgeClass + '">' + daysLeft + ' дн.</span></div></div>' +
+                    '</div></div>';
+            }
+            
+            if (progress.status === 'success' && progress.has_data) {
+                var exercises = progress.available_exercises || [];
+                var currentEx = progress.current_exercise || (exercises.length > 0 ? exercises[0] : '');
+                var filteredData = progress.data || [];
+                
+                var first = filteredData.length > 0 ? filteredData[0] : {};
+                var last = filteredData.length > 0 ? filteredData[filteredData.length - 1] : {};
+                var change = (last.max_weight || 0) - (first.max_weight || 0);
+                var percent = first.max_weight > 0 ? (change / first.max_weight * 100) : 0;
+                var maxWeight = 0, maxReps = 0, totalWeight = 0;
+                for (var i = 0; i < filteredData.length; i++) {
+                    var item = filteredData[i];
+                    if (item.max_weight > maxWeight) maxWeight = item.max_weight;
+                    if (item.max_reps > maxReps) maxReps = item.max_reps;
+                    totalWeight += (item.max_weight || 0);
+                }
+                var avgWeight = filteredData.length > 0 ? totalWeight / filteredData.length : 0;
+                
+                var exerciseButtons = '';
+                for (var i = 0; i < exercises.length; i++) {
+                    var ex = exercises[i];
+                    var activeClass = (ex === currentEx) ? ' active' : '';
+                    exerciseButtons += '<button class="exercise-btn' + activeClass + '" onclick="loadClientExerciseProgress(' + clientId + ', \'' + ex + '\')">' + ex + '</button>';
+                }
+                
+                html += '<div class="bg-white rounded-xl border border-slate-200 p-4">' +
+                    '<div class="flex items-center gap-2 mb-3"><span class="text-lg">📊</span><h4 class="font-bold text-slate-800">Прогресс в упражнениях</h4></div>' +
+                    '<div class="exercise-selector"><span style="font-size: 12px; color: #64748b; font-weight: 500; margin-right: 4px;">🏋️ Упражнение:</span>' + (exercises.length > 0 ? exerciseButtons : '<span style="font-size: 12px; color: #94a3b8;">Нет доступных упражнений</span>') + '</div>' +
+                    '<div class="stats-summary" id="clientStats_' + clientId + '">' +
+                        '<div class="stat-summary-item"><div class="number ' + (change > 0 ? 'text-emerald-600' : change < 0 ? 'text-red-600' : 'text-slate-400') + '">' + (change > 0 ? '+' : '') + change.toFixed(1) + ' кг</div><div class="label">Изменение</div></div>' +
+                        '<div class="stat-summary-item"><div class="number ' + (percent > 0 ? 'text-emerald-600' : percent < 0 ? 'text-red-600' : 'text-slate-400') + '">' + percent.toFixed(1) + '%</div><div class="label">Прогресс</div></div>' +
+                        '<div class="stat-summary-item"><div class="number">' + maxWeight.toFixed(1) + ' кг</div><div class="label">Макс. вес</div></div>' +
+                        '<div class="stat-summary-item"><div class="number">' + maxReps + '</div><div class="label">Макс. повторений</div></div>' +
+                        '<div class="stat-summary-item"><div class="number">' + filteredData.length + '</div><div class="label">Тренировок</div></div>' +
+                        '<div class="stat-summary-item"><div class="number">' + avgWeight.toFixed(1) + ' кг</div><div class="label">Средний вес</div></div>' +
+                    '</div>' +
+                    '<div id="clientProgressContainer_' + clientId + '"><div class="overflow-x-auto"><table class="progress-table"><thead><tr><th>Дата</th><th>Упражнение</th><th>Макс. вес (кг)</th><th>Повторения</th><th>Прогресс</th></tr></thead><tbody>';
+                for (var i = 0; i < filteredData.length; i++) {
+                    var item = filteredData[i];
+                    var prevItem = i > 0 ? filteredData[i - 1] : null;
+                    var progressCell = '';
+                    if (prevItem) {
+                        var diff = (item.max_weight || 0) - (prevItem.max_weight || 0);
+                        if (diff > 0) progressCell = '<span class="progress-positive">📈 +' + diff.toFixed(1) + ' кг</span>';
+                        else if (diff < 0) progressCell = '<span class="progress-negative">📉 ' + diff.toFixed(1) + ' кг</span>';
+                        else progressCell = '<span class="progress-neutral">➖ 0 кг</span>';
+                    } else {
+                        progressCell = '<span class="progress-neutral">— Начало</span>';
+                    }
+                    html += '<tr><td>' + formatDate(item.date) + '</td><td class="font-medium">' + (currentEx || '—') + '</td><td class="font-semibold">' + (item.max_weight || 0).toFixed(1) + ' кг</td><td>' + (item.max_reps || 0) + '</td><td>' + progressCell + '</td></tr>';
+                }
+                html += '</tbody></table></div></div></div>';
+            } else {
+                html += '<div class="bg-white rounded-xl border border-slate-200 p-4"><div class="flex items-center gap-2 mb-3"><span class="text-lg">📊</span><h4 class="font-bold text-slate-800">Прогресс в упражнениях</h4></div><div class="text-center py-4 text-slate-400">Нет данных о тренировках</div></div>';
+            }
+            
+            html += '<div class="mt-6 pt-4 border-t border-slate-200"><button onclick="declineClient(' + clientId + ')" class="w-full bg-red-500 hover:bg-red-600 text-white font-semibold py-2.5 px-4 rounded-xl transition-all shadow-sm shadow-red-100 flex items-center justify-center gap-2">🚫 Отказаться от клиента</button><p class="text-xs text-slate-400 mt-2 text-center">После отправки запроса администратор рассмотрит вашу просьбу</p></div>';
+            
+            if (container) container.innerHTML = html;
+            
+        } catch (e) {
+            console.error(e);
+            if (container) container.innerHTML = '<div class="text-center py-4 text-red-500">❌ Ошибка загрузки</div>';
+        }
+    }
+
+    function closeClientDetails() {
+        var detailsDiv = document.getElementById('clientDetails');
+        if (detailsDiv) detailsDiv.style.display = 'none';
+    }
+
+    async function loadClientExerciseProgress(clientId, exerciseName) {
+        if (!exerciseName) return;
+        try {
+            var res = await fetch(API_BASE + '/coach/clients/' + clientId + '/progress?exercise_name=' + encodeURIComponent(exerciseName));
+            var progress = await res.json();
+            if (progress.status === 'success' && progress.has_data) {
+                var container = document.getElementById('clientProgressContainer_' + clientId);
+                var statsContainer = document.getElementById('clientStats_' + clientId);
+                var filteredData = progress.data || [];
+                
+                var first = filteredData.length > 0 ? filteredData[0] : {};
+                var last = filteredData.length > 0 ? filteredData[filteredData.length - 1] : {};
+                var change = (last.max_weight || 0) - (first.max_weight || 0);
+                var percent = first.max_weight > 0 ? (change / first.max_weight * 100) : 0;
+                var maxWeight = 0, maxReps = 0, totalWeight = 0;
+                for (var i = 0; i < filteredData.length; i++) {
+                    var item = filteredData[i];
+                    if (item.max_weight > maxWeight) maxWeight = item.max_weight;
+                    if (item.max_reps > maxReps) maxReps = item.max_reps;
+                    totalWeight += (item.max_weight || 0);
+                }
+                var avgWeight = filteredData.length > 0 ? totalWeight / filteredData.length : 0;
+                
+                if (statsContainer) {
+                    statsContainer.innerHTML = 
+                        '<div class="stat-summary-item"><div class="number ' + (change > 0 ? 'text-emerald-600' : change < 0 ? 'text-red-600' : 'text-slate-400') + '">' + (change > 0 ? '+' : '') + change.toFixed(1) + ' кг</div><div class="label">Изменение</div></div>' +
+                        '<div class="stat-summary-item"><div class="number ' + (percent > 0 ? 'text-emerald-600' : percent < 0 ? 'text-red-600' : 'text-slate-400') + '">' + percent.toFixed(1) + '%</div><div class="label">Прогресс</div></div>' +
+                        '<div class="stat-summary-item"><div class="number">' + maxWeight.toFixed(1) + ' кг</div><div class="label">Макс. вес</div></div>' +
+                        '<div class="stat-summary-item"><div class="number">' + maxReps + '</div><div class="label">Макс. повторений</div></div>' +
+                        '<div class="stat-summary-item"><div class="number">' + filteredData.length + '</div><div class="label">Тренировок</div></div>' +
+                        '<div class="stat-summary-item"><div class="number">' + avgWeight.toFixed(1) + ' кг</div><div class="label">Средний вес</div></div>';
+                }
+                
+                var html = '<div class="overflow-x-auto"><table class="progress-table"><thead><tr><th>Дата</th><th>Упражнение</th><th>Макс. вес (кг)</th><th>Повторения</th><th>Прогресс</th></tr></thead><tbody>';
+                for (var i = 0; i < filteredData.length; i++) {
+                    var item = filteredData[i];
+                    var prevItem = i > 0 ? filteredData[i - 1] : null;
+                    var progressCell = '';
+                    if (prevItem) {
+                        var diff = (item.max_weight || 0) - (prevItem.max_weight || 0);
+                        if (diff > 0) progressCell = '<span class="progress-positive">📈 +' + diff.toFixed(1) + ' кг</span>';
+                        else if (diff < 0) progressCell = '<span class="progress-negative">📉 ' + diff.toFixed(1) + ' кг</span>';
+                        else progressCell = '<span class="progress-neutral">➖ 0 кг</span>';
+                    } else {
+                        progressCell = '<span class="progress-neutral">— Начало</span>';
+                    }
+                    html += '<tr><td>' + formatDate(item.date) + '</td><td class="font-medium">' + (exerciseName || '—') + '</td><td class="font-semibold">' + (item.max_weight || 0).toFixed(1) + ' кг</td><td>' + (item.max_reps || 0) + '</td><td>' + progressCell + '</td></tr>';
+                }
+                html += '</tbody></table></div>';
+                container.innerHTML = html;
+                
+                var btns = document.querySelectorAll('#clientDetailContent .exercise-btn');
+                for (var i = 0; i < btns.length; i++) {
+                    btns[i].classList.remove('active');
+                    if (btns[i].textContent.trim() === exerciseName) {
+                        btns[i].classList.add('active');
+                    }
+                }
+            }
+        } catch (e) {
+            console.error('❌ Ошибка загрузки прогресса клиента:', e);
+            showToast('Ошибка загрузки прогресса', 'error');
+        }
+    }
+
+    // ==========================================
+    // ОТКАЗ ОТ КЛИЕНТА
+    // ==========================================
+    async function declineClient(clientId) {
+        var reason = prompt('Укажите причину отказа от клиента (необязательно):');
+        if (reason === null) return;
+        if (!confirm('Вы уверены, что хотите отказаться от этого клиента?\n\nАдминистратор рассмотрит ваш запрос.')) return;
+        
+        try {
+            var res = await fetch(API_BASE + '/coach/decline-client/' + clientId, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    coach_id: currentCoachId,
+                    reason: reason || 'Не указана'
+                })
+            });
+            var result = await res.json();
+            if (res.ok) {
+                showToast('✅ Запрос на отказ отправлен администратору!', 'success');
+                closeClientDetails();
+                await loadClients();
+            } else {
+                showToast('❌ Ошибка: ' + (result.detail || 'Не удалось отправить запрос'), 'error');
+            }
+        } catch (e) {
+            console.error('❌ Ошибка:', e);
+            showToast('❌ Ошибка: ' + e.message, 'error');
+        }
+    }
+
+    // ==========================================
+    // 3. ТРЕНИРОВКИ
+    // ==========================================
+    async function loadActiveSessions() {
+        if (!currentCoachId) return;
+        try {
+            var res = await fetch(API_BASE + '/coach/' + currentCoachId + '/active-sessions');
+            var result = await res.json();
+            var container = document.getElementById('activeSessions');
+            if (!container) return;
+            
+            console.log('📋 Активные тренировки:', result);
+            
+            if (result.status === 'success' && result.data && result.data.length > 0) {
+                var html = '<div class="space-y-3">';
+                for (var i = 0; i < result.data.length; i++) {
+                    var s = result.data[i];
+                    if (s.status === 'completed') continue;
+                    
+                    var statusText = s.status === 'pending' ? '⏳ Ожидает' : '🔄 В процессе';
+                    var statusClass = s.status === 'pending' ? 'pending' : 'in_progress';
+                    
+                    html += '<div class="session-card p-4 bg-white border border-slate-200 rounded-xl" id="session_' + s.session_id + '">' +
+                        '<div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-3">' +
+                            '<div class="flex items-center gap-3">' +
+                                '<div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold">' + (s.client_name ? s.client_name.charAt(0).toUpperCase() : 'К') + '</div>' +
+                                '<div><div class="font-semibold text-slate-800">' + (s.client_name || '—') + '</div><div class="text-sm text-slate-500">' + formatDateTime(s.session_datetime) + '</div></div>' +
+                            '</div>' +
+                            '<div class="flex flex-wrap items-center gap-2">' +
+                                '<span class="status-badge ' + statusClass + '">' + statusText + '</span>' +
+                                '<span class="text-xs bg-slate-100 px-2 py-1 rounded">' + (s.session_type || 'Силовая') + '</span>' +
+                                '<span class="text-xs text-slate-500">⏱ ' + (s.duration_minutes || 60) + ' мин</span>' +
+                                (s.exercises_count > 0 ? '<span class="text-xs bg-green-50 text-green-700 px-2 py-1 rounded">🏋️ ' + s.exercises_count + ' упр.</span>' : '') +
+                            '</div>' +
+                        '</div>' +
+                        '<div class="mt-3 flex gap-2">' +
+                            '<button onclick="openSessionModal(' + s.session_id + ', \'' + s.client_name + '\', ' + s.client_id + ')" class="btn bg-blue-600 hover:bg-blue-700 text-white text-sm px-4 py-1.5 rounded-lg">' + (s.status === 'pending' ? '🏋️ Провести' : '📝 Продолжить') + '</button>' +
+                        '</div>' +
+                    '</div>';
+                }
+                html += '</div>';
+                container.innerHTML = html;
+            } else {
+                container.innerHTML = '<div class="text-center py-12 text-slate-400"><span class="text-4xl block mb-3">✅</span><p class="text-lg font-medium">Нет активных тренировок</p></div>';
+            }
+        } catch (e) { 
+            console.error(e);
+            var container = document.getElementById('activeSessions');
+            if (container) container.innerHTML = '<div class="text-center py-8 text-red-500">❌ Ошибка загрузки</div>';
+        }
+    }
+
+    // ==========================================
+    // 4. ОТКРЫТЬ МОДАЛЬНОЕ ОКНО С ЗАГРУЗКОЙ ДАННЫХ
+    // ==========================================
+    async function openSessionModal(sessionId, clientName, clientId) {
+        currentSessionId = sessionId;
+        finishButtonAdded = false;
+        console.log('📂 Открытие модала для тренировки ID:', sessionId);
+        
+        var title = document.getElementById('modalTitle');
+        if (title) title.textContent = '🏋️ Тренировка с ' + clientName;
+        
+        var modal = document.getElementById('sessionModal');
+        if (modal) modal.style.display = 'flex';
+        
+        var container = document.getElementById('sessionModalContent');
+        if (!container) return;
+        
+        container.innerHTML = '<div class="text-center py-8 text-slate-400">⏳ Загрузка сохраненных данных...</div>';
+        
+        try {
+            var res = await fetch(API_BASE + '/coach/sessions/' + sessionId + '/details');
+            var result = await res.json();
+            console.log('📋 Сохраненные детали:', result);
+            
+            var hasExistingData = result.status === 'success' && result.data && result.data.length > 0;
+            if (hasExistingData) {
+                finishButtonAdded = true;
+            }
+            
+            var html = '<div class="mb-4"><p class="text-slate-500">Добавьте упражнения и подходы</p></div><div id="exercisesContainer">';
+            
+            if (hasExistingData) {
+                console.log('✅ Загружено сохраненных упражнений:', result.data.length);
+                
+                var exercisesMap = {};
+                for (var i = 0; i < result.data.length; i++) {
+                    var item = result.data[i];
+                    var key = item.exercise_name;
+                    if (!exercisesMap[key]) exercisesMap[key] = [];
+                    exercisesMap[key].push({
+                        set_number: item.set_number,
+                        reps: item.reps,
+                        weight_kg: item.weight_kg
+                    });
+                }
+                
+                var exerciseNames = Object.keys(exercisesMap);
+                for (var e = 0; e < exerciseNames.length; e++) {
+                    var exName = exerciseNames[e];
+                    var sets = exercisesMap[exName];
+                    
+                    html += '<div class="exercise-row"><div class="flex flex-wrap gap-2 mb-2">';
+                    html += '<input type="text" placeholder="Упражнение" class="exercise-input flex-1 min-w-[150px]" value="' + exName + '">';
+                    html += '<input type="number" placeholder="Подход" class="exercise-input w-20" value="' + sets.length + '">';
+                    html += '<input type="number" placeholder="Повторения" class="exercise-input w-24" value="' + (sets.length > 0 ? sets[0].reps : 10) + '">';
+                    html += '<input type="number" placeholder="Вес (кг)" class="exercise-input w-24" value="' + (sets.length > 0 ? sets[0].weight_kg : 80) + '" step="0.5">';
+                    html += '<button onclick="removeExercise(this)" class="text-red-500 hover:text-red-600 px-2">✕</button></div>';
+                    
+                    html += '<div class="sets-container space-y-1 mt-1">';
+                    for (var s = 0; s < sets.length; s++) {
+                        var setData = sets[s];
+                        html += '<div class="flex flex-wrap gap-2 items-center"><span class="text-xs text-slate-400 w-6">#' + (s + 1) + '</span>';
+                        html += '<input type="number" placeholder="Повторения" class="exercise-input w-24" value="' + setData.reps + '">';
+                        html += '<input type="number" placeholder="Вес" class="exercise-input w-24" value="' + setData.weight_kg + '" step="0.5">';
+                        html += '<button onclick="removeSet(this)" class="text-red-400 hover:text-red-600 text-sm">✕</button></div>';
+                    }
+                    html += '</div><button onclick="addSet(this)" class="text-sm text-blue-600 hover:text-blue-700">+ Добавить подход</button></div>';
+                }
+            } else {
+                html += '<div class="exercise-row"><div class="flex flex-wrap gap-2 mb-2">';
+                html += '<input type="text" placeholder="Упражнение" class="exercise-input flex-1 min-w-[150px]" value="Жим лежа">';
+                html += '<input type="number" placeholder="Подход" class="exercise-input w-20" value="1">';
+                html += '<input type="number" placeholder="Повторения" class="exercise-input w-24" value="10">';
+                html += '<input type="number" placeholder="Вес (кг)" class="exercise-input w-24" value="80" step="0.5">';
+                html += '<button onclick="removeExercise(this)" class="text-red-500 hover:text-red-600 px-2">✕</button></div>';
+                html += '<button onclick="addSet(this)" class="text-sm text-blue-600 hover:text-blue-700">+ Добавить подход</button></div>';
+            }
+            
+            html += '</div>';
+            html += '<button onclick="addExercise()" class="text-sm bg-slate-100 hover:bg-slate-200 px-4 py-2 rounded-lg mt-3 transition">➕ Добавить упражнение</button>';
+            html += '<div class="mt-4"><label class="block text-sm font-medium text-slate-700 mb-1">Заметки</label>';
+            html += '<textarea id="sessionNotes" class="w-full p-3 border border-slate-200 rounded-lg text-sm" rows="2" placeholder="Заметки..."></textarea></div>';
+            html += '<div class="mt-4 flex gap-3">';
+            html += '<button onclick="saveSession()" class="btn bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-medium">💾 Сохранить</button>';
+            
+            if (hasExistingData) {
+                html += '<button onclick="finishCurrentSession()" class="btn bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-2 rounded-lg font-medium">✅ Завершить</button>';
+            }
+            
+            html += '<button onclick="closeSessionModal()" class="btn bg-slate-200 hover:bg-slate-300 text-slate-700 px-6 py-2 rounded-lg font-medium">✕ Закрыть</button></div>';
+            
+            container.innerHTML = html;
+        } catch (error) {
+            console.error('❌ Ошибка загрузки деталей:', error);
+            container.innerHTML = '<div class="text-center py-8 text-red-500">❌ Ошибка загрузки данных</div>';
+        }
+    }
+
+    // ==========================================
+    // 5. ДОБАВЛЕНИЕ УПРАЖНЕНИЙ И ПОДХОДОВ
+    // ==========================================
+    function addExercise() {
+        var container = document.getElementById('exercisesContainer');
+        if (!container) return;
+        var div = document.createElement('div');
+        div.className = 'exercise-row';
+        div.innerHTML = 
+            '<div class="flex flex-wrap gap-2 mb-2">' +
+                '<input type="text" placeholder="Упражнение" class="exercise-input flex-1 min-w-[150px]" value="">' +
+                '<input type="number" placeholder="Подход" class="exercise-input w-20" value="1">' +
+                '<input type="number" placeholder="Повторения" class="exercise-input w-24" value="10">' +
+                '<input type="number" placeholder="Вес (кг)" class="exercise-input w-24" value="80" step="0.5">' +
+                '<button onclick="removeExercise(this)" class="text-red-500 hover:text-red-600 px-2">✕</button>' +
+            '</div>' +
+            '<button onclick="addSet(this)" class="text-sm text-blue-600 hover:text-blue-700">+ Добавить подход</button>';
+        container.appendChild(div);
+    }
+
+    function addSet(btn) {
+        var row = btn.closest('.exercise-row');
+        if (!row) return;
+        var setsContainer = row.querySelector('.sets-container');
+        if (!setsContainer) {
+            var div = document.createElement('div');
+            div.className = 'sets-container space-y-1 mt-1';
+            row.appendChild(div);
+            setsContainer = div;
+        }
+        var num = setsContainer.children.length + 1;
+        var setDiv = document.createElement('div');
+        setDiv.className = 'flex flex-wrap gap-2 items-center';
+        setDiv.innerHTML = 
+            '<span class="text-xs text-slate-400 w-6">#' + num + '</span>' +
+            '<input type="number" placeholder="Повторения" class="exercise-input w-24" value="10">' +
+            '<input type="number" placeholder="Вес" class="exercise-input w-24" value="80" step="0.5">' +
+            '<button onclick="removeSet(this)" class="text-red-400 hover:text-red-600 text-sm">✕</button>';
+        setsContainer.appendChild(setDiv);
+    }
+
+    function removeSet(btn) {
+        var row = btn.closest('.exercise-row');
+        if (!row) return;
+        var container = row.querySelector('.sets-container');
+        if (container && container.children.length > 0) {
+            btn.closest('div').remove();
+            var items = container.querySelectorAll('div');
+            for (var i = 0; i < items.length; i++) {
+                var span = items[i].querySelector('span');
+                if (span) span.textContent = '#' + (i + 1);
+            }
+        }
+    }
+
+    function removeExercise(btn) {
+        var row = btn.closest('.exercise-row');
+        if (!row) return;
+        var container = document.getElementById('exercisesContainer');
+        if (container && container.children.length > 1) {
+            row.remove();
+        } else {
+            showToast('Должно быть хотя бы одно упражнение', 'error');
+        }
+    }
+
+    function closeSessionModal() {
+        var modal = document.getElementById('sessionModal');
+        if (modal) modal.style.display = 'none';
+        currentSessionId = null;
+        finishButtonAdded = false;
+    }
+
+    // ==========================================
+    // 6. СОХРАНИТЬ ТРЕНИРОВКУ
+    // ==========================================
+    async function saveSession() {
+        console.log('💾 ===== СОХРАНЕНИЕ ТРЕНИРОВКИ =====');
+        console.log('💾 session_id:', currentSessionId);
+        
+        if (!currentSessionId) {
+            showToast('Ошибка: ID тренировки не найден', 'error');
+            return;
+        }
+        
+        var exercises = [];
+        var rows = document.querySelectorAll('#exercisesContainer .exercise-row');
+        console.log('💾 Найдено строк упражнений:', rows.length);
+        
+        for (var i = 0; i < rows.length; i++) {
+            var row = rows[i];
+            var inputs = row.querySelectorAll('input');
+            var exerciseName = inputs[0].value.trim();
+            
+            console.log('💾 Упражнение ' + (i+1) + ':', exerciseName);
+            
+            if (!exerciseName) continue;
+            
+            var sets = [];
+            var setContainers = row.querySelectorAll('.sets-container div');
+            
+            if (setContainers.length > 0) {
+                console.log('💾   Найдено подходов:', setContainers.length);
+                for (var j = 0; j < setContainers.length; j++) {
+                    var setInputs = setContainers[j].querySelectorAll('input');
+                    if (setInputs.length >= 2) {
+                        var reps = parseInt(setInputs[0].value) || 0;
+                        var weight = parseFloat(setInputs[1].value) || 0;
+                        console.log('💾   Подход ' + (j+1) + ': reps=' + reps + ', weight=' + weight);
+                        sets.push({
+                            set_number: j + 1,
+                            reps: reps,
+                            weight: weight
+                        });
+                    }
+                }
+            } else {
+                if (inputs.length >= 4) {
+                    var setNum = parseInt(inputs[1].value) || 1;
+                    var reps = parseInt(inputs[2].value) || 0;
+                    var weight = parseFloat(inputs[3].value) || 0;
+                    console.log('💾   Основной подход: set=' + setNum + ', reps=' + reps + ', weight=' + weight);
+                    sets.push({
+                        set_number: setNum,
+                        reps: reps,
+                        weight: weight
+                    });
+                }
+            }
+            
+            if (sets.length > 0) {
+                exercises.push({ name: exerciseName, sets: sets });
+                console.log('✅ Добавлено упражнение:', exerciseName, 'с', sets.length, 'подходами');
+            }
+        }
+        
+        console.log('💾 Итого упражнений для сохранения:', exercises.length);
+        console.log('💾 Данные для отправки:', JSON.stringify(exercises, null, 2));
+        
+        if (exercises.length === 0) {
+            showToast('❌ Добавьте хотя бы одно упражнение с подходами!', 'error');
+            return;
+        }
+        
+        var btn = document.querySelector('#sessionModalContent .btn-blue-600');
+        if (btn) {
+            btn.disabled = true;
+            btn.textContent = '⏳ Сохранение...';
+        }
+        
+        try {
+            var url = API_BASE + '/coach/sessions/' + currentSessionId + '/start';
+            console.log('💾 URL запроса:', url);
+            console.log('💾 Тело запроса:', JSON.stringify(exercises));
+            
+            var res = await fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(exercises)
+            });
+            
+            console.log('💾 Статус ответа:', res.status);
+            var result = await res.json();
+            console.log('💾 Ответ сервера:', result);
+            
+            if (res.ok) {
+                showToast('✅ Сохранено ' + (result.added_count || 0) + ' подходов!', 'success');
+                
+                if (!finishButtonAdded) {
+                    var buttonContainer = document.querySelector('#sessionModalContent .flex.gap-3');
+                    if (buttonContainer) {
+                        var existingFinishBtn = buttonContainer.querySelector('.btn-emerald-600');
+                        if (!existingFinishBtn) {
+                            var finishBtn = document.createElement('button');
+                            finishBtn.className = 'btn bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-2 rounded-lg font-medium';
+                            finishBtn.textContent = '✅ Завершить';
+                            finishBtn.onclick = finishCurrentSession;
+                            var closeBtn = buttonContainer.querySelector('.btn-slate-200');
+                            if (closeBtn) {
+                                buttonContainer.insertBefore(finishBtn, closeBtn);
+                            } else {
+                                buttonContainer.appendChild(finishBtn);
+                            }
+                            finishButtonAdded = true;
+                            console.log('✅ Кнопка "Завершить" добавлена!');
+                        }
+                    }
+                }
+                
+                await loadActiveSessions();
+            } else {
+                showToast('❌ Ошибка: ' + (result.message || result.detail || 'Не удалось сохранить'), 'error');
+            }
+        } catch (error) {
+            console.error('❌ Ошибка:', error);
+            showToast('❌ Ошибка: ' + error.message, 'error');
+        } finally {
+            if (btn) {
+                btn.disabled = false;
+                btn.textContent = '💾 Сохранить';
+            }
+        }
+    }
+
+    // ==========================================
+    // 7. ЗАВЕРШИТЬ ТРЕНИРОВКУ
+    // ==========================================
+    async function finishCurrentSession() {
+        if (!currentSessionId) {
+            showToast('Ошибка: ID тренировки не найден', 'error');
+            return;
+        }
+        
+        if (!confirm('✅ Завершить тренировку?')) return;
+        
+        var btn = document.querySelector('#sessionModalContent .btn-emerald-600');
+        if (btn) {
+            btn.disabled = true;
+            btn.textContent = '⏳ Завершение...';
+        }
+        
+        try {
+            var checkRes = await fetch(API_BASE + '/coach/sessions/' + currentSessionId + '/details');
+            var checkResult = await checkRes.json();
+            
+            if (checkResult.status === 'success' && checkResult.data && checkResult.data.length === 0) {
+                showToast('❌ Нет упражнений для завершения тренировки!', 'error');
+                if (btn) {
+                    btn.disabled = false;
+                    btn.textContent = '✅ Завершить';
+                }
+                return;
+            }
+            
+            var notes = document.getElementById('sessionNotes') ? 
+                document.getElementById('sessionNotes').value : 
+                'Тренировка завершена';
+            
+            var finishUrl = API_BASE + '/coach/sessions/' + currentSessionId + '/finish';
+            console.log('🏁 Завершение URL:', finishUrl);
+            
+            var finishRes = await fetch(finishUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ notes: notes })
+            });
+            
+            var finishResult = await finishRes.json();
+            console.log('🏁 Результат завершения:', finishResult);
+            
+            if (finishRes.ok) {
+                showToast('✅ Тренировка завершена! ' + (finishResult.exercises_count || 0) + ' упражнений сохранено.', 'success');
+                closeSessionModal();
+                await loadActiveSessions();
+            } else {
+                showToast('❌ Ошибка завершения: ' + (finishResult.message || finishResult.detail || 'Не удалось завершить'), 'error');
+            }
+        } catch (error) {
+            console.error('❌ Ошибка:', error);
+            showToast('❌ Ошибка: ' + error.message, 'error');
+        } finally {
+            if (btn) {
+                btn.disabled = false;
+                btn.textContent = '✅ Завершить';
+            }
+        }
+    }
+
+    // ==========================================
+    // 8. ЦЕЛИ ТРЕНЕРА
+    // ==========================================
+    async function loadCoachGoals() {
+        if (!currentCoachId) return;
+        try {
+            var res = await fetch(API_BASE + '/coach/' + currentCoachId + '/goals');
+            var result = await res.json();
+            var container = document.getElementById('coachGoalsList');
+            if (!container) return;
+            
+            if (result.status === 'success' && result.data && result.data.length > 0) {
+                var html = '';
+                for (var i = 0; i < result.data.length; i++) {
+                    var goal = result.data[i];
+                    var progressPercent = goal.target_value > 0 ? Math.min((goal.current_value || 0) / goal.target_value * 100, 100) : 0;
+                    var statusClass = goal.status === 'active' ? 'bg-blue-100 text-blue-700' : 
+                                     goal.status === 'achieved' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700';
+                    
+                    html += '<div class="border border-slate-200 rounded-xl p-4 mb-3 bg-white hover:shadow-md transition-all">' +
+                        '<div class="flex justify-between items-start flex-wrap gap-2">' +
+                            '<div>' +
+                                '<div class="font-semibold text-slate-800">' + (goal.exercise_name || 'Общая цель') +
+                                '<span class="text-xs font-normal text-slate-400 ml-2">' + 
+                                    (goal.goal_type === 'weight' ? '🏋️ Вес' : goal.goal_type === 'reps' ? '🔁 Повторения' : '⏱️ Время') +
+                                '</span></div>' +
+                                (goal.description ? '<p class="text-sm text-slate-500">' + goal.description + '</p>' : '') +
+                                '<div class="text-sm text-slate-500 mt-1">🎯 ' + goal.target_value + 
+                                (goal.goal_type === 'weight' ? ' кг' : goal.goal_type === 'reps' ? ' повторений' : ' мин') +
+                                (goal.current_value ? ' | 📊 Текущий: ' + goal.current_value : '') +
+                                (goal.target_date ? ' | 📅 до ' + formatDate(goal.target_date) : '') + '</div>' +
+                            '</div>' +
+                            '<div class="flex items-center gap-2 flex-wrap">' +
+                                '<span class="text-xs px-3 py-1 rounded-full font-medium ' + statusClass + '">' + (goal.status_display || goal.status) + '</span>' +
+                                (goal.status === 'active' ? '<button onclick="showAddCoachProgress(' + goal.id + ')" class="text-xs bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded-lg transition">➕ Прогресс</button>' : '') +
+                                '<button onclick="deleteCoachGoal(' + goal.id + ')" class="text-xs bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-lg transition">✕</button>' +
+                            '</div>' +
+                        '</div>' +
+                        '<div class="mt-3"><div class="flex justify-between text-xs text-slate-400 mb-1"><span>Прогресс</span><span>' + Math.round(progressPercent) + '%</span></div>' +
+                        '<div class="w-full bg-slate-200 rounded-full h-2 overflow-hidden"><div class="h-full rounded-full transition-all duration-500 ' + (progressPercent >= 100 ? 'bg-green-500' : 'bg-purple-500') + '" style="width: ' + progressPercent + '%;"></div></div></div>' +
+                        (goal.last_progress_value ? '<div class="text-xs text-slate-400 mt-2">Последнее обновление: ' + goal.last_progress_value + 
+                            (goal.goal_type === 'weight' ? ' кг' : goal.goal_type === 'reps' ? ' повторений' : ' мин') +
+                            (goal.last_progress_date ? ' (' + formatDate(goal.last_progress_date) + ')' : '') + '</div>' : '') +
+                    '</div>';
+                }
+                container.innerHTML = html;
+            } else {
+                container.innerHTML = '<div class="text-center py-8 text-slate-400"><span class="text-3xl block mb-2">🎯</span><p>У вас пока нет целей</p><p class="text-sm mt-1">Создайте первую цель и начните отслеживать прогресс!</p></div>';
+            }
+        } catch (e) {
+            console.error('❌ Ошибка загрузки целей:', e);
+            container.innerHTML = '<div class="text-center py-8 text-red-500">❌ Ошибка загрузки</div>';
+        }
+    }
+
+    function showAddCoachProgress(goalId) {
+        var value = prompt('Введите текущее значение:');
+        if (value === null) return;
+        var numValue = parseFloat(value);
+        if (isNaN(numValue) || numValue < 0) { alert('Введите корректное число'); return; }
+        addCoachGoalProgress(goalId, numValue);
+    }
+
+    async function addCoachGoalProgress(goalId, value) {
+        try {
+            var res = await fetch(API_BASE + '/coach/goals/' + goalId + '/progress', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ value: value })
+            });
+            var result = await res.json();
+            if (res.ok) { showToast('✅ Прогресс обновлен!', 'success'); loadCoachGoals(); }
+            else { showToast('❌ ' + (result.detail || 'Ошибка'), 'error'); }
+        } catch (e) { console.error(e); showToast('❌ Ошибка', 'error'); }
+    }
+
+    async function deleteCoachGoal(goalId) {
+        if (!confirm('Вы уверены?')) return;
+        try {
+            var res = await fetch(API_BASE + '/coach/goals/' + goalId, { method: 'DELETE' });
+            if (res.ok) { showToast('✅ Цель удалена', 'success'); loadCoachGoals(); }
+            else { var result = await res.json(); showToast('❌ ' + (result.detail || 'Ошибка'), 'error'); }
+        } catch (e) { console.error(e); showToast('❌ Ошибка', 'error'); }
+    }
+
+    document.getElementById('coachGoalForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        var exercise = document.getElementById('coachGoalExercise').value.trim();
+        var goalType = document.getElementById('coachGoalType').value;
+        var targetValue = parseFloat(document.getElementById('coachGoalTarget').value);
+        var targetDate = document.getElementById('coachGoalDate').value;
+        var description = document.getElementById('coachGoalDesc').value.trim();
+        if (!exercise) { showToast('⚠️ Введите название упражнения', 'error'); return; }
+        if (!targetValue || targetValue <= 0) { showToast('⚠️ Введите корректное целевое значение', 'error'); return; }
+        var btn = this.querySelector('button[type="submit"]');
+        btn.disabled = true; btn.textContent = '⏳ Создание...';
+        try {
+            var res = await fetch(API_BASE + '/coach/' + currentCoachId + '/goals', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ exercise_name: exercise, goal_type: goalType, target_value: targetValue, target_date: targetDate || null, description: description || null })
+            });
+            var result = await res.json();
+            if (res.ok) { showToast('✅ Цель создана!', 'success'); this.reset(); loadCoachGoals(); }
+            else { showToast('❌ ' + (result.detail || 'Ошибка'), 'error'); }
+        } catch (e) { console.error(e); showToast('❌ Не удалось создать цель', 'error'); }
+        finally { btn.disabled = false; btn.textContent = '🎯 Создать цель'; }
+    });
+
+    // ==========================================
+    // 9. ОТЗЫВЫ ТРЕНЕРА
+    // ==========================================
+    function filterFeedback(filter) {
+        currentFeedbackFilter = filter;
+        
+        // Обновляем активную кнопку
+        var buttons = [
+            document.getElementById('fbFilterAll'),
+            document.getElementById('fbFilterMy'),
+            document.getElementById('fbFilterClient')
+        ];
+        
+        buttons.forEach(function(btn) {
+            if (btn) {
+                btn.classList.remove('bg-blue-500', 'text-white');
+                btn.classList.add('bg-slate-200', 'text-slate-700');
+            }
+        });
+        
+        var activeBtn = document.getElementById('fbFilter' + (filter === 'all' ? 'All' : filter === 'my' ? 'My' : 'Client'));
+        if (activeBtn) {
+            activeBtn.classList.remove('bg-slate-200', 'text-slate-700');
+            activeBtn.classList.add('bg-blue-500', 'text-white');
+        }
+        
+        renderFilteredFeedbacks();
+    }
+
+    function renderFilteredFeedbacks() {
+        var container = document.getElementById('coachFeedbackList');
+        if (!container) return;
+        
+        var filtered = allFeedbacks;
+        if (currentFeedbackFilter === 'my') {
+            filtered = allFeedbacks.filter(function(f) { return f.feedback_source === 'my'; });
+        } else if (currentFeedbackFilter === 'client') {
+            filtered = allFeedbacks.filter(function(f) { return f.feedback_source === 'client'; });
+        }
+        
+        var countEl = document.getElementById('feedbackCount');
+        if (countEl) countEl.textContent = filtered.length + ' отзывов';
+        
+        if (filtered.length === 0) {
+            var message = currentFeedbackFilter === 'all' ? 'Нет отзывов' :
+                         currentFeedbackFilter === 'my' ? 'У вас пока нет своих отзывов' :
+                         'У ваших клиентов пока нет отзывов';
+            container.innerHTML = '<div class="text-center py-8 text-slate-400"><span class="text-3xl block mb-2">💬</span><p>' + message + '</p></div>';
+            return;
+        }
+        
+        var html = '';
+        for (var i = 0; i < filtered.length; i++) {
+            var f = filtered[i];
+            var isMy = f.feedback_source === 'my';
+            var sourceLabel = isMy ? '👤 Мой отзыв' : '👤 Отзыв клиента';
+            var sourceColor = isMy ? 'border-blue-400' : 'border-emerald-400';
+            
+            html += '<div class="feedback-item mb-3 border-l-4 ' + sourceColor + '">' +
+                '<div class="flex justify-between items-start flex-wrap gap-2">' +
+                    '<div>' +
+                        '<span class="font-semibold text-slate-800">' + formatDateTime(f.session_datetime) + '</span>' +
+                        '<span class="text-xs text-slate-400 ml-2">' + (f.session_type || 'Тренировка') + '</span>' +
+                        (isMy ? '' : '<span class="text-xs bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded ml-2">' + f.client_name + '</span>') +
+                    '</div>' +
+                    '<div class="flex items-center gap-2 flex-wrap">' +
+                        '<span class="text-sm stars">' + getStars(f.wellbeing_score || 0) + '</span>' +
+                        '<span class="text-xs px-2 py-0.5 rounded-full ' + (isMy ? 'bg-blue-100 text-blue-700' : 'bg-emerald-100 text-emerald-700') + '">' + sourceLabel + '</span>' +
+                    '</div>' +
+                '</div>' +
+                (f.client_feedback ? '<p class="text-slate-600 text-sm mt-1">"' + f.client_feedback + '"</p>' : '') +
+            '</div>';
+        }
+        container.innerHTML = html;
+    }
+
+    async function loadAllCoachFeedback() {
+        if (!currentCoachId) return;
+        try {
+            var res = await fetch(API_BASE + '/coach/' + currentCoachId + '/all-feedback');
+            var result = await res.json();
+            if (result.status === 'success' && result.data) {
+                allFeedbacks = result.data;
+                renderFilteredFeedbacks();
+            } else {
+                allFeedbacks = [];
+                renderFilteredFeedbacks();
+            }
+        } catch (e) {
+            console.error('❌ Ошибка загрузки отзывов:', e);
+            document.getElementById('coachFeedbackList').innerHTML = '<div class="text-center py-8 text-red-500">❌ Ошибка загрузки</div>';
+        }
+    }
+
+    async function loadCoachSessionsForFeedback() {
+        if (!currentCoachId) return;
+        try {
+            var res = await fetch(API_BASE + '/coach/' + currentCoachId + '/sessions');
+            var result = await res.json();
+            var select = document.getElementById('coachFeedbackSession');
+            if (!select) return;
+            if (result.status === 'success' && result.data && result.data.length > 0) {
+                var noFeedback = result.data.filter(function(s) { return !s.client_feedback; });
+                if (noFeedback.length === 0) {
+                    select.innerHTML = '<option value="">✅ Все тренировки уже оценены</option>';
+                    return;
+                }
+                select.innerHTML = '<option value="">-- Выберите тренировку --</option>' + 
+                    noFeedback.map(function(s) {
+                        return '<option value="' + s.session_id + '">' + formatDateTime(s.session_datetime) + ' - ' + (s.session_type || 'Тренировка') + '</option>';
+                    }).join('');
+            } else {
+                select.innerHTML = '<option value="">Нет тренировок</option>';
+            }
+        } catch (e) { console.error(e); select.innerHTML = '<option value="">Ошибка загрузки</option>'; }
+    }
+
+    document.getElementById('coachFeedbackForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        var sessionId = document.getElementById('coachFeedbackSession').value;
+        var score = parseInt(document.getElementById('coachFeedbackScore').value);
+        var text = document.getElementById('coachFeedbackText').value.trim();
+        if (!sessionId) { showToast('Выберите тренировку', 'error'); return; }
+        if (!text) { showToast('Напишите комментарий', 'error'); return; }
+        var btn = this.querySelector('button[type="submit"]');
+        btn.disabled = true; btn.textContent = '⏳ Отправка...';
+        try {
+            var res = await fetch(API_BASE + '/coach/sessions/' + sessionId + '/feedback', {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ feedback_text: text, wellbeing_score: score })
+            });
+            var result = await res.json();
+            if (res.ok) { 
+                showToast('✅ Спасибо за отзыв!', 'success'); 
+                this.reset(); 
+                loadCoachSessionsForFeedback(); 
+                loadAllCoachFeedback(); 
+            } else { 
+                showToast('❌ ' + (result.detail || 'Ошибка'), 'error'); 
+            }
+        } catch (e) { console.error(e); showToast('❌ Ошибка', 'error'); }
+        finally { btn.disabled = false; btn.textContent = '📝 Отправить отзыв'; }
+    });
+
+    // ==========================================
+    // 10. ИНИЦИАЛИЗАЦИЯ
+    // ==========================================
+    window.onload = async function() {
+        loadTheme();
+        var userData = sessionStorage.getItem('user');
+        if (!userData) { window.location.href = '/login.html'; return; }
+        try {
+            currentUser = JSON.parse(userData);
+            if (currentUser.role !== 'trainer') {
+                showToast('⚠️ У вас нет доступа к панели тренера', 'error');
+                setTimeout(function() { window.location.href = '/login.html'; }, 2000);
+                return;
+            }
+            var coachId = await getCoachIdFromUser(currentUser.id);
+            if (coachId) {
+                currentCoachId = coachId;
+                document.getElementById('coachId').value = coachId;
+                document.getElementById('coachNameDisplay').textContent = '👨‍🏫 ID: ' + coachId + ' (загрузка...)';
+                await loadCoachFullProfile();
+                await loadClients();
+                await loadActiveSessions();
+                await loadCoachGoals();
+                await loadCoachSessionsForFeedback();
+                await loadAllCoachFeedback();
+            } else {
+                document.getElementById('coachNameDisplay').textContent = '⚠️ Тренер не найден';
+                showToast('Ошибка: тренер не найден для вашего аккаунта', 'error');
+            }
+        } catch (e) { console.error(e); showToast('Ошибка загрузки данных', 'error'); }
+    };
+</script>
+</body>
+</html>

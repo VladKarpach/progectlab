@@ -1,0 +1,2255 @@
+<!DOCTYPE html>
+<html lang="ru" id="htmlRoot">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Личный кабинет клиента | Fitness Club</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-body: #f0f4f8;
+            --bg-card: #ffffff;
+            --bg-header: #ffffff;
+            --text-primary: #1a202c;
+            --text-secondary: #4a5568;
+            --text-muted: #a0aec0;
+            --border-color: rgba(226, 232, 240, 0.6);
+            --border-card: #e2e8f0;
+            --bg-info: #f7fafc;
+            --shadow: 0 1px 3px rgba(0,0,0,0.06);
+            --badge-bg: #e2e8f0;
+            --badge-text: #4a5568;
+            --trainer-bg: #f7fafc;
+            --goal-bg: #f7fafc;
+            --input-bg: white;
+            --input-border: #e2e8f0;
+            --session-hover: #f7fafc;
+            --feedback-bg: #f7fafc;
+            --modal-bg: white;
+            --modal-shadow: 0 8px 32px rgba(0,0,0,0.2);
+            --toast-bg: white;
+            --toast-shadow: 0 8px 32px rgba(0,0,0,0.15);
+            --chat-mine: #667eea;
+            --chat-other: #f0f4f8;
+        }
+        
+        [data-theme="dark"] {
+            --bg-body: #0f172a;
+            --bg-card: #1e293b;
+            --bg-header: #1e293b;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --border-color: rgba(51, 65, 85, 0.6);
+            --border-card: #334155;
+            --bg-info: #2d3748;
+            --shadow: 0 1px 3px rgba(0,0,0,0.3);
+            --badge-bg: #334155;
+            --badge-text: #94a3b8;
+            --trainer-bg: #2d3748;
+            --goal-bg: #2d3748;
+            --input-bg: #2d3748;
+            --input-border: #475569;
+            --session-hover: #2d3748;
+            --feedback-bg: #2d3748;
+            --modal-bg: #1e293b;
+            --modal-shadow: 0 8px 32px rgba(0,0,0,0.4);
+            --toast-bg: #1e293b;
+            --toast-shadow: 0 8px 32px rgba(0,0,0,0.4);
+            --chat-mine: #4f46e5;
+            --chat-other: #334155;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
+            background: var(--bg-body); 
+            color: var(--text-primary); 
+            min-height: 100vh; 
+            padding: 24px; 
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+        .container { max-width: 1280px; margin: 0 auto; }
+        
+        .header { 
+            background: var(--bg-header); 
+            border-radius: 20px; 
+            padding: 24px 32px; 
+            margin-bottom: 32px; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            flex-wrap: wrap; 
+            gap: 16px; 
+            box-shadow: var(--shadow); 
+            border: 1px solid var(--border-color); 
+            transition: background 0.3s ease, border-color 0.3s ease;
+        }
+        .header-left { display: flex; align-items: center; gap: 16px; }
+        .header-icon { width: 48px; height: 48px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 24px; color: white; }
+        .header-title h1 { font-size: 24px; font-weight: 800; color: var(--text-primary); transition: color 0.3s ease; }
+        .header-title p { font-size: 14px; color: var(--text-secondary); transition: color 0.3s ease; margin-top: 2px; }
+        
+        .header-actions { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+        .theme-toggle {
+            background: var(--bg-info);
+            border: 1px solid var(--border-card);
+            border-radius: 50px;
+            width: 44px;
+            height: 44px;
+            cursor: pointer;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            color: var(--text-primary);
+        }
+        .theme-toggle:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); background: var(--border-card); }
+        .theme-toggle:active { transform: scale(0.93); }
+        
+        .client-badge { 
+            display: flex; 
+            align-items: center; 
+            gap: 12px; 
+            background: var(--bg-info); 
+            padding: 6px 16px 6px 12px; 
+            border-radius: 50px; 
+            border: 1px solid var(--border-card); 
+            transition: background 0.3s ease, border-color 0.3s ease;
+        }
+        .client-avatar { width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 16px; }
+        .client-name { font-weight: 600; font-size: 15px; color: var(--text-primary); transition: color 0.3s ease; }
+        .client-id { font-size: 12px; color: var(--text-muted); transition: color 0.3s ease; }
+        .status-dot { width: 10px; height: 10px; border-radius: 50%; background: #48bb78; display: inline-block; animation: pulse 2s infinite; }
+        
+        .logout-btn {
+            background: #fee2e2;
+            color: #991b1b;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .logout-btn:hover { background: #fecaca; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(239, 68, 68, 0.15); }
+        .logout-btn:active { transform: scale(0.97); }
+        
+        @keyframes pulse { 0% { opacity: 1; transform: scale(1); } 50% { opacity: 0.6; transform: scale(0.9); } 100% { opacity: 1; transform: scale(1); } }
+        
+        .alert { padding: 14px 20px; border-radius: 12px; margin-bottom: 24px; display: none; font-weight: 500; font-size: 14px; }
+        .alert-success { background: #c6f6d5; color: #22543d; display: block; }
+        .alert-error { background: #fed7d7; color: #9b2c2c; display: block; }
+        .alert-info { background: #bee3f8; color: #2a4365; display: block; }
+        
+        .tabs-container {
+            background: var(--bg-card);
+            border-radius: 20px;
+            padding: 6px;
+            margin-bottom: 24px;
+            border: 1px solid var(--border-card);
+            display: flex;
+            overflow-x: auto;
+            gap: 4px;
+        }
+        .tab-btn {
+            padding: 12px 28px;
+            border: none;
+            background: transparent;
+            font-weight: 600;
+            font-size: 15px;
+            color: var(--text-muted);
+            cursor: pointer;
+            border-radius: 14px;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            font-family: inherit;
+        }
+        .tab-btn:hover { color: var(--text-primary); background: var(--bg-info); }
+        .tab-btn.active { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; box-shadow: 0 4px 16px rgba(102, 126, 234, 0.3); }
+        
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        
+        .card { 
+            background: var(--bg-card); 
+            border-radius: 20px; 
+            padding: 28px; 
+            box-shadow: var(--shadow); 
+            border: 1px solid var(--border-card); 
+            transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+            margin-bottom: 24px;
+        }
+        .card:last-child { margin-bottom: 0; }
+        .card-header { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid var(--border-card); transition: border-color 0.3s ease; flex-wrap: wrap; }
+        .card-header-icon { width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+        .card-header-icon.purple { background: #f3e8ff; }
+        .card-header-icon.green { background: #e6fffa; }
+        .card-header-icon.blue { background: #ebf8ff; }
+        .card-header-icon.orange { background: #fffaeb; }
+        .card-header-icon.pink { background: #fce4ec; }
+        .card-header-icon.indigo { background: #e0e7ff; }
+        .card-header h2 { font-size: 18px; font-weight: 700; color: var(--text-primary); transition: color 0.3s ease; }
+        .card-header .subtitle { font-size: 13px; color: var(--text-muted); font-weight: 400; margin-top: 1px; transition: color 0.3s ease; }
+        .card-header .btn-create {
+            margin-left: auto;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-family: inherit;
+        }
+        .card-header .btn-create:hover { transform: translateY(-2px); box-shadow: 0 4px 16px rgba(102,126,234,0.3); }
+        .card-header .btn-create:active { transform: scale(0.97); }
+        
+        .grid-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+        @media (max-width: 900px) { .grid-2col { grid-template-columns: 1fr; } }
+        
+        .membership-card { border-left: 5px solid #48bb78; }
+        .membership-card.expired { border-left-color: #fc8181; }
+        
+        .membership-info { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        @media (max-width: 480px) { .membership-info { grid-template-columns: 1fr; } }
+        
+        .info-item { background: var(--bg-info); padding: 12px 16px; border-radius: 12px; transition: background 0.3s ease; }
+        .info-item .label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); transition: color 0.3s ease; }
+        .info-item .value { font-size: 16px; font-weight: 600; color: var(--text-primary); margin-top: 4px; transition: color 0.3s ease; }
+        .info-item .value .badge { font-size: 12px; font-weight: 600; padding: 2px 10px; border-radius: 50px; display: inline-block; }
+        .badge-success { background: #c6f6d5; color: #22543d; }
+        .badge-danger { background: #fed7d7; color: #9b2c2c; }
+        .badge-info { background: #bee3f8; color: #2a4365; }
+        .badge-warning { background: #feebc8; color: #7b341e; }
+        
+        .trainer-card { 
+            display: flex; 
+            align-items: center; 
+            gap: 20px; 
+            padding: 16px; 
+            background: var(--trainer-bg); 
+            border-radius: 16px; 
+            border: 1px solid var(--border-card); 
+            transition: background 0.3s ease, border-color 0.3s ease;
+        }
+        .trainer-avatar { width: 64px; height: 64px; border-radius: 50%; background: linear-gradient(135deg, #48bb78 0%, #38a169 100%); color: white; display: flex; align-items: center; justify-content: center; font-size: 26px; font-weight: 700; flex-shrink: 0; }
+        .trainer-info h3 { font-size: 18px; font-weight: 700; color: var(--text-primary); transition: color 0.3s ease; }
+        .trainer-info .specialization { display: inline-block; background: var(--badge-bg); padding: 2px 12px; border-radius: 50px; font-size: 12px; font-weight: 600; color: var(--badge-text); margin-top: 4px; transition: background 0.3s ease, color 0.3s ease; }
+        .trainer-info .detail { font-size: 14px; color: var(--text-secondary); margin-top: 6px; transition: color 0.3s ease; }
+        .trainer-info .detail span { display: inline-flex; align-items: center; gap: 4px; margin-right: 16px; }
+        
+        .progress-controls { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 20px; align-items: center; }
+        .progress-controls label { font-size: 14px; font-weight: 500; color: var(--text-secondary); transition: color 0.3s ease; }
+        .progress-select { 
+            padding: 8px 16px; 
+            border: 2px solid var(--input-border); 
+            border-radius: 10px; 
+            font-size: 14px; 
+            font-weight: 500; 
+            background: var(--input-bg); 
+            color: var(--text-primary); 
+            outline: none; 
+            cursor: pointer; 
+            font-family: inherit; 
+            min-width: 180px; 
+            transition: background 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+        }
+        .progress-select:focus { border-color: #667eea; }
+        .progress-select option { background: var(--bg-card); color: var(--text-primary); }
+        
+        .table-wrapper { overflow-x: auto; border-radius: 12px; border: 1px solid var(--border-card); transition: border-color 0.3s ease; }
+        .progress-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+        .progress-table th { background: var(--bg-info); padding: 14px 16px; text-align: left; font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-secondary); border-bottom: 2px solid var(--border-card); transition: background 0.3s ease, color 0.3s ease, border-color 0.3s ease; }
+        .progress-table td { padding: 14px 16px; border-bottom: 1px solid var(--border-card); color: var(--text-primary); transition: color 0.3s ease, border-color 0.3s ease; }
+        .progress-table tr:last-child td { border-bottom: none; }
+        .progress-table tr:hover td { background: var(--bg-info); transition: background 0.3s ease; }
+        .progress-table .exercise-name { font-weight: 600; color: var(--text-primary); transition: color 0.3s ease; }
+        .progress-positive { color: #48bb78; font-weight: 600; }
+        .progress-negative { color: #fc8181; font-weight: 600; }
+        .progress-neutral { color: var(--text-muted); font-weight: 600; transition: color 0.3s ease; }
+        
+        .stats-summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-bottom: 20px; }
+        .stat-summary-item { background: var(--bg-info); padding: 14px 16px; border-radius: 12px; text-align: center; transition: background 0.3s ease; }
+        .stat-summary-item .number { font-size: 24px; font-weight: 700; color: var(--text-primary); transition: color 0.3s ease; }
+        .stat-summary-item .label { font-size: 12px; color: var(--text-muted); margin-top: 2px; transition: color 0.3s ease; }
+        
+        .no-data-message { text-align: center; padding: 40px 20px; color: var(--text-muted); transition: color 0.3s ease; }
+        .no-data-message .emoji { font-size: 48px; display: block; margin-bottom: 12px; }
+        .text-muted { color: var(--text-muted); text-align: center; padding: 20px 0; transition: color 0.3s ease; }
+        
+        .session-item { padding: 16px; border-bottom: 1px solid var(--border-card); transition: border-color 0.3s ease; }
+        .session-item:last-child { border-bottom: none; }
+        .session-item:hover { background: var(--session-hover); border-radius: 12px; transition: background 0.3s ease; }
+        .session-top { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 8px; }
+        .session-date { font-weight: 600; color: var(--text-primary); font-size: 15px; transition: color 0.3s ease; }
+        .session-badges { display: flex; flex-wrap: wrap; gap: 6px; }
+        .session-badge { font-size: 11px; font-weight: 600; padding: 3px 12px; border-radius: 50px; background: var(--badge-bg); color: var(--badge-text); transition: background 0.3s ease, color 0.3s ease; }
+        .session-badge.type { background: #ebf8ff; color: #2a4365; }
+        .session-badge.feedback { background: #c6f6d5; color: #22543d; }
+        .session-badge.no-feedback { background: #feebc8; color: #7b341e; }
+        .session-details { margin-top: 8px; display: flex; flex-wrap: wrap; gap: 16px; font-size: 13px; color: var(--text-secondary); transition: color 0.3s ease; }
+        .session-details span { display: flex; align-items: center; gap: 4px; }
+        .session-feedback { margin-top: 10px; padding: 12px 16px; background: var(--feedback-bg); border-radius: 10px; font-size: 14px; color: var(--text-primary); border-left: 3px solid #48bb78; transition: background 0.3s ease, color 0.3s ease; }
+        .session-feedback .stars { color: #ecc94b; margin-top: 4px; }
+        
+        .feedback-form { margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border-card); transition: border-color 0.3s ease; }
+        .feedback-form .form-group { margin-bottom: 16px; }
+        .feedback-form label { display: block; font-size: 13px; font-weight: 600; color: var(--text-secondary); margin-bottom: 4px; transition: color 0.3s ease; }
+        .feedback-form .form-control { width: 100%; padding: 10px 14px; border: 2px solid var(--input-border); border-radius: 10px; font-size: 14px; outline: none; font-family: inherit; transition: background 0.3s ease, border-color 0.3s ease, color 0.3s ease; background: var(--input-bg); color: var(--text-primary); }
+        .feedback-form .form-control:focus { border-color: #667eea; }
+        .feedback-form .btn-submit { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; padding: 12px 24px; border-radius: 10px; font-weight: 600; cursor: pointer; font-size: 15px; transition: all 0.2s; width: 100%; }
+        .feedback-form .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(102,126,234,0.3); }
+        .feedback-form .btn-submit:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+        .feedback-form .row-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        @media (max-width: 640px) { .feedback-form .row-2col { grid-template-columns: 1fr; } }
+        
+        .goal-form { background: var(--goal-bg); padding: 20px; border-radius: 12px; margin-bottom: 20px; transition: background 0.3s ease; }
+        .goal-form h4 { color: var(--text-primary); transition: color 0.3s ease; margin-bottom: 12px; }
+        .goal-form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        @media (max-width: 640px) { .goal-form-grid { grid-template-columns: 1fr; } }
+        .goal-form .full-width { grid-column: 1 / -1; }
+        .goal-form .form-control { width: 100%; padding: 8px 12px; border: 2px solid var(--input-border); border-radius: 8px; font-size: 14px; outline: none; background: var(--input-bg); color: var(--text-primary); transition: background 0.3s ease, border-color 0.3s ease, color 0.3s ease; }
+        .goal-form .form-control:focus { border-color: #667eea; }
+        
+        .goal-item { border: 1px solid var(--border-card); border-radius: 12px; padding: 16px; margin-bottom: 12px; background: var(--bg-card); transition: all 0.2s, background 0.3s ease, border-color 0.3s ease; }
+        .goal-item:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+        .goal-header { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 8px; }
+        .goal-title { font-weight: 700; color: var(--text-primary); font-size: 16px; transition: color 0.3s ease; }
+        .goal-meta { font-size: 13px; color: var(--text-secondary); margin-top: 4px; transition: color 0.3s ease; }
+        .goal-actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+        .goal-status-badge { padding: 2px 12px; border-radius: 50px; font-size: 12px; font-weight: 600; }
+        .goal-status-active { background: #dbeafe; color: #1e40af; }
+        .goal-status-achieved { background: #d1fae5; color: #065f46; }
+        .goal-status-failed { background: #fee2e2; color: #991b1b; }
+        .goal-status-cancelled { background: #f3f4f6; color: #4b5563; }
+        .goal-progress-bar { margin-top: 10px; }
+        .goal-progress-bar .bar-track { width: 100%; background: var(--border-card); border-radius: 50px; height: 8px; overflow: hidden; transition: background 0.3s ease; }
+        .goal-progress-bar .bar-fill { height: 100%; border-radius: 50px; transition: width 0.5s ease; }
+        .goal-progress-bar .bar-fill.active { background: #667eea; }
+        .goal-progress-bar .bar-fill.achieved { background: #48bb78; }
+        
+        /* ==========================================
+           ГРУППЫ
+        ========================================== */
+        .group-tabs {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--border-card);
+            padding-bottom: 4px;
+            flex-wrap: wrap;
+        }
+        .group-tab-btn {
+            padding: 8px 20px;
+            border: none;
+            background: transparent;
+            font-weight: 600;
+            font-size: 14px;
+            color: var(--text-muted);
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            font-family: inherit;
+            position: relative;
+        }
+        .group-tab-btn:hover { color: var(--text-primary); background: var(--bg-info); }
+        .group-tab-btn.active { color: #667eea; background: #eef2ff; }
+        .group-tab-btn .badge-count {
+            background: #ef4444;
+            color: white;
+            border-radius: 50%;
+            padding: 0 8px;
+            font-size: 11px;
+            margin-left: 4px;
+            display: none;
+        }
+        .group-tab-btn .badge-count.show { display: inline; }
+        
+        .group-card {
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 20px;
+            border: 2px solid var(--border-card);
+            margin-bottom: 14px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .group-card:hover { 
+            border-color: #667eea; 
+            box-shadow: 0 4px 16px rgba(102, 126, 234, 0.12);
+            transform: translateX(4px);
+        }
+        .group-card .group-name { font-weight: 700; font-size: 18px; color: var(--text-primary); }
+        .group-card .group-goal { font-size: 14px; color: var(--text-secondary); margin-top: 2px; }
+        .group-card .group-desc { font-size: 13px; color: var(--text-muted); margin-top: 4px; }
+        .group-card .group-meta { font-size: 12px; color: var(--text-muted); margin-top: 8px; display: flex; gap: 16px; flex-wrap: wrap; }
+        .group-card .group-meta span { display: flex; align-items: center; gap: 4px; }
+        .group-card .group-click-hint { font-size: 12px; color: #667eea; margin-top: 8px; opacity: 0.7; }
+        .group-card .admin-badge {
+            font-size: 12px;
+            background: #dbeafe;
+            color: #1e40af;
+            padding: 2px 12px;
+            border-radius: 50px;
+            font-weight: 600;
+            margin-left: 8px;
+        }
+        
+        .invite-item {
+            background: var(--bg-info);
+            border-radius: 12px;
+            padding: 16px;
+            border: 1px solid var(--border-card);
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .invite-item .invite-info { flex: 1; }
+        .invite-item .invite-info .name { font-weight: 600; color: var(--text-primary); }
+        .invite-item .invite-info .sub { font-size: 13px; color: var(--text-muted); }
+        .invite-item .invite-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+        
+        .btn-sm { padding: 4px 14px; font-size: 12px; border-radius: 6px; border: none; cursor: pointer; font-weight: 600; transition: all 0.2s; font-family: inherit; }
+        .btn-accept { background: #48bb78; color: white; }
+        .btn-accept:hover { background: #38a169; }
+        .btn-reject { background: #fc8181; color: white; }
+        .btn-reject:hover { background: #e53e3e; }
+        .btn-purple { background: #667eea; color: white; }
+        .btn-purple:hover { background: #5a67d8; }
+        .btn-danger { background: #ef4444; color: white; }
+        .btn-danger:hover { background: #dc2626; }
+        .btn-outline { background: transparent; border: 1px solid var(--border-card); color: var(--text-secondary); }
+        .btn-outline:hover { background: var(--bg-info); }
+        .btn-sm:disabled { opacity: 0.5; cursor: not-allowed; }
+        
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(4px);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-overlay.active { display: flex; }
+        .modal-content {
+            background: var(--modal-bg);
+            border-radius: 20px;
+            padding: 32px;
+            max-width: 920px;
+            width: 95%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: var(--modal-shadow);
+            border: 1px solid var(--border-card);
+            animation: modalIn 0.3s ease;
+            position: relative;
+        }
+        @keyframes modalIn { from { transform: translateY(30px) scale(0.95); opacity: 0; } to { transform: translateY(0) scale(1); opacity: 1; } }
+        .modal-content .close-modal {
+            position: absolute;
+            top: 5px;
+            right: 20px;
+            font-size: 28px;
+            cursor: pointer;
+            color: var(--text-muted);
+            transition: color 0.2s;
+            background: none;
+            border: none;
+            line-height: 1;
+        }
+        .modal-content .close-modal:hover { color: var(--text-primary); }
+        .modal-content h2 { font-size: 22px; font-weight: 700; color: var(--text-primary); margin-bottom: 4px; }
+        .modal-content .sub { color: var(--text-muted); font-size: 14px; margin-bottom: 20px; }
+        
+        .form-group { margin-bottom: 16px; }
+        .form-group label { display: block; font-size: 13px; font-weight: 600; color: var(--text-secondary); margin-bottom: 4px; transition: color 0.3s ease; }
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 10px 14px;
+            border: 2px solid var(--input-border);
+            border-radius: 10px;
+            font-size: 14px;
+            outline: none;
+            font-family: inherit;
+            transition: background 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+            background: var(--input-bg);
+            color: var(--text-primary);
+        }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: #667eea; }
+        .form-submit {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+        .form-submit:hover { transform: translateY(-2px); box-shadow: 0 4px 16px rgba(102,126,234,0.3); }
+        .form-submit:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+        
+        /* Чат */
+        .chat-container {
+            background: var(--bg-info);
+            border-radius: 12px;
+            padding: 12px;
+            min-height: 150px;
+            max-height: 320px;
+            overflow-y: auto;
+            margin-bottom: 10px;
+            border: 1px solid var(--border-card);
+        }
+        .chat-message {
+            margin-bottom: 8px;
+            display: flex;
+            flex-direction: column;
+        }
+        .chat-message.mine { align-items: flex-end; }
+        .chat-message.other { align-items: flex-start; }
+        .chat-bubble {
+            max-width: 80%;
+            padding: 8px 14px;
+            border-radius: 12px;
+            word-wrap: break-word;
+            font-size: 14px;
+        }
+        .chat-bubble.mine {
+            background: var(--chat-mine);
+            color: white;
+            border-bottom-right-radius: 4px;
+        }
+        .chat-bubble.other {
+            background: var(--chat-other);
+            color: var(--text-primary);
+            border-bottom-left-radius: 4px;
+        }
+        .chat-meta {
+            font-size: 10px;
+            color: var(--text-muted);
+            margin-top: 2px;
+            padding: 0 4px;
+        }
+        .chat-input-row {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+        }
+        .chat-input-row input {
+            flex: 1;
+            padding: 10px 14px;
+            border: 2px solid var(--input-border);
+            border-radius: 10px;
+            font-size: 14px;
+            outline: none;
+            background: var(--input-bg);
+            color: var(--text-primary);
+            transition: all 0.3s;
+            font-family: inherit;
+        }
+        .chat-input-row input:focus { border-color: #667eea; }
+        .chat-input-row button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 18px;
+        }
+        .chat-input-row button:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(102,126,234,0.3); }
+        
+        /* Группы - панель целей */
+        .goals-panel {
+            background: var(--bg-info);
+            border-radius: 12px;
+            padding: 12px;
+            border: 1px solid var(--border-card);
+            overflow-y: auto;
+            height: 100%;
+            min-height: 100px;
+        }
+        .goals-panel .goal-item-mini {
+            background: var(--bg-card);
+            border-radius: 6px;
+            padding: 6px 10px;
+            margin-bottom: 4px;
+            border: 1px solid var(--border-card);
+            font-size: 12px;
+        }
+        .goals-panel .goal-item-mini .g-name {
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+        .goals-panel .goal-item-mini .g-progress {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+        .goals-panel .goal-item-mini .g-bar {
+            width: 100%;
+            height: 3px;
+            background: var(--border-card);
+            border-radius: 4px;
+            margin-top: 2px;
+            overflow: hidden;
+        }
+        .goals-panel .goal-item-mini .g-bar .g-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.3s;
+        }
+        .goals-panel .goal-item-mini .g-bar .g-fill.active { background: #667eea; }
+        .goals-panel .goal-item-mini .g-bar .g-fill.achieved { background: #48bb78; }
+        
+        /* Группы - layout */
+        .group-layout {
+            display: grid;
+            grid-template-columns: 1fr 280px;
+            gap: 20px;
+            height: 480px;
+        }
+        @media (max-width: 768px) {
+            .group-layout { grid-template-columns: 1fr; height: auto; }
+            .goals-panel { max-height: 200px; }
+        }
+        
+        .members-panel {
+            background: var(--bg-info);
+            border-radius: 12px;
+            padding: 12px;
+            border: 1px solid var(--border-card);
+            max-height: 200px;
+            overflow-y: auto;
+            flex-shrink: 0;
+        }
+        .members-panel .member-item-mini {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 3px 6px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+        .members-panel .member-item-mini:hover { background: var(--bg-card); }
+        .members-panel .member-item-mini .avatar {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 9px;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+        .members-panel .member-item-mini .m-name {
+            color: var(--text-primary);
+            flex: 1;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .members-panel .member-item-mini .m-role {
+            font-size: 9px;
+            color: var(--text-muted);
+        }
+        .members-panel .member-item-mini .m-role.admin { color: #667eea; font-weight: 600; }
+        
+        .user-search-results {
+            margin-top: 4px;
+            max-height: 80px;
+            overflow-y: auto;
+            border: 1px solid var(--border-card);
+            border-radius: 6px;
+            display: none;
+            background: var(--bg-card);
+        }
+        .user-search-results .result-item {
+            padding: 6px 10px;
+            cursor: pointer;
+            border-bottom: 1px solid var(--border-card);
+            transition: background 0.2s;
+            color: var(--text-primary);
+            font-size: 13px;
+        }
+        .user-search-results .result-item:hover { background: var(--bg-info); }
+        .user-search-results .result-item:last-child { border-bottom: none; }
+        .user-search-results .result-item .email { color: var(--text-muted); font-size: 11px; }
+        
+        .invite-status { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+        .invite-status.success { color: #48bb78; }
+        .invite-status.error { color: #ef4444; }
+        
+        .toast {
+            position: fixed;
+            top: 24px;
+            right: 24px;
+            padding: 16px 24px;
+            border-radius: 16px;
+            color: white;
+            font-weight: 600;
+            font-size: 14px;
+            box-shadow: var(--toast-shadow);
+            z-index: 10000;
+            animation: slideIn 0.3s ease-out;
+            max-width: 400px;
+        }
+        .toast-success { background: linear-gradient(135deg, #10b981, #059669); }
+        .toast-error { background: linear-gradient(135deg, #ef4444, #dc2626); }
+        .toast-info { background: linear-gradient(135deg, #3b82f6, #2563eb); }
+        @keyframes slideIn { from { transform: translateX(100px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        
+        @media (max-width: 768px) {
+            .modal-content { max-width: 98%; padding: 16px; }
+            .modal-content .grid-2col { grid-template-columns: 1fr; }
+            body { padding: 12px; }
+            .header { padding: 16px; }
+            .card { padding: 16px; }
+            .group-card { padding: 14px; }
+            .group-layout { grid-template-columns: 1fr; height: auto; }
+            .goals-panel { max-height: 200px; }
+            .members-panel { max-height: 150px; }
+        }
+        @media (max-width: 640px) { 
+            .header-actions { width: 100%; justify-content: flex-start; flex-wrap: wrap; }
+            .trainer-card { flex-direction: column; text-align: center; } 
+            .trainer-info .detail span { display: block; margin-right: 0; margin-top: 4px; } 
+            .session-top { flex-direction: column; } 
+            .stats-summary { grid-template-columns: 1fr 1fr; } 
+            .progress-table th, .progress-table td { padding: 10px 12px; font-size: 13px; }
+            .tab-btn { padding: 10px 16px; font-size: 13px; }
+            .tabs-container { overflow-x: auto; flex-wrap: nowrap; }
+            .tab-btn { white-space: nowrap; }
+            .modal-content { padding: 16px; }
+            .grid-2col { grid-template-columns: 1fr; }
+            .card-header .btn-create { font-size: 12px; padding: 8px 14px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    
+    <!-- Header -->
+    <header class="header">
+        <div class="header-left">
+            <div class="header-icon">🏋️</div>
+            <div class="header-title">
+                <h1>Мой фитнес-клуб</h1>
+                <p>Личный кабинет клиента</p>
+            </div>
+        </div>
+        <div class="header-actions">
+            <button class="theme-toggle" onclick="toggleTheme()" id="themeToggle" title="Переключить тему">
+                <span id="themeIcon">🌙</span>
+            </button>
+            <div class="client-badge">
+                <div class="client-avatar" id="clientAvatar">К</div>
+                <div>
+                    <div class="client-name" id="clientNameDisplay">Клиент</div>
+                    <div class="client-id" id="clientIdDisplay">ID: —</div>
+                </div>
+            </div>
+            <span class="status-dot"></span>
+            <button onclick="logout()" class="logout-btn"><span>🚪</span> Выйти</button>
+        </div>
+    </header>
+
+    <!-- Alert -->
+    <div id="alertMessage" class="alert"></div>
+
+    <!-- Tabs -->
+    <div class="tabs-container">
+        <button class="tab-btn active" onclick="switchTab('profile')">👤 Профиль</button>
+        <button class="tab-btn" onclick="switchTab('groups')">👥 Группы</button>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- TAB 1: ПРОФИЛЬ -->
+    <!-- ========================================== -->
+    <div id="tab-profile" class="tab-content active">
+        
+        <div class="grid-2col">
+            <div class="card membership-card" id="membershipCard">
+                <div class="card-header">
+                    <div class="card-header-icon green">🎫</div>
+                    <div>
+                        <h2>Мой абонемент</h2>
+                        <div class="subtitle">Информация о действующем тарифе</div>
+                    </div>
+                </div>
+                <div id="membershipInfo"><div class="text-muted">⏳ Загрузка...</div></div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-header-icon purple">👨‍🏫</div>
+                    <div>
+                        <h2>Мой тренер</h2>
+                        <div class="subtitle">Персональный наставник</div>
+                    </div>
+                </div>
+                <div id="trainerInfo"><div class="text-muted">⏳ Загрузка...</div></div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <div class="card-header-icon blue">📊</div>
+                <div>
+                    <h2>Прогресс в упражнениях</h2>
+                    <div class="subtitle">Динамика силовых показателей</div>
+                </div>
+            </div>
+            <div class="progress-controls">
+                <label for="exerciseSelect">🏋️ Упражнение:</label>
+                <select id="exerciseSelect" class="progress-select" onchange="onExerciseChange()">
+                    <option value="">Загрузка...</option>
+                </select>
+            </div>
+            <div id="progressSummary" class="stats-summary"></div>
+            <div class="table-wrapper">
+                <table class="progress-table">
+                    <thead><tr><th>Дата</th><th>Упражнение</th><th>Макс. вес (кг)</th><th>Повторения</th><th>Прогресс</th></tr></thead>
+                    <tbody id="progressTableBody"><tr><td colspan="5" class="text-muted">Нет данных</td></tr></tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <div class="card-header-icon purple">🎯</div>
+                <div>
+                    <h2>Мои цели</h2>
+                    <div class="subtitle">Ставьте цели и отслеживайте прогресс</div>
+                </div>
+            </div>
+            <div class="goal-form">
+                <h4>➕ Новая цель</h4>
+                <form id="goalForm" class="goal-form-grid">
+                    <div>
+                        <label style="font-size: 12px; font-weight: 600; color: var(--text-secondary); display: block; margin-bottom: 4px; transition: color 0.3s ease;">Упражнение</label>
+                        <input type="text" id="goalExercise" class="form-control" placeholder="Например: Жим лежа">
+                    </div>
+                    <div>
+                        <label style="font-size: 12px; font-weight: 600; color: var(--text-secondary); display: block; margin-bottom: 4px; transition: color 0.3s ease;">Тип цели</label>
+                        <select id="goalType" class="form-control">
+                            <option value="weight">Вес (кг)</option>
+                            <option value="reps">Количество повторений</option>
+                            <option value="time">Время (мин)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label style="font-size: 12px; font-weight: 600; color: var(--text-secondary); display: block; margin-bottom: 4px; transition: color 0.3s ease;">Целевое значение</label>
+                        <input type="number" id="goalTarget" class="form-control" placeholder="100" step="0.5">
+                    </div>
+                    <div>
+                        <label style="font-size: 12px; font-weight: 600; color: var(--text-secondary); display: block; margin-bottom: 4px; transition: color 0.3s ease;">Дата достижения</label>
+                        <input type="date" id="goalDate" class="form-control">
+                    </div>
+                    <div class="full-width">
+                        <label style="font-size: 12px; font-weight: 600; color: var(--text-secondary); display: block; margin-bottom: 4px; transition: color 0.3s ease;">Описание</label>
+                        <input type="text" id="goalDescription" class="form-control" placeholder="Достичь результата к концу месяца">
+                    </div>
+                    <div class="full-width">
+                        <button type="submit" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; padding: 10px; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 14px; width: 100%; transition: all 0.2s; font-family: inherit;">🎯 Создать цель</button>
+                    </div>
+                </form>
+            </div>
+            <div id="goalsList"><div class="text-muted">⏳ Загрузка целей...</div></div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <div class="card-header-icon orange">📋</div>
+                <div>
+                    <h2>Последние тренировки</h2>
+                    <div class="subtitle">История занятий</div>
+                </div>
+            </div>
+            <div id="recentSessions"><div class="text-muted">⏳ Загрузка...</div></div>
+            <div class="feedback-form">
+                <h3 style="font-size: 16px; font-weight: 700; color: var(--text-primary); margin-bottom: 16px; transition: color 0.3s ease;">💬 Оставить отзыв о тренировке</h3>
+                <form id="feedbackForm">
+                    <div class="row-2col">
+                        <div class="form-group">
+                            <label for="feedbackSession">Выберите тренировку</label>
+                            <select id="feedbackSession" class="form-control" required>
+                                <option value="">-- Выберите --</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="feedbackScore">Оценка</label>
+                            <select id="feedbackScore" class="form-control" required>
+                                <option value="5">⭐⭐⭐⭐⭐ Отлично</option>
+                                <option value="4">⭐⭐⭐⭐ Хорошо</option>
+                                <option value="3">⭐⭐⭐ Средне</option>
+                                <option value="2">⭐⭐ Плохо</option>
+                                <option value="1">⭐ Ужасно</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="feedbackText">Комментарий</label>
+                        <textarea id="feedbackText" class="form-control" placeholder="Напишите, как прошла тренировка..." rows="3"></textarea>
+                    </div>
+                    <button type="submit" class="btn-submit" id="feedbackSubmitBtn">📝 Отправить отзыв</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- TAB 2: ГРУППЫ -->
+    <!-- ========================================== -->
+    <div id="tab-groups" class="tab-content">
+        <div class="card">
+            <div class="card-header">
+                <div class="card-header-icon indigo">👥</div>
+                <div>
+                    <h2>Мои группы</h2>
+                    <div class="subtitle">Общайтесь и достигайте целей вместе</div>
+                </div>
+                <button class="btn-create" onclick="showCreateGroupModal()">➕ Создать группу</button>
+            </div>
+
+            <div class="group-tabs">
+                <button class="group-tab-btn active" onclick="switchGroupTab('my')">📋 Мои группы</button>
+                <button class="group-tab-btn" onclick="switchGroupTab('invites')">📩 Приглашения <span class="badge-count" id="invitesCount">0</span></button>
+            </div>
+
+            <div id="groupContentMy">
+                <div id="myGroupsList"><div class="text-muted">⏳ Загрузка...</div></div>
+            </div>
+
+            <div id="groupContentInvites" style="display:none;">
+                <div id="invitesList"><div class="text-muted">⏳ Загрузка...</div></div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- ========================================== -->
+<!-- МОДАЛ: СОЗДАНИЕ ГРУППЫ -->
+<!-- ========================================== -->
+<div id="createGroupModal" class="modal-overlay">
+    <div class="modal-content">
+        <button class="close-modal" onclick="closeCreateGroupModal()">✕</button>
+        <h2>👥 Создать группу</h2>
+        <p class="sub">Создайте группу для общения и совместных тренировок</p>
+        <form id="createGroupForm">
+            <div class="form-group">
+                <label for="groupName">Название группы *</label>
+                <input type="text" id="groupName" placeholder="Например: Команда чемпионов" required>
+            </div>
+            <div class="form-group">
+                <label for="groupGoal">Общая цель группы (необязательно)</label>
+                <input type="text" id="groupGoal" placeholder="Например: Набрать 100 кг в жиме">
+            </div>
+            <div class="form-group">
+                <label for="groupDesc">Описание</label>
+                <textarea id="groupDesc" rows="3" placeholder="Расскажите о группе..."></textarea>
+            </div>
+            <button type="submit" class="form-submit">🚀 Создать группу</button>
+        </form>
+    </div>
+</div>
+
+<!-- ========================================== -->
+<!-- МОДАЛ: ДЕТАЛИ ГРУППЫ -->
+<!-- ========================================== -->
+<div id="groupDetailModal" class="modal-overlay">
+    <div class="modal-content" style="max-width: 920px; max-height: 90vh;">
+        <button class="close-modal" onclick="closeGroupDetail()">✕</button>
+        <div id="groupDetailContent">
+            <!-- Заголовок -->
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--border-card);">
+                <div>
+                    <h2 id="detailGroupName" style="font-size: 24px; font-weight: 800;">Группа</h2>
+                    <p id="detailGroupGoal" style="color: var(--text-secondary); font-size: 14px; margin-top: 2px;"></p>
+                    <p id="detailGroupDesc" style="color: var(--text-muted); font-size: 13px; margin-top: 2px;"></p>
+                </div>
+                <button onclick="leaveGroup()" id="leaveGroupBtn" style="background: #fee2e2; color: #991b1b; border: none; padding: 8px 16px; border-radius: 10px; font-weight: 600; cursor: pointer; font-size: 13px; transition: all 0.2s; font-family: inherit; display: flex; align-items: center; gap: 6px;">
+                    🚪 Выйти из группы
+                </button>
+            </div>
+            
+            <div class="group-layout">
+                
+                <!-- ЛЕВАЯ КОЛОНКА: ЧАТ -->
+                <div style="display: flex; flex-direction: column; min-height: 0;">
+                    <div style="font-weight: 600; font-size: 13px; color: var(--text-secondary); margin-bottom: 6px;">💬 Чат группы</div>
+                    <div class="chat-container" id="chatMessages" style="flex: 1; min-height: 0; overflow-y: auto;">
+                        <div class="text-muted" style="text-align: center;">Загрузка сообщений...</div>
+                    </div>
+                    <!-- ПОЛЕ ВВОДА СООБЩЕНИЯ (ВНИЗУ) -->
+                    <div class="chat-input-row" style="margin-top: 10px;">
+                        <input type="text" id="chatInput" placeholder="Напишите сообщение..." onkeypress="if(event.key==='Enter') sendMessage()" style="flex: 1; padding: 10px 14px; border: 2px solid var(--input-border); border-radius: 10px; font-size: 14px; outline: none; background: var(--input-bg); color: var(--text-primary); transition: all 0.3s; font-family: inherit;">
+                        <button onclick="sendMessage()" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; padding: 10px 20px; border-radius: 10px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-size: 18px;">📤</button>
+                    </div>
+                </div>
+                
+                <!-- ПРАВАЯ КОЛОНКА -->
+                <div style="display: flex; flex-direction: column; min-height: 0; border-left: 1px solid var(--border-card); padding-left: 16px;">
+                    
+                    <!-- ОБЩАЯ ЦЕЛЬ ГРУППЫ -->
+                    <div id="commonGoalBlock" style="margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px solid var(--border-card); display: none;">
+                        <div style="font-weight: 600; font-size: 13px; color: var(--text-secondary); margin-bottom: 4px;">🎯 Общая цель</div>
+                        <div id="commonGoalDisplay" style="font-size: 13px; color: var(--text-primary);"></div>
+                        <div id="commonGoalProgress" style="margin-top: 4px;"></div>
+                    </div>
+                    
+                    <!-- ЛИЧНЫЕ ЦЕЛИ УЧАСТНИКОВ -->
+                    <div style="flex: 1; min-height: 0; display: flex; flex-direction: column; overflow: hidden; margin-bottom: 8px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                            <div style="font-weight: 600; font-size: 13px; color: var(--text-secondary);">🎯 Цели участников</div>
+                            <button onclick="showSetPersonalGoal()" id="setGoalBtn" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; padding: 3px 12px; border-radius: 6px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: inherit;">
+                                ➕ Моя цель
+                            </button>
+                        </div>
+                        <div id="goalsPanel" class="goals-panel" style="flex: 1; overflow-y: auto; min-height: 0;">
+                            <div style="color: var(--text-muted); font-size: 13px; text-align: center; padding: 20px 0;">Загрузка целей...</div>
+                        </div>
+                    </div>
+                    
+                    <!-- БЛОК ПРИГЛАШЕНИЯ -->
+                    <div id="inviteBlock" style="margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px solid var(--border-card); display: none;">
+                        <div style="font-weight: 600; font-size: 13px; color: var(--text-secondary); margin-bottom: 4px;">📩 Пригласить в группу</div>
+                        <div style="display: flex; gap: 6px;">
+                            <input type="text" id="inviteSearchInline" placeholder="Имя или Email..." style="flex: 1; padding: 6px 10px; border: 2px solid var(--input-border); border-radius: 8px; font-size: 13px; outline: none; background: var(--input-bg); color: var(--text-primary); transition: all 0.3s; font-family: inherit;" oninput="searchUsersInline(this.value)">
+                            <button onclick="sendInviteInline()" id="sendInviteInlineBtn" disabled style="background: #667eea; color: white; border: none; padding: 6px 14px; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 13px; transition: all 0.2s; font-family: inherit; white-space: nowrap;">➕</button>
+                        </div>
+                        <div class="user-search-results" id="userSearchResultsInline"></div>
+                        <div class="invite-status" id="inviteStatusInline"></div>
+                    </div>
+                    
+                    <!-- УЧАСТНИКИ ГРУППЫ -->
+                    <div style="flex-shrink: 0;">
+                        <div style="font-weight: 600; font-size: 13px; color: var(--text-secondary); margin-bottom: 4px;">👥 Участники <span id="membersCount" style="font-weight: 400; font-size: 12px; color: var(--text-muted);"></span></div>
+                        <div id="membersPanel" class="members-panel">
+                            <div style="color: var(--text-muted); font-size: 13px; text-align: center; padding: 20px 0;">Загрузка...</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ========================================== -->
+<!-- МОДАЛ: УСТАНОВКА ЛИЧНОЙ ЦЕЛИ -->
+<!-- ========================================== -->
+<div id="setPersonalGoalModal" class="modal-overlay">
+    <div class="modal-content" style="max-width: 450px;">
+        <button class="close-modal" onclick="closeSetPersonalGoalModal()">✕</button>
+        <h2>🎯 Личная цель</h2>
+        <p class="sub">Установите свою цель в этой группе</p>
+        <form id="setPersonalGoalForm">
+            <div class="form-group">
+                <label for="pgGoal">Название цели</label>
+                <input type="text" id="pgGoal" placeholder="Например: Набрать мышечную массу" required>
+            </div>
+            <div class="form-group">
+                <label for="pgExercise">Упражнение</label>
+                <input type="text" id="pgExercise" placeholder="Например: Жим лежа" required>
+            </div>
+            <div class="form-group">
+                <label for="pgType">Тип цели</label>
+                <select id="pgType">
+                    <option value="weight">Вес (кг)</option>
+                    <option value="reps">Количество повторений</option>
+                    <option value="time">Время (мин)</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="pgTarget">Целевое значение</label>
+                <input type="number" id="pgTarget" placeholder="100" step="0.5" required>
+            </div>
+            <div class="form-group">
+                <label for="pgDate">Дата достижения</label>
+                <input type="date" id="pgDate">
+            </div>
+            <button type="submit" class="form-submit">🎯 Установить цель</button>
+        </form>
+    </div>
+</div>
+
+<!-- ========================================== -->
+<!-- МОДАЛ: ОБНОВЛЕНИЕ ПРОГРЕССА -->
+<!-- ========================================== -->
+<div id="updateProgressModal" class="modal-overlay">
+    <div class="modal-content" style="max-width: 400px;">
+        <button class="close-modal" onclick="closeUpdateProgressModal()">✕</button>
+        <h2>📊 Обновить прогресс</h2>
+        <p class="sub" id="updateProgressInfo">Введите текущее значение</p>
+        <input type="hidden" id="updateProgressUserId">
+        <input type="hidden" id="updateProgressType">
+        <div class="form-group">
+            <label for="progressValue">Текущее значение</label>
+            <input type="number" id="progressValue" placeholder="Введите значение..." step="0.5" required>
+        </div>
+        <button onclick="submitProgressUpdate()" class="form-submit">📊 Обновить</button>
+    </div>
+</div>
+
+<script>
+    // ==========================================
+    // КОНФИГУРАЦИЯ
+    // ==========================================
+    var API_BASE = "http://127.0.0.1:8000/api/v1";
+    var currentClientId = null;
+    var allProgressData = [];
+    var currentExercise = '';
+    var currentGroupTab = 'my';
+    var currentGroupId = null;
+    var selectedInviteUserIdInline = null;
+    var chatInterval = null;
+    var selectedGroupIdForGoal = null;
+
+    // ==========================================
+    // ТЕМА
+    // ==========================================
+    function toggleTheme() {
+        var html = document.getElementById('htmlRoot');
+        var currentTheme = html.getAttribute('data-theme');
+        var newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+        html.setAttribute('data-theme', newTheme);
+        localStorage.setItem('theme', newTheme);
+        var icon = document.getElementById('themeIcon');
+        icon.textContent = newTheme === 'dark' ? '☀️' : '🌙';
+    }
+
+    function loadTheme() {
+        var savedTheme = localStorage.getItem('theme');
+        var html = document.getElementById('htmlRoot');
+        var icon = document.getElementById('themeIcon');
+        if (savedTheme === 'dark') {
+            html.setAttribute('data-theme', 'dark');
+            icon.textContent = '☀️';
+        } else {
+            html.setAttribute('data-theme', 'light');
+            icon.textContent = '🌙';
+        }
+    }
+
+    // ==========================================
+    // TOAST И ALERT
+    // ==========================================
+    function showToast(message, type) {
+        type = type || 'success';
+        var container = document.getElementById('toastContainer');
+        if (!container) {
+            var div = document.createElement('div');
+            div.id = 'toastContainer';
+            document.body.appendChild(div);
+            container = div;
+        }
+        var toast = document.createElement('div');
+        toast.className = 'toast toast-' + type;
+        toast.textContent = message;
+        container.appendChild(toast);
+        setTimeout(function() {
+            toast.style.opacity = '0';
+            toast.style.transform = 'translateX(100px)';
+            setTimeout(function() { if (toast.parentNode) toast.remove(); }, 300);
+        }, 4000);
+    }
+
+    function showAlert(message, type) {
+        type = type || 'success';
+        var el = document.getElementById('alertMessage');
+        el.textContent = message;
+        el.className = 'alert alert-' + type;
+        setTimeout(function() { el.className = 'alert'; }, 5000);
+    }
+
+    function getClientId() { return currentClientId; }
+
+    function formatDate(dateStr) {
+        if (!dateStr) return '—';
+        var d = new Date(dateStr);
+        return d.toLocaleDateString('ru-RU', { day: '2-digit', month: 'short', year: 'numeric' });
+    }
+
+    function formatDateTime(dateStr) {
+        if (!dateStr) return '—';
+        var d = new Date(dateStr);
+        return d.toLocaleDateString('ru-RU', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+    }
+
+    function getInitials(name) {
+        if (!name) return 'К';
+        var parts = name.trim().split(' ');
+        if (parts.length >= 2) return (parts[0][0] + parts[1][0]).toUpperCase();
+        return name.charAt(0).toUpperCase();
+    }
+
+    function logout() {
+        sessionStorage.removeItem('user');
+        window.location.href = '/login.html';
+    }
+
+    // ==========================================
+    // ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК
+    // ==========================================
+    function switchTab(tab) {
+        document.querySelectorAll('.tab-content').forEach(function(el) { el.classList.remove('active'); });
+        document.querySelectorAll('.tab-btn').forEach(function(el) { el.classList.remove('active'); });
+        document.getElementById('tab-' + tab).classList.add('active');
+        document.querySelector('.tab-btn[onclick="switchTab(\'' + tab + '\')"]').classList.add('active');
+        if (tab === 'groups') {
+            loadMyGroups();
+            loadInvites();
+        }
+    }
+
+    function switchGroupTab(tab) {
+        currentGroupTab = tab;
+        document.getElementById('groupContentMy').style.display = 'none';
+        document.getElementById('groupContentInvites').style.display = 'none';
+        document.querySelectorAll('.group-tab-btn').forEach(function(btn) { btn.classList.remove('active'); });
+        if (tab === 'my') {
+            document.getElementById('groupContentMy').style.display = 'block';
+            document.querySelector('.group-tab-btn[onclick="switchGroupTab(\'my\')"]').classList.add('active');
+            loadMyGroups();
+        } else if (tab === 'invites') {
+            document.getElementById('groupContentInvites').style.display = 'block';
+            document.querySelector('.group-tab-btn[onclick="switchGroupTab(\'invites\')"]').classList.add('active');
+            loadInvites();
+        }
+    }
+
+    // ==========================================
+    // ЗАГРУЗКА ВСЕХ ДАННЫХ (профиль)
+    // ==========================================
+    function loadAllProfileData() {
+        document.getElementById('clientIdDisplay').textContent = 'ID: ' + currentClientId;
+        loadMembership();
+        loadTrainer();
+        loadExercises();
+        loadRecentSessions();
+        loadSessionsForFeedback();
+        loadGoals();
+    }
+
+    // ==========================================
+    // 1. АБОНЕМЕНТ
+    // ==========================================
+    async function loadMembership() {
+        var id = getClientId();
+        try {
+            var res = await fetch(API_BASE + '/client/' + id + '/membership');
+            var result = await res.json();
+            var container = document.getElementById('membershipInfo');
+            var card = document.getElementById('membershipCard');
+            if (!result.has_membership) {
+                container.innerHTML = '<div class="no-data-message"><span class="emoji">⚠️</span><div style="font-weight:500;">Нет активного абонемента</div><div style="font-size:13px;margin-top:4px;">Обратитесь в ресепшн</div></div>';
+                card.className = 'card membership-card expired';
+                return;
+            }
+            var d = result.data;
+            var daysLeft = d.days_left || 0;
+            var isActive = daysLeft > 0;
+            var badge = isActive ? 'badge-success' : 'badge-danger';
+            var status = isActive ? '✅ Активен' : '❌ Истек';
+            container.innerHTML = '<div class="membership-info">' +
+                '<div class="info-item"><div class="label">Название</div><div class="value">' + (d.membership_name || '—') + '</div></div>' +
+                '<div class="info-item"><div class="label">Тип</div><div class="value"><span class="badge badge-info">' + (d.membership_type || '—') + '</span></div></div>' +
+                '<div class="info-item"><div class="label">Стоимость</div><div class="value">' + (d.membership_price || 0) + ' Br</div></div>' +
+                '<div class="info-item"><div class="label">Осталось дней</div><div class="value"><span class="badge ' + badge + '">' + daysLeft + ' дн.</span></div></div>' +
+                '<div class="info-item"><div class="label">Начало</div><div class="value">' + formatDate(d.start_date) + '</div></div>' +
+                '<div class="info-item"><div class="label">Окончание</div><div class="value">' + formatDate(d.end_date) + '</div></div>' +
+                '<div class="info-item" style="grid-column:1/-1;"><div class="label">Статус</div><div class="value"><span class="badge ' + badge + '">' + status + '</span></div></div></div>';
+        } catch (e) { console.error(e); document.getElementById('membershipInfo').innerHTML = '<div class="text-muted">❌ Ошибка загрузки</div>'; }
+    }
+
+    // ==========================================
+    // 2. ТРЕНЕР
+    // ==========================================
+    async function loadTrainer() {
+        var id = getClientId();
+        try {
+            var res = await fetch(API_BASE + '/client/' + id + '/trainer');
+            var result = await res.json();
+            var container = document.getElementById('trainerInfo');
+            if (!result.has_trainer) {
+                container.innerHTML = '<div class="no-data-message"><span class="emoji">👤</span><div style="font-weight:500;">Тренер не назначен</div><div style="font-size:13px;margin-top:4px;">Обратитесь к администратору</div></div>';
+                return;
+            }
+            var d = result.data;
+            var initial = getInitials(d.trainer_name);
+            container.innerHTML = '<div class="trainer-card"><div class="trainer-avatar">' + initial + '</div><div class="trainer-info"><h3>' + (d.trainer_name || '—') + '</h3><span class="specialization">' + (d.specialization || 'Без специализации') + '</span><div class="detail"><span>📧 ' + (d.trainer_email || 'Email не указан') + '</span><span>📊 ' + (d.total_sessions || 0) + ' тренировок</span></div></div></div>';
+        } catch (e) { console.error(e); document.getElementById('trainerInfo').innerHTML = '<div class="text-muted">❌ Ошибка загрузки</div>'; }
+    }
+
+    // ==========================================
+    // 3. ПРОГРЕСС
+    // ==========================================
+    async function loadExercises() {
+        var id = getClientId();
+        try {
+            var res = await fetch(API_BASE + '/client/' + id + '/progress');
+            var result = await res.json();
+            var select = document.getElementById('exerciseSelect');
+            if (result.available_exercises && result.available_exercises.length > 0) {
+                select.innerHTML = result.available_exercises.map(function(ex) { return '<option value="' + ex + '">' + ex + '</option>'; }).join('');
+                currentExercise = result.available_exercises[0];
+                await loadProgressData(currentExercise);
+            } else {
+                select.innerHTML = '<option value="">Нет данных</option>';
+                document.getElementById('progressTableBody').innerHTML = '<tr><td colspan="5" class="text-muted">Нет данных о тренировках</td></tr>';
+                document.getElementById('progressSummary').innerHTML = '';
+            }
+        } catch (e) { console.error('❌ Ошибка загрузки упражнений:', e); showAlert('Не удалось загрузить упражнения', 'error'); }
+    }
+
+    function onExerciseChange() {
+        var select = document.getElementById('exerciseSelect');
+        currentExercise = select.value;
+        if (currentExercise) loadProgressData(currentExercise);
+    }
+
+    async function loadProgressData(exerciseName) {
+        var id = getClientId();
+        try {
+            var res = await fetch(API_BASE + '/client/' + id + '/progress?exercise_name=' + encodeURIComponent(exerciseName));
+            var result = await res.json();
+            var tbody = document.getElementById('progressTableBody');
+            var summary = document.getElementById('progressSummary');
+            if (!result.has_data || !result.data || result.data.length === 0) {
+                if (tbody) tbody.innerHTML = '<tr><td colspan="5" class="text-muted">Нет данных по упражнению "' + exerciseName + '"</td></tr>';
+                if (summary) summary.innerHTML = '';
+                return;
+            }
+            var filteredData = result.data || [];
+            allProgressData = filteredData;
+            var first = filteredData.length > 0 ? filteredData[0] : {};
+            var last = filteredData.length > 0 ? filteredData[filteredData.length - 1] : {};
+            var change = (last.max_weight || 0) - (first.max_weight || 0);
+            var percent = first.max_weight > 0 ? (change / first.max_weight * 100) : 0;
+            var maxWeight = 0, maxReps = 0, totalWeight = 0;
+            for (var i = 0; i < filteredData.length; i++) {
+                var item = filteredData[i];
+                if (item.max_weight > maxWeight) maxWeight = item.max_weight;
+                if (item.max_reps > maxReps) maxReps = item.max_reps;
+                totalWeight += (item.max_weight || 0);
+            }
+            var avgWeight = filteredData.length > 0 ? totalWeight / filteredData.length : 0;
+            var dirSymbol = change > 0 ? '📈' : change < 0 ? '📉' : '➖';
+            var dirClass = change > 0 ? 'progress-positive' : change < 0 ? 'progress-negative' : 'progress-neutral';
+            if (summary) {
+                summary.innerHTML = '<div class="stat-summary-item"><div class="number ' + dirClass + '">' + (change > 0 ? '+' : '') + change.toFixed(1) + ' кг</div><div class="label">' + dirSymbol + ' Изменение</div></div>' +
+                    '<div class="stat-summary-item"><div class="number ' + dirClass + '">' + percent.toFixed(1) + '%</div><div class="label">' + dirSymbol + ' Прогресс</div></div>' +
+                    '<div class="stat-summary-item"><div class="number">' + maxWeight.toFixed(1) + ' кг</div><div class="label">🏆 Макс. вес</div></div>' +
+                    '<div class="stat-summary-item"><div class="number">' + maxReps + '</div><div class="label">🏆 Макс. повторений</div></div>' +
+                    '<div class="stat-summary-item"><div class="number">' + filteredData.length + '</div><div class="label">📅 Тренировок</div></div>' +
+                    '<div class="stat-summary-item"><div class="number">' + avgWeight.toFixed(1) + ' кг</div><div class="label">📊 Средний вес</div></div>';
+            }
+            var html = '';
+            for (var i = 0; i < filteredData.length; i++) {
+                var item = filteredData[i];
+                var prevItem = i > 0 ? filteredData[i - 1] : null;
+                var progressCell = '';
+                if (prevItem) {
+                    var diff = (item.max_weight || 0) - (prevItem.max_weight || 0);
+                    progressCell = diff > 0 ? '<span class="progress-positive">📈 +' + diff.toFixed(1) + ' кг</span>' : diff < 0 ? '<span class="progress-negative">📉 ' + diff.toFixed(1) + ' кг</span>' : '<span class="progress-neutral">➖ 0 кг</span>';
+                } else { progressCell = '<span class="progress-neutral">— Начало</span>'; }
+                var dateStr = new Date(item.date).toLocaleDateString('ru-RU', { day: '2-digit', month: 'short', year: 'numeric' });
+                html += '<tr><td>' + dateStr + '</td><td class="exercise-name">' + exerciseName + '</td><td>' + (item.max_weight || 0).toFixed(1) + ' кг</td><td>' + (item.max_reps || 0) + '</td><td>' + progressCell + '</td></tr>';
+            }
+            if (tbody) tbody.innerHTML = html;
+        } catch (e) { console.error('❌ Ошибка загрузки прогресса:', e); var tbody = document.getElementById('progressTableBody'); if (tbody) tbody.innerHTML = '<tr><td colspan="5" class="text-muted">❌ Ошибка загрузки</td></tr>'; }
+    }
+
+    // ==========================================
+    // 4. ТРЕНИРОВКИ
+    // ==========================================
+    async function loadRecentSessions() {
+        var id = getClientId();
+        try {
+            var res = await fetch(API_BASE + '/client/' + id + '/recent-sessions?limit=5');
+            var result = await res.json();
+            var container = document.getElementById('recentSessions');
+            if (!result.data || result.data.length === 0) {
+                container.innerHTML = '<div class="no-data-message"><span class="emoji">🏋️</span><div style="font-weight:500;">Нет проведенных тренировок</div><div style="font-size:13px;margin-top:4px;">Начните заниматься, чтобы увидеть историю</div></div>';
+                return;
+            }
+            var html = '';
+            for (var i = 0; i < result.data.length; i++) {
+                var s = result.data[i];
+                var hasFeedback = s.client_feedback;
+                var fbBadge = hasFeedback ? '<span class="session-badge feedback">💬 Есть отзыв</span>' : '<span class="session-badge no-feedback">⏳ Нет отзыва</span>';
+                var stars = s.wellbeing_score ? '⭐'.repeat(s.wellbeing_score) : '';
+                html += '<div class="session-item"><div class="session-top"><span class="session-date">📅 ' + formatDateTime(s.session_datetime) + '</span><div class="session-badges"><span class="session-badge type">' + (s.session_type || 'Тренировка') + '</span>' + fbBadge + '</div></div><div class="session-details"><span>👨‍🏫 ' + (s.coach_name || 'Тренер не указан') + '</span><span>⏱ ' + (s.duration_minutes || 0) + ' мин</span><span>🏋️ ' + (s.exercises_count || 0) + ' упражнений</span></div>';
+                if (s.client_feedback) html += '<div class="session-feedback">💬 "' + s.client_feedback + '"' + (stars ? '<div class="stars">' + stars + '</div>' : '') + '</div>';
+                html += '</div>';
+            }
+            container.innerHTML = html;
+        } catch (e) { console.error(e); document.getElementById('recentSessions').innerHTML = '<div class="text-muted">❌ Ошибка загрузки</div>'; }
+    }
+
+    // ==========================================
+    // 5. ОТЗЫВЫ
+    // ==========================================
+    async function loadSessionsForFeedback() {
+        var id = getClientId();
+        try {
+            var res = await fetch(API_BASE + '/client/' + id + '/sessions');
+            var result = await res.json();
+            var select = document.getElementById('feedbackSession');
+            if (result.data && result.data.length > 0) {
+                var noFeedback = result.data.filter(function(s) { return !s.client_feedback; });
+                if (noFeedback.length === 0) { select.innerHTML = '<option value="">✅ Все тренировки уже оценены</option>'; return; }
+                select.innerHTML = '<option value="">-- Выберите тренировку --</option>' + noFeedback.map(function(s) { return '<option value="' + s.session_id + '">' + formatDateTime(s.session_datetime) + ' - ' + (s.session_type || 'Тренировка') + '</option>'; }).join('');
+            } else { select.innerHTML = '<option value="">Нет тренировок</option>'; }
+        } catch (e) { console.error(e); select.innerHTML = '<option value="">Ошибка загрузки</option>'; }
+    }
+
+    document.getElementById('feedbackForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        var sessionId = document.getElementById('feedbackSession').value;
+        var score = parseInt(document.getElementById('feedbackScore').value);
+        var text = document.getElementById('feedbackText').value.trim();
+        var btn = document.getElementById('feedbackSubmitBtn');
+        if (!sessionId) { showAlert('Выберите тренировку', 'error'); return; }
+        if (!text) { showAlert('Напишите комментарий', 'error'); return; }
+        btn.disabled = true; btn.textContent = '⏳ Отправка...';
+        try {
+            var response = await fetch(API_BASE + '/client/sessions/' + sessionId + '/feedback', {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ feedback_text: text, wellbeing_score: score })
+            });
+            var result = await response.json();
+            if (response.ok) {
+                showAlert('✅ Спасибо за отзыв!', 'success');
+                document.getElementById('feedbackForm').reset();
+                document.getElementById('feedbackText').value = '';
+                await loadSessionsForFeedback();
+                await loadRecentSessions();
+            } else { showAlert('❌ Ошибка: ' + (result.detail || 'Не удалось отправить отзыв'), 'error'); }
+        } catch (error) { console.error(error); showAlert('❌ Не удалось отправить отзыв', 'error'); }
+        finally { btn.disabled = false; btn.textContent = '📝 Отправить отзыв'; }
+    });
+
+    // ==========================================
+    // 6. ЦЕЛИ
+    // ==========================================
+    async function loadGoals() {
+        var id = getClientId();
+        try {
+            var response = await fetch(API_BASE + '/client/' + id + '/goals');
+            var result = await response.json();
+            var container = document.getElementById('goalsList');
+            if (!result.data || result.data.length === 0) {
+                container.innerHTML = '<div class="no-data-message"><span class="emoji">🎯</span><div style="font-weight:500;">У вас пока нет целей</div><div style="font-size:13px;margin-top:4px;">Создайте первую цель и начните отслеживать прогресс!</div></div>';
+                return;
+            }
+            var html = '';
+            for (var i = 0; i < result.data.length; i++) {
+                var goal = result.data[i];
+                var progressPercent = goal.target_value > 0 ? Math.min((goal.current_value || 0) / goal.target_value * 100, 100) : 0;
+                var statusClass = goal.status === 'active' ? 'goal-status-active' : goal.status === 'achieved' ? 'goal-status-achieved' : goal.status === 'failed' ? 'goal-status-failed' : 'goal-status-cancelled';
+                var barClass = progressPercent >= 100 ? 'achieved' : 'active';
+                html += '<div class="goal-item"><div class="goal-header"><div><div class="goal-title">' + (goal.exercise_name || 'Общая цель') + '<span style="font-size: 12px; font-weight: 400; color: var(--text-muted); margin-left: 8px;">' + (goal.goal_type === 'weight' ? '🏋️ Вес' : goal.goal_type === 'reps' ? '🔁 Повторения' : goal.goal_type === 'time' ? '⏱️ Время' : goal.goal_type) + '</span></div>' + (goal.description ? '<p style="font-size: 13px; color: var(--text-secondary); margin-top: 4px;">' + goal.description + '</p>' : '') + '<div class="goal-meta">🎯 ' + goal.target_value + ' ' + (goal.goal_type === 'weight' ? 'кг' : goal.goal_type === 'reps' ? 'повторений' : goal.goal_type === 'time' ? 'мин' : '') + (goal.current_value ? ' | 📊 Текущий: ' + goal.current_value : '') + (goal.target_date ? ' | 📅 до ' + formatDate(goal.target_date) : '') + '</div></div><div class="goal-actions"><span class="goal-status-badge ' + statusClass + '">' + (goal.status_display || goal.status) + '</span>' + (goal.status === 'active' ? '<button onclick="showAddProgress(' + goal.id + ')" style="background: #3b82f6; color: white; border: none; padding: 4px 12px; border-radius: 6px; font-size: 12px; cursor: pointer; transition: all 0.2s; font-family: inherit;">➕ Прогресс</button>' : '') + '<button onclick="deleteGoal(' + goal.id + ')" style="background: #ef4444; color: white; border: none; padding: 4px 12px; border-radius: 6px; font-size: 12px; cursor: pointer; transition: all 0.2s; font-family: inherit;">✕</button></div></div><div class="goal-progress-bar"><div style="display: flex; justify-content: space-between; font-size: 12px; color: var(--text-muted); margin-bottom: 4px;"><span>Прогресс</span><span>' + Math.round(progressPercent) + '%</span></div><div class="bar-track"><div class="bar-fill ' + barClass + '" style="width: ' + progressPercent + '%;"></div></div></div>' + (goal.last_progress_value ? '<div style="font-size: 12px; color: var(--text-muted); margin-top: 6px;">Последнее обновление: ' + goal.last_progress_value + ' ' + (goal.goal_type === 'weight' ? 'кг' : goal.goal_type === 'reps' ? 'повторений' : 'мин') + (goal.last_progress_date ? ' (' + formatDate(goal.last_progress_date) + ')' : '') + '</div>' : '') + '</div>';
+            }
+            container.innerHTML = html;
+        } catch (error) { console.error('Ошибка загрузки целей:', error); document.getElementById('goalsList').innerHTML = '<div class="text-muted">❌ Ошибка загрузки целей</div>'; }
+    }
+
+    function showAddProgress(goalId) {
+        var value = prompt('Введите текущее значение:');
+        if (value === null) return;
+        var numValue = parseFloat(value);
+        if (isNaN(numValue) || numValue < 0) { alert('Введите корректное число'); return; }
+        var note = prompt('Комментарий (необязательно):');
+        addGoalProgress(goalId, numValue, note);
+    }
+
+    async function addGoalProgress(goalId, value, note) {
+        try {
+            var response = await fetch(API_BASE + '/client/goals/' + goalId + '/progress', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ value: value, note: note || '' })
+            });
+            var result = await response.json();
+            if (response.ok) { showAlert('✅ Прогресс обновлен!', 'success'); loadGoals(); }
+            else { showAlert('❌ ' + (result.detail || 'Ошибка'), 'error'); }
+        } catch (error) { console.error(error); showAlert('❌ Не удалось обновить прогресс', 'error'); }
+    }
+
+    document.getElementById('goalForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        var exercise = document.getElementById('goalExercise').value.trim();
+        var goalType = document.getElementById('goalType').value;
+        var targetValue = parseFloat(document.getElementById('goalTarget').value);
+        var targetDate = document.getElementById('goalDate').value;
+        var description = document.getElementById('goalDescription').value.trim();
+        if (!exercise) { showAlert('Введите название упражнения', 'error'); return; }
+        if (!targetValue || targetValue <= 0) { showAlert('Введите корректное целевое значение', 'error'); return; }
+        var btn = e.target.querySelector('button[type="submit"]');
+        btn.disabled = true; btn.textContent = '⏳ Создание...';
+        try {
+            var response = await fetch(API_BASE + '/client/' + getClientId() + '/goals', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ exercise_name: exercise, goal_type: goalType, target_value: targetValue, target_date: targetDate || null, description: description || null })
+            });
+            var result = await response.json();
+            if (response.ok) { showAlert('✅ Цель создана!', 'success'); document.getElementById('goalForm').reset(); loadGoals(); }
+            else { showAlert('❌ ' + (result.detail || 'Ошибка'), 'error'); }
+        } catch (error) { console.error(error); showAlert('❌ Не удалось создать цель', 'error'); }
+        finally { btn.disabled = false; btn.textContent = '🎯 Создать цель'; }
+    });
+
+    async function deleteGoal(goalId) {
+        if (!confirm('Вы уверены, что хотите удалить эту цель?')) return;
+        try {
+            var response = await fetch(API_BASE + '/client/goals/' + goalId, { method: 'DELETE' });
+            if (response.ok) { showAlert('✅ Цель удалена', 'success'); loadGoals(); }
+            else { var result = await response.json(); showAlert('❌ ' + (result.detail || 'Не удалось удалить цель'), 'error'); }
+        } catch (error) { console.error(error); showAlert('❌ Ошибка удаления', 'error'); }
+    }
+
+    // ==========================================
+    // 7. ГРУППЫ - ПОЛНАЯ ЛОГИКА
+    // ==========================================
+
+    // --- СОЗДАНИЕ ГРУППЫ ---
+    function showCreateGroupModal() {
+        document.getElementById('createGroupModal').classList.add('active');
+        document.getElementById('groupName').value = '';
+        document.getElementById('groupGoal').value = '';
+        document.getElementById('groupDesc').value = '';
+    }
+
+    function closeCreateGroupModal() {
+        document.getElementById('createGroupModal').classList.remove('active');
+    }
+
+    document.getElementById('createGroupForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        var name = document.getElementById('groupName').value.trim();
+        var goal = document.getElementById('groupGoal').value.trim();
+        var description = document.getElementById('groupDesc').value.trim();
+        if (!name) { showToast('Введите название группы', 'error'); return; }
+        var btn = this.querySelector('button[type="submit"]');
+        btn.disabled = true; btn.textContent = '⏳ Создание...';
+        try {
+            var res = await fetch(API_BASE + '/client/' + getClientId() + '/groups', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name: name, goal: goal || null, description: description || null })
+            });
+            var result = await res.json();
+            if (res.ok) {
+                showToast('✅ Группа создана!', 'success');
+                closeCreateGroupModal();
+                loadMyGroups();
+            } else { showToast(result.detail || 'Ошибка', 'error'); }
+        } catch (e) { console.error(e); showToast('❌ Ошибка', 'error'); }
+        finally { btn.disabled = false; btn.textContent = '🚀 Создать группу'; }
+    });
+
+    // --- ЗАГРУЗКА МОИХ ГРУПП ---
+    async function loadMyGroups() {
+        try {
+            var res = await fetch(API_BASE + '/client/' + getClientId() + '/groups');
+            var result = await res.json();
+            var container = document.getElementById('myGroupsList');
+            if (result.status === 'success' && result.data && result.data.length > 0) {
+                var html = '';
+                for (var i = 0; i < result.data.length; i++) {
+                    var g = result.data[i];
+                    html += '<div class="group-card" onclick="openGroupDetail(' + g.id + ')">' +
+                        '<div class="group-name">' + g.name + 
+                        (g.is_admin ? ' <span class="admin-badge">👑 Админ</span>' : '') +
+                        '</div>' +
+                        (g.goal ? '<div class="group-goal">🎯 ' + g.goal + '</div>' : '') +
+                        (g.description ? '<div class="group-desc">' + g.description + '</div>' : '') +
+                        '<div class="group-meta"><span>👥 ' + (g.members_count || 0) + ' участников</span><span>📅 ' + new Date(g.created_at).toLocaleDateString('ru-RU') + '</span></div>' +
+                        '<div class="group-click-hint">👆 Нажмите для чата</div>' +
+                    '</div>';
+                }
+                container.innerHTML = html;
+            } else {
+                container.innerHTML = '<div class="no-data-message"><span class="emoji">👥</span><div style="font-weight:500;">Вы не состоите в группах</div><div style="font-size:13px;margin-top:4px;">Создайте группу или примите приглашение</div></div>';
+            }
+        } catch (e) { console.error(e); container.innerHTML = '<div class="text-muted">❌ Ошибка загрузки</div>'; }
+    }
+
+    // --- ОТКРЫТИЕ ГРУППЫ ---
+    async function openGroupDetail(groupId) {
+        currentGroupId = groupId;
+        document.getElementById('groupDetailModal').classList.add('active');
+        document.getElementById('chatMessages').innerHTML = '<div class="text-muted" style="text-align: center;">Загрузка...</div>';
+        
+        var goalsPanel = document.getElementById('goalsPanel');
+        if (goalsPanel) {
+            goalsPanel.innerHTML = '<div style="color: var(--text-muted); font-size: 13px; text-align: center; padding: 20px 0;">Загрузка целей...</div>';
+        }
+        
+        var membersPanel = document.getElementById('membersPanel');
+        if (membersPanel) {
+            membersPanel.innerHTML = '<div style="color: var(--text-muted); font-size: 13px; text-align: center; padding: 20px 0;">Загрузка...</div>';
+        }
+        
+        // Очищаем поля приглашения
+        var inviteSearch = document.getElementById('inviteSearchInline');
+        if (inviteSearch) inviteSearch.value = '';
+        var resultsDiv = document.getElementById('userSearchResultsInline');
+        if (resultsDiv) resultsDiv.style.display = 'none';
+        var sendBtn = document.getElementById('sendInviteInlineBtn');
+        if (sendBtn) sendBtn.disabled = true;
+        var statusDiv = document.getElementById('inviteStatusInline');
+        if (statusDiv) {
+            statusDiv.textContent = '';
+            statusDiv.className = 'invite-status';
+        }
+        selectedInviteUserIdInline = null;
+        
+        try {
+            var res = await fetch(API_BASE + '/client/groups/' + groupId + '/detail');
+            var result = await res.json();
+            
+            if (result.status === 'success') {
+                var g = result.data;
+                document.getElementById('detailGroupName').textContent = g.name;
+                document.getElementById('detailGroupGoal').textContent = g.goal ? '🎯 ' + g.goal : '';
+                document.getElementById('detailGroupDesc').textContent = g.description || '';
+                
+                // Показываем общую цель
+                var commonBlock = document.getElementById('commonGoalBlock');
+                if (commonBlock) {
+                    if (g.goal) {
+                        commonBlock.style.display = 'block';
+                        document.getElementById('commonGoalDisplay').textContent = g.goal;
+                        var currentUserProgress = 0;
+                        var currentUserCompleted = false;
+                        if (g.members) {
+                            for (var i = 0; i < g.members.length; i++) {
+                                if (g.members[i].user_id === getClientId()) {
+                                    currentUserProgress = g.members[i].common_progress || 0;
+                                    currentUserCompleted = g.members[i].common_completed || false;
+                                    break;
+                                }
+                            }
+                        }
+                        var progressPercent = Math.min(currentUserProgress, 100);
+                        var barColor = currentUserCompleted ? 'achieved' : 'active';
+                        document.getElementById('commonGoalProgress').innerHTML = 
+                            '<div style="display: flex; justify-content: space-between; font-size: 11px; color: var(--text-muted);"><span>Ваш прогресс</span><span>' + progressPercent + '%</span></div>' +
+                            '<div style="width: 100%; height: 4px; background: var(--border-card); border-radius: 4px; overflow: hidden;"><div style="width: ' + progressPercent + '%; height: 100%; background: ' + (currentUserCompleted ? '#48bb78' : '#667eea') + '; border-radius: 4px; transition: width 0.3s;"></div></div>';
+                    } else {
+                        commonBlock.style.display = 'none';
+                    }
+                }
+                
+                var isAdmin = false;
+                var currentUserId = getClientId();
+                if (g.members) {
+                    for (var i = 0; i < g.members.length; i++) {
+                        if (g.members[i].user_id === currentUserId && g.members[i].role === 'admin') {
+                            isAdmin = true;
+                            break;
+                        }
+                    }
+                }
+                
+                var inviteBlock = document.getElementById('inviteBlock');
+                if (inviteBlock) {
+                    inviteBlock.style.display = isAdmin ? 'block' : 'none';
+                }
+                
+                // --- ЦЕЛИ УЧАСТНИКОВ ---
+                if (goalsPanel) {
+                    var hasAnyGoals = false;
+                    var goalsHtml = '';
+                    
+                    if (g.members && g.members.length > 0) {
+                        for (var i = 0; i < g.members.length; i++) {
+                            var m = g.members[i];
+                            var isYou = m.user_id === currentUserId;
+                            
+                            if (m.personal_goal) {
+                                hasAnyGoals = true;
+                                var progressPercent = m.personal_goal_target > 0 
+                                    ? Math.min((m.personal_goal_current || 0) / m.personal_goal_target * 100, 100) 
+                                    : 0;
+                                var goalStatus = m.personal_goal_status === 'achieved' ? '✅' : '⏳';
+                                var barColor = m.personal_goal_status === 'achieved' ? 'achieved' : 'active';
+                                var nameDisplay = m.name + (isYou ? ' (Вы)' : '');
+                                
+                                goalsHtml += '<div class="goal-item-mini">' +
+                                    '<div class="g-name">' + nameDisplay + ' — ' + m.personal_goal + 
+                                    ' <span style="font-size: 10px; color: var(--text-muted);">' + m.personal_goal_exercise + '</span></div>' +
+                                    '<div class="g-progress">' + (m.personal_goal_current || 0) + '/' + (m.personal_goal_target || 0) + ' ' + goalStatus + '</div>' +
+                                    '<div class="g-bar"><div class="g-fill ' + barColor + '" style="width: ' + progressPercent + '%;"></div></div>' +
+                                    (isYou ? '<button onclick="showUpdateProgress(' + m.user_id + ', \'personal\', ' + (m.personal_goal_current || 0) + ', ' + (m.personal_goal_target || 0) + ')" style="font-size: 10px; background: #667eea; color: white; border: none; padding: 2px 8px; border-radius: 4px; cursor: pointer; font-family: inherit; margin-top: 3px;">📊 Обновить</button>' : '') +
+                                '</div>';
+                            }
+                        }
+                    }
+                    
+                    if (!hasAnyGoals) {
+                        goalsPanel.innerHTML = '<div style="color: var(--text-muted); font-size: 13px; text-align: center; padding: 20px 0;">У участников пока нет целей</div>';
+                    } else {
+                        goalsPanel.innerHTML = goalsHtml;
+                    }
+                }
+                
+                // --- УЧАСТНИКИ ГРУППЫ ---
+                if (membersPanel) {
+                    if (g.members && g.members.length > 0) {
+                        var membersHtml = '';
+                        var countSpan = document.getElementById('membersCount');
+                        if (countSpan) countSpan.textContent = '(' + g.members.length + ')';
+                        
+                        for (var i = 0; i < g.members.length; i++) {
+                            var m = g.members[i];
+                            var isYou = m.user_id === currentUserId;
+                            var isUserAdmin = m.role === 'admin';
+                            var avatarBg = isUserAdmin ? 'linear-gradient(135deg, #667eea, #764ba2)' : 'linear-gradient(135deg, #48bb78, #38a169)';
+                            
+                            membersHtml += '<div class="member-item-mini">' +
+                                '<div class="avatar" style="background: ' + avatarBg + ';">' + getInitials(m.name) + '</div>' +
+                                '<span class="m-name">' + m.name + (isYou ? ' (Вы)' : '') + '</span>' +
+                                '<span class="m-role ' + (isUserAdmin ? 'admin' : '') + '">' + (isUserAdmin ? '👑' : '') + '</span>' +
+                            '</div>';
+                        }
+                        membersPanel.innerHTML = membersHtml;
+                    } else {
+                        var countSpan = document.getElementById('membersCount');
+                        if (countSpan) countSpan.textContent = '(0)';
+                        membersPanel.innerHTML = '<div style="color: var(--text-muted); font-size: 13px; text-align: center; padding: 20px 0;">Нет участников</div>';
+                    }
+                }
+            }
+            
+            await loadChatMessages(groupId);
+            
+            if (chatInterval) clearInterval(chatInterval);
+            chatInterval = setInterval(function() { 
+                loadChatMessages(groupId, true); 
+            }, 5000);
+            
+        } catch (e) { 
+            console.error(e); 
+            var goalsPanel = document.getElementById('goalsPanel');
+            if (goalsPanel) {
+                goalsPanel.innerHTML = '<div style="color: var(--text-muted); font-size: 13px; text-align: center; padding: 20px 0;">❌ Ошибка загрузки</div>';
+            }
+            var membersPanel = document.getElementById('membersPanel');
+            if (membersPanel) {
+                membersPanel.innerHTML = '<div style="color: var(--text-muted); font-size: 13px; text-align: center; padding: 20px 0;">❌ Ошибка загрузки</div>';
+            }
+            showToast('❌ Ошибка загрузки группы', 'error'); 
+        }
+    }
+
+    function closeGroupDetail() {
+        document.getElementById('groupDetailModal').classList.remove('active');
+        if (chatInterval) { clearInterval(chatInterval); chatInterval = null; }
+        currentGroupId = null;
+    }
+
+    // --- ЧАТ ---
+    async function loadChatMessages(groupId, silent) {
+        try {
+            var res = await fetch(API_BASE + '/client/groups/' + groupId + '/messages');
+            var result = await res.json();
+            var container = document.getElementById('chatMessages');
+            if (result.status === 'success' && result.data && result.data.length > 0) {
+                var html = '';
+                for (var i = 0; i < result.data.length; i++) {
+                    var m = result.data[i];
+                    var isMine = m.user_id === getClientId();
+                    var cls = isMine ? 'mine' : 'other';
+                    html += '<div class="chat-message ' + cls + '">' +
+                        '<div class="chat-bubble ' + cls + '">' + m.message + '</div>' +
+                        '<div class="chat-meta">' + m.user_name + ' • ' + new Date(m.created_at).toLocaleTimeString('ru-RU', {hour: '2-digit', minute: '2-digit'}) + '</div>' +
+                    '</div>';
+                }
+                container.innerHTML = html;
+                container.scrollTop = container.scrollHeight;
+            } else {
+                if (!silent) container.innerHTML = '<div class="text-muted" style="text-align: center;">Сообщений пока нет. Напишите первое!</div>';
+            }
+        } catch (e) {
+            if (!silent) {
+                console.error(e);
+                document.getElementById('chatMessages').innerHTML = '<div class="text-muted" style="text-align: center;">❌ Ошибка загрузки</div>';
+            }
+        }
+    }
+
+    async function sendMessage() {
+        var input = document.getElementById('chatInput');
+        var message = input.value.trim();
+        if (!message || !currentGroupId) return;
+        input.value = '';
+        try {
+            var res = await fetch(API_BASE + '/client/groups/' + currentGroupId + '/messages', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ user_id: getClientId(), message: message })
+            });
+            if (res.ok) {
+                await loadChatMessages(currentGroupId);
+                document.getElementById('chatMessages').scrollTop = document.getElementById('chatMessages').scrollHeight;
+            } else {
+                var result = await res.json();
+                showToast(result.detail || 'Ошибка отправки', 'error');
+            }
+        } catch (e) { console.error(e); showToast('❌ Ошибка отправки', 'error'); }
+    }
+
+    // ==========================================
+    // ЛИЧНЫЕ ЦЕЛИ В ГРУППЕ
+    // ==========================================
+
+    function showSetPersonalGoal() {
+        if (!currentGroupId) {
+            showToast('Ошибка: группа не выбрана', 'error');
+            return;
+        }
+        selectedGroupIdForGoal = currentGroupId;
+        document.getElementById('setPersonalGoalModal').classList.add('active');
+        document.getElementById('pgGoal').value = '';
+        document.getElementById('pgExercise').value = '';
+        document.getElementById('pgTarget').value = '';
+        document.getElementById('pgDate').value = '';
+    }
+
+    function closeSetPersonalGoalModal() {
+        document.getElementById('setPersonalGoalModal').classList.remove('active');
+    }
+
+    document.getElementById('setPersonalGoalForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        var goal = document.getElementById('pgGoal').value.trim();
+        var exercise = document.getElementById('pgExercise').value.trim();
+        var goalType = document.getElementById('pgType').value;
+        var target = parseFloat(document.getElementById('pgTarget').value);
+        var targetDate = document.getElementById('pgDate').value;
+        
+        if (!goal || !exercise || !target || target <= 0) {
+            showToast('Заполните все поля корректно', 'error');
+            return;
+        }
+        
+        var btn = this.querySelector('button[type="submit"]');
+        btn.disabled = true;
+        btn.textContent = '⏳ Сохранение...';
+        
+        try {
+            var res = await fetch(API_BASE + '/client/groups/' + selectedGroupIdForGoal + '/personal-goal?client_id=' + getClientId(), {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    goal: goal,
+                    exercise: exercise,
+                    goal_type: goalType,
+                    target: target,
+                    target_date: targetDate || null
+                })
+            });
+            
+            var result = await res.json();
+            if (res.ok) {
+                showToast('✅ ' + result.message, 'success');
+                closeSetPersonalGoalModal();
+                await openGroupDetail(selectedGroupIdForGoal);
+            } else {
+                showToast('❌ ' + (result.detail || 'Ошибка'), 'error');
+            }
+        } catch (e) {
+            console.error(e);
+            showToast('❌ Ошибка', 'error');
+        } finally {
+            btn.disabled = false;
+            btn.textContent = '🎯 Установить цель';
+        }
+    });
+
+    // ==========================================
+    // ОБНОВЛЕНИЕ ПРОГРЕССА
+    // ==========================================
+
+    function showUpdateProgress(userId, type, currentValue, target) {
+        var userIdInput = document.getElementById('updateProgressUserId');
+        var typeInput = document.getElementById('updateProgressType');
+        var info = document.getElementById('updateProgressInfo');
+        var valueInput = document.getElementById('progressValue');
+        
+        if (!userIdInput || !typeInput || !info || !valueInput) {
+            showToast('Ошибка: не найдены элементы формы', 'error');
+            return;
+        }
+        
+        userIdInput.value = userId;
+        typeInput.value = type;
+        if (type === 'personal') {
+            info.textContent = 'Введите текущее значение для личной цели (цель: ' + target + ')';
+        } else {
+            info.textContent = 'Введите прогресс по общей цели (0-100%)';
+        }
+        valueInput.value = currentValue || 0;
+        document.getElementById('updateProgressModal').classList.add('active');
+    }
+
+    function closeUpdateProgressModal() {
+        document.getElementById('updateProgressModal').classList.remove('active');
+    }
+
+    async function submitProgressUpdate() {
+        var userIdInput = document.getElementById('updateProgressUserId');
+        var typeInput = document.getElementById('updateProgressType');
+        var valueInput = document.getElementById('progressValue');
+        
+        if (!userIdInput || !typeInput || !valueInput) {
+            showToast('Ошибка: не найдены элементы формы', 'error');
+            return;
+        }
+        
+        var userId = parseInt(userIdInput.value);
+        var type = typeInput.value;
+        var value = parseFloat(valueInput.value);
+        
+        if (isNaN(userId) || isNaN(value) || value < 0) {
+            showToast('Введите корректное значение', 'error');
+            return;
+        }
+        
+        var btn = document.querySelector('#updateProgressModal .form-submit');
+        if (btn) {
+            btn.disabled = true;
+            btn.textContent = '⏳ Обновление...';
+        }
+        
+        try {
+            var url;
+            var body = { user_id: userId, value: value };
+            
+            if (type === 'personal') {
+                url = API_BASE + '/client/groups/' + currentGroupId + '/personal-progress';
+            } else {
+                url = API_BASE + '/client/groups/' + currentGroupId + '/common-progress';
+            }
+            
+            var res = await fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(body)
+            });
+            
+            var result = await res.json();
+            if (res.ok) {
+                showToast('✅ ' + result.message, 'success');
+                closeUpdateProgressModal();
+                await openGroupDetail(currentGroupId);
+            } else {
+                showToast('❌ ' + (result.detail || 'Ошибка'), 'error');
+            }
+        } catch (e) {
+            console.error(e);
+            showToast('❌ Ошибка', 'error');
+        } finally {
+            if (btn) {
+                btn.disabled = false;
+                btn.textContent = '📊 Обновить';
+            }
+        }
+    }
+
+    // ==========================================
+    // ПРИГЛАШЕНИЯ
+    // ==========================================
+    async function searchUsersInline(query) {
+        var resultsDiv = document.getElementById('userSearchResultsInline');
+        var statusDiv = document.getElementById('inviteStatusInline');
+        var btn = document.getElementById('sendInviteInlineBtn');
+        
+        if (query.length < 2) {
+            if (resultsDiv) resultsDiv.style.display = 'none';
+            if (btn) btn.disabled = true;
+            selectedInviteUserIdInline = null;
+            if (statusDiv) {
+                statusDiv.textContent = '';
+                statusDiv.className = 'invite-status';
+            }
+            return;
+        }
+        
+        try {
+            var res = await fetch(API_BASE + '/client/search-users?q=' + encodeURIComponent(query));
+            var result = await res.json();
+            
+            if (result.status === 'success' && result.data && result.data.length > 0 && resultsDiv) {
+                var html = '';
+                var found = false;
+                for (var i = 0; i < result.data.length; i++) {
+                    var u = result.data[i];
+                    if (u.id === getClientId()) continue;
+                    found = true;
+                    html += '<div class="result-item" onclick="selectUserInline(' + u.id + ', \'' + u.name + '\')">' +
+                        u.name + ' <span class="email">(' + u.email + ')</span>' +
+                    '</div>';
+                }
+                if (!found) {
+                    html = '<div class="result-item" style="color: var(--text-muted);">Пользователи не найдены</div>';
+                    if (btn) btn.disabled = true;
+                } else {
+                    if (btn) btn.disabled = true;
+                }
+                resultsDiv.innerHTML = html;
+                resultsDiv.style.display = 'block';
+                if (statusDiv) {
+                    statusDiv.textContent = '';
+                    statusDiv.className = 'invite-status';
+                }
+            } else {
+                if (resultsDiv) {
+                    resultsDiv.innerHTML = '<div class="result-item" style="color: var(--text-muted);">Пользователи не найдены</div>';
+                    resultsDiv.style.display = 'block';
+                }
+                if (btn) btn.disabled = true;
+                selectedInviteUserIdInline = null;
+            }
+        } catch (e) {
+            console.error(e);
+            if (resultsDiv) resultsDiv.style.display = 'none';
+        }
+    }
+
+    function selectUserInline(userId, userName) {
+        selectedInviteUserIdInline = userId;
+        var input = document.getElementById('inviteSearchInline');
+        var resultsDiv = document.getElementById('userSearchResultsInline');
+        var btn = document.getElementById('sendInviteInlineBtn');
+        var statusDiv = document.getElementById('inviteStatusInline');
+        
+        if (input) input.value = userName;
+        if (resultsDiv) resultsDiv.style.display = 'none';
+        if (btn) btn.disabled = false;
+        if (statusDiv) {
+            statusDiv.textContent = '✅ Выбран: ' + userName;
+            statusDiv.className = 'invite-status success';
+        }
+    }
+
+    async function sendInviteInline() {
+        var userId = selectedInviteUserIdInline;
+        var groupId = currentGroupId;
+        var statusDiv = document.getElementById('inviteStatusInline');
+        var btn = document.getElementById('sendInviteInlineBtn');
+        
+        if (!groupId || !userId) {
+            if (statusDiv) {
+                statusDiv.textContent = '❌ Выберите пользователя';
+                statusDiv.className = 'invite-status error';
+            }
+            return;
+        }
+        
+        if (btn) {
+            btn.disabled = true;
+            btn.textContent = '⏳';
+        }
+        if (statusDiv) {
+            statusDiv.textContent = '⏳ Отправка...';
+            statusDiv.className = 'invite-status';
+        }
+        
+        try {
+            var res = await fetch(API_BASE + '/client/' + getClientId() + '/invite', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ 
+                    group_id: parseInt(groupId), 
+                    invitee_id: parseInt(userId) 
+                })
+            });
+            var result = await res.json();
+            if (res.ok) {
+                if (statusDiv) {
+                    statusDiv.textContent = '✅ Приглашение отправлено!';
+                    statusDiv.className = 'invite-status success';
+                }
+                var input = document.getElementById('inviteSearchInline');
+                if (input) input.value = '';
+                var resultsDiv = document.getElementById('userSearchResultsInline');
+                if (resultsDiv) resultsDiv.style.display = 'none';
+                selectedInviteUserIdInline = null;
+                if (btn) btn.disabled = true;
+                await openGroupDetail(currentGroupId);
+            } else {
+                if (statusDiv) {
+                    statusDiv.textContent = '❌ ' + (result.detail || 'Ошибка');
+                    statusDiv.className = 'invite-status error';
+                }
+                if (btn) btn.disabled = false;
+            }
+        } catch (e) {
+            console.error(e);
+            if (statusDiv) {
+                statusDiv.textContent = '❌ Ошибка отправки';
+                statusDiv.className = 'invite-status error';
+            }
+            if (btn) btn.disabled = false;
+        }
+        if (btn) btn.textContent = '➕';
+    }
+
+    // --- ВЫХОД ИЗ ГРУППЫ ---
+    async function leaveGroup() {
+        if (!currentGroupId) return;
+        if (!confirm('Вы уверены, что хотите выйти из группы?')) return;
+        
+        try {
+            var res = await fetch(API_BASE + '/client/groups/' + currentGroupId + '/leave', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ user_id: getClientId() })
+            });
+            var result = await res.json();
+            if (res.ok) {
+                showToast('✅ Вы вышли из группы', 'success');
+                closeGroupDetail();
+                loadMyGroups();
+            } else {
+                showToast(result.detail || 'Ошибка', 'error');
+            }
+        } catch (e) {
+            console.error(e);
+            showToast('❌ Ошибка', 'error');
+        }
+    }
+
+    // --- ВЫГНАТЬ УЧАСТНИКА ---
+    async function kickMember(userId) {
+        if (!currentGroupId) return;
+        if (!confirm('Вы уверены, что хотите исключить этого участника из группы?')) return;
+        
+        try {
+            var res = await fetch(API_BASE + '/client/groups/' + currentGroupId + '/kick', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ 
+                    user_id: userId,
+                    admin_id: getClientId()
+                })
+            });
+            var result = await res.json();
+            if (res.ok) {
+                showToast('✅ Участник исключён из группы', 'success');
+                await openGroupDetail(currentGroupId);
+            } else {
+                showToast(result.detail || 'Ошибка', 'error');
+            }
+        } catch (e) {
+            console.error(e);
+            showToast('❌ Ошибка', 'error');
+        }
+    }
+
+    // --- ПРИГЛАШЕНИЯ (вкладка) ---
+    async function loadInvites() {
+        try {
+            var res = await fetch(API_BASE + '/client/' + getClientId() + '/group-invites');
+            var result = await res.json();
+            var container = document.getElementById('invitesList');
+            var countBadge = document.getElementById('invitesCount');
+            if (result.status === 'success' && result.data && result.data.length > 0) {
+                var pending = result.data.filter(function(inv) { return inv.status === 'pending'; });
+                if (pending.length > 0 && countBadge) {
+                    countBadge.classList.add('show');
+                    countBadge.textContent = pending.length;
+                } else if (countBadge) { 
+                    countBadge.classList.remove('show'); 
+                }
+                var html = '';
+                for (var i = 0; i < result.data.length; i++) {
+                    var inv = result.data[i];
+                    var isPending = inv.status === 'pending';
+                    html += '<div class="invite-item"><div class="invite-info"><div class="name">📩 ' + inv.group_name + '</div><div class="sub">от ' + inv.inviter_name + ' • ' + new Date(inv.created_at).toLocaleString('ru-RU') + '</div></div><div class="invite-actions">' +
+                        (isPending ? '<button onclick="respondToInvite(' + inv.id + ', \'accept\')" class="btn-sm btn-accept">✅ Принять</button><button onclick="respondToInvite(' + inv.id + ', \'reject\')" class="btn-sm btn-reject">❌ Отклонить</button>' :
+                        '<span style="font-size: 13px; color: var(--text-muted);">' + (inv.status === 'accepted' ? '✅ Принято' : '❌ Отклонено') + '</span>') +
+                    '</div></div>';
+                }
+                if (container) container.innerHTML = html;
+            } else {
+                if (countBadge) countBadge.classList.remove('show');
+                if (container) container.innerHTML = '<div class="no-data-message"><span class="emoji">📭</span><div style="font-weight:500;">Нет приглашений</div></div>';
+            }
+        } catch (e) { console.error(e); var container = document.getElementById('invitesList'); if (container) container.innerHTML = '<div class="text-muted">❌ Ошибка загрузки</div>'; }
+    }
+
+    async function respondToInvite(inviteId, action) {
+        if (!confirm(action === 'accept' ? '✅ Принять приглашение?' : '❌ Отклонить приглашение?')) return;
+        try {
+            var res = await fetch(API_BASE + '/client/invites/' + inviteId + '/respond', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: action, client_id: getClientId() })
+            });
+            var result = await res.json();
+            if (res.ok) {
+                showToast(result.message, 'success');
+                loadInvites();
+                if (action === 'accept') loadMyGroups();
+            } else { showToast(result.detail || 'Ошибка', 'error'); }
+        } catch (e) { console.error(e); showToast('❌ Ошибка', 'error'); }
+    }
+
+    // ==========================================
+    // ЗАПУСК
+    // ==========================================
+    window.onload = function() {
+        loadTheme();
+        var userData = sessionStorage.getItem('user');
+        if (!userData) { window.location.href = '/login.html'; return; }
+        try {
+            var user = JSON.parse(userData);
+            if (user.role !== 'client') { window.location.href = '/login.html'; return; }
+            currentClientId = user.id;
+            document.getElementById('clientIdDisplay').textContent = 'ID: ' + user.id;
+            if (user.name) {
+                document.getElementById('clientNameDisplay').textContent = user.name;
+                document.getElementById('clientAvatar').textContent = getInitials(user.name);
+            }
+            loadAllProfileData();
+        } catch (e) { console.error('❌ Ошибка инициализации:', e); showAlert('Ошибка загрузки данных', 'error'); }
+    };
+</script>
+
+</body>
+</html>

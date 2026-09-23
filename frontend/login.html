@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Вход в систему | Fitness Club</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #111827;
+            color: #e5e7eb;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .login-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 40px;
+            max-width: 1400px;
+            width: 100%;
+        }
+
+        /* Боковые фото */
+        .side-photos {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+            flex: 1;
+            max-width: 400px;
+        }
+
+        .side-photos .photo {
+            height: 280px;
+            border-radius: 20px;
+            overflow: hidden;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            border: 2px solid #374151;
+            transition: all 0.4s ease;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .side-photos .photo:hover {
+            transform: scale(1.04);
+            border-color: #8b5cf6;
+            box-shadow: 0 12px 40px rgba(139, 92, 246, 0.25);
+        }
+
+        .side-photos .photo .overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 20px;
+            background: linear-gradient(transparent, rgba(0, 0, 0, 0.85));
+            color: #f3f4f6;
+            font-size: 18px;
+            font-weight: 600;
+            opacity: 0;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            transform: translateY(10px);
+            text-align: center;
+            letter-spacing: 0.5px;
+        }
+
+        .side-photos .photo:hover .overlay {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .side-photos.left {
+            align-items: flex-end;
+        }
+
+        .side-photos.right {
+            align-items: flex-start;
+        }
+
+        .login-container {
+            background: #1f2937;
+            border-radius: 24px;
+            padding: 48px 40px;
+            max-width: 460px;
+            width: 100%;
+            border: 1px solid #374151;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+        }
+
+        .login-container:hover {
+            border-color: #8b5cf6;
+            box-shadow: 0 20px 60px rgba(139, 92, 246, 0.15);
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .login-header .logo {
+            font-size: 56px;
+            display: block;
+            margin-bottom: 12px;
+        }
+
+        .login-header h1 {
+            font-size: 28px;
+            font-weight: 800;
+            color: #f3f4f6;
+            letter-spacing: -0.5px;
+        }
+
+        .login-header h1 span {
+            color: #8b5cf6;
+        }
+
+        .login-header p {
+            color: #9ca3af;
+            font-size: 15px;
+            margin-top: 4px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: #9ca3af;
+            margin-bottom: 6px;
+            letter-spacing: 0.3px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #374151;
+            border-radius: 12px;
+            font-size: 15px;
+            font-family: inherit;
+            outline: none;
+            transition: all 0.3s ease;
+            background: #111827;
+            color: #f3f4f6;
+        }
+
+        .form-group input:focus {
+            border-color: #8b5cf6;
+            box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.1);
+            background: #111827;
+        }
+
+        .form-group input::placeholder {
+            color: #6b7280;
+        }
+
+        .form-group .hint {
+            font-size: 12px;
+            color: #6b7280;
+            margin-top: 4px;
+        }
+
+        .btn-login {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: inherit;
+            margin-top: 4px;
+        }
+
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(139, 92, 246, 0.4);
+        }
+
+        .btn-login:active {
+            transform: scale(0.98);
+        }
+
+        .btn-login:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .alert {
+            padding: 12px 16px;
+            border-radius: 12px;
+            margin-bottom: 16px;
+            font-size: 14px;
+            font-weight: 500;
+            display: none;
+        }
+
+        .alert-error {
+            background: #2a0f0f;
+            color: #fca5a5;
+            border: 1px solid #7f1d1d;
+            display: block;
+        }
+
+        .alert-success {
+            background: #0f2922;
+            color: #6ee7b7;
+            border: 1px solid #065f46;
+            display: block;
+        }
+
+        .login-footer {
+            text-align: center;
+            margin-top: 24px;
+            font-size: 13px;
+            color: #6b7280;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            vertical-align: middle;
+            margin-right: 8px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .demo-info {
+            background: #111827;
+            border-radius: 12px;
+            padding: 14px 18px;
+            margin-top: 20px;
+            font-size: 13px;
+            color: #9ca3af;
+            border: 1px solid #374151;
+            line-height: 1.8;
+        }
+
+        .demo-info strong {
+            color: #f3f4f6;
+        }
+
+        .demo-info .highlight {
+            color: #8b5cf6;
+            font-weight: 600;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 16px;
+            color: #6b7280;
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.2s;
+        }
+
+        .back-link:hover {
+            color: #f3f4f6;
+        }
+
+        .back-link .arrow {
+            margin-right: 6px;
+        }
+
+        @media (max-width: 1200px) {
+            .login-wrapper {
+                gap: 30px;
+            }
+            .side-photos {
+                max-width: 300px;
+            }
+            .side-photos .photo {
+                height: 220px;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .login-wrapper {
+                flex-direction: column;
+                gap: 20px;
+            }
+            .side-photos {
+                flex-direction: row;
+                max-width: 100%;
+                width: 100%;
+                gap: 16px;
+            }
+            .side-photos .photo {
+                height: 180px;
+                flex: 1;
+            }
+            .side-photos.left {
+                align-items: stretch;
+            }
+            .side-photos.right {
+                align-items: stretch;
+            }
+            .login-container {
+                max-width: 460px;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .side-photos .photo {
+                height: 130px;
+            }
+            .side-photos .photo .overlay {
+                font-size: 13px;
+                padding: 12px;
+            }
+            .login-container {
+                padding: 32px 24px;
+            }
+            .login-header h1 {
+                font-size: 24px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .side-photos {
+                display: none;
+            }
+            .login-container {
+                padding: 28px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-wrapper">
+
+        <!-- ЛЕВАЯ КОЛОНКА С ФОТО (из интернета) -->
+        <div class="side-photos left">
+            <div class="photo" style="background-image: url('https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=600&h=400&fit=crop');">
+                <div class="overlay"> Тренажерный зал</div>
+            </div>
+            <div class="photo" style="background-image: url('https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=600&h=400&fit=crop');">
+                <div class="overlay"> Силовая зона</div>
+            </div>
+        </div>
+
+        <!-- ЦЕНТРАЛЬНАЯ КАРТОЧКА ВХОДА -->
+        <div class="login-container">
+            <div class="login-header">
+                <span class="logo">🏋️</span>
+                <h1>Fitness<span>Club</span></h1>
+                <p>Войдите в систему</p>
+            </div>
+
+            <div id="alertMessage" class="alert"></div>
+
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="username"> ФИО</label>
+                    <input type="text" id="username" placeholder="Введите ваше ФИО" required>
+                    <div class="hint">Введите полное ФИО как в системе</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="password"> ID (пароль)</label>
+                    <input type="password" id="password" placeholder="Введите ваш ID" required>
+                    <div class="hint">Ваш ID указан в личном кабинете</div>
+                </div>
+
+                <button type="submit" class="btn-login" id="loginBtn">Войти</button>
+            </form>
+
+            <div class="demo-info">
+                <strong>📌 Тестовые данные:</strong><br>
+                 Администратор: <span class="highlight">Администратор</span> / ID: <span class="highlight">1</span><br>
+                 Кассир: <span class="highlight">Кассир</span> / ID: <span class="highlight">2</span><br>
+                 Тренер: <span class="highlight">Тренер Иван</span> / ID: <span class="highlight">3</span><br>
+                 Клиент: <span class="highlight">Клиент Иван</span> / ID: <span class="highlight">4</span>
+            </div>
+
+            <div style="text-align:center;">
+                <a href="/" class="back-link"><span class="arrow">←</span> Вернуться на главную</a>
+            </div>
+
+            <div class="login-footer">© 2026 Фитнес-клуб. Все права защищены.</div>
+        </div>
+
+        <!-- ПРАВАЯ КОЛОНКА С ФОТО (из интернета) -->
+        <div class="side-photos right">
+            <div class="photo" style="background-image: url('https://images.unsplash.com/photo-1538805060514-97d9cc17730c?w=600&h=400&fit=crop');">
+                <div class="overlay"> Кардиозона</div>
+            </div>
+            <div class="photo" style="background-image: url('https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=600&h=400&fit=crop');">
+                <div class="overlay"> Зона стретчинга</div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        const API_BASE = "http://127.0.0.1:8000/api/v1";
+
+        function showAlert(message, type = 'error') {
+            const el = document.getElementById('alertMessage');
+            el.textContent = message;
+            el.className = 'alert alert-' + type;
+            setTimeout(function() {
+                el.className = 'alert';
+            }, 5000);
+        }
+
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value.trim();
+
+            if (!username || !password) {
+                showAlert('⚠️ Заполните все поля', 'error');
+                return;
+            }
+
+            const btn = document.getElementById('loginBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner"></span> Вход...';
+
+            try {
+                const response = await fetch(API_BASE + '/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username: username, password: password })
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    showAlert('✅ ' + result.message, 'success');
+                    sessionStorage.setItem('user', JSON.stringify(result.user));
+                    setTimeout(function() {
+                        window.location.href = result.redirect;
+                    }, 1000);
+                } else {
+                    showAlert('❌ ' + (result.detail || 'Ошибка входа'), 'error');
+                }
+            } catch (error) {
+                console.error('Ошибка:', error);
+                showAlert('❌ Не удалось войти. Проверьте подключение к серверу.', 'error');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = 'Войти';
+            }
+        });
+    </script>
+</body>
+</html>

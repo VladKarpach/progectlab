@@ -1,0 +1,1564 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fitness Club — Тренажерный зал в Гродно</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #111827;
+            color: #e5e7eb;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .site-header {
+            background: #1f2937;
+            padding: 16px 0;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 1px solid #374151;
+        }
+
+        .site-header .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .site-branding {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .site-branding .logo-icon {
+            font-size: 36px;
+        }
+
+        .site-branding .logo-text {
+            font-size: 28px;
+            font-weight: 800;
+            color: #f3f4f6;
+            letter-spacing: -0.5px;
+        }
+
+        .site-branding .logo-text span {
+            color: #8b5cf6;
+        }
+
+        .main-navigation ul {
+            display: flex;
+            list-style: none;
+            gap: 32px;
+            margin: 0;
+            padding: 0;
+        }
+
+        .main-navigation ul li a {
+            color: #9ca3af;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 15px;
+            transition: color 0.2s;
+            position: relative;
+        }
+
+        .main-navigation ul li a::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: #8b5cf6;
+            transition: width 0.3s;
+        }
+
+        .main-navigation ul li a:hover::after {
+            width: 100%;
+        }
+
+        .main-navigation ul li a:hover {
+            color: #f3f4f6;
+        }
+
+        .header-phone {
+            font-weight: 600;
+            font-size: 16px;
+            color: #f3f4f6;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .header-phone:hover {
+            color: #8b5cf6;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 28px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 15px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: none;
+            text-align: center;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%);
+            color: white;
+            box-shadow: 0 4px 20px rgba(139, 92, 246, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px rgba(139, 92, 246, 0.4);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: #f3f4f6;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-outline:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: #8b5cf6;
+            transform: translateY(-3px);
+        }
+
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 28px;
+            cursor: pointer;
+            color: #f3f4f6;
+        }
+
+        .hero {
+            background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
+            padding: 80px 0 100px;
+            position: relative;
+            overflow: hidden;
+            border-bottom: 3px solid rgba(139, 92, 246, 0.2);
+        }
+
+        .hero::before {
+            content: '💪';
+            position: absolute;
+            font-size: 350px;
+            opacity: 0.03;
+            right: -60px;
+            bottom: -100px;
+            transform: rotate(-10deg);
+        }
+
+        .hero .container {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .hero-content {
+            max-width: 500px;
+            color: #f3f4f6;
+        }
+
+        .hero-content h1 {
+            font-size: 48px;
+            font-weight: 800;
+            line-height: 1.2;
+            margin-bottom: 16px;
+            letter-spacing: -1px;
+        }
+
+        .hero-content h1 span {
+            color: #8b5cf6;
+        }
+
+        .hero-content .subtitle {
+            font-size: 18px;
+            opacity: 0.8;
+            margin-bottom: 8px;
+        }
+
+        .hero-content .free-trial {
+            font-size: 14px;
+            opacity: 0.7;
+            margin-bottom: 30px;
+        }
+
+        .hero-content .free-trial strong {
+            color: #8b5cf6;
+        }
+
+        .hero-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        /* ====================================================
+        ГАЛЕРЕЯ
+        ==================================================== */
+        .gallery-section {
+            padding: 80px 0;
+            background: #111827;
+        }
+
+        .gallery-section .section-header {
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto 50px;
+        }
+
+        .gallery-section .section-header h2 {
+            font-size: 42px;
+            font-weight: 800;
+            color: #f3f4f6;
+            margin-bottom: 16px;
+        }
+
+        .gallery-section .section-header h2 span {
+            color: #8b5cf6;
+        }
+
+        .gallery-section .section-header p {
+            color: #9ca3af;
+            font-size: 18px;
+            line-height: 1.8;
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+        }
+
+        .gallery-item {
+            height: 340px;
+            border-radius: 20px;
+            overflow: hidden;
+            position: relative;
+            border: 1px solid #374151;
+            transition: all 0.4s ease;
+            cursor: pointer;
+            background: #1a1f2e;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+
+        .gallery-item:hover {
+            transform: scale(1.03);
+            border-color: #8b5cf6;
+            box-shadow: 0 12px 40px rgba(139, 92, 246, 0.25);
+            z-index: 10;
+        }
+
+        .gallery-item .overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 24px 20px;
+            background: linear-gradient(transparent, rgba(0, 0, 0, 0.85));
+            color: #f3f4f6;
+            font-size: 17px;
+            font-weight: 600;
+            opacity: 0;
+            transition: opacity 0.4s ease, transform 0.4s ease;
+            transform: translateY(15px);
+            text-align: center;
+            letter-spacing: 0.5px;
+        }
+
+        .gallery-item:hover .overlay {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* ====================================================
+        ТРЕНЕРЫ
+        ==================================================== */
+        .trainers-section {
+            padding: 80px 0;
+            background: #111827;
+            border-top: 1px solid #374151;
+        }
+
+        .trainers-section .section-header {
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto 50px;
+        }
+
+        .trainers-section .section-header h2 {
+            font-size: 42px;
+            font-weight: 800;
+            color: #f3f4f6;
+            margin-bottom: 16px;
+        }
+
+        .trainers-section .section-header h2 span {
+            color: #8b5cf6;
+        }
+
+        .trainers-section .section-header p {
+            color: #9ca3af;
+            font-size: 18px;
+            line-height: 1.8;
+        }
+
+        .trainers-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 40px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .trainer-card {
+            background: #1f2937;
+            border-radius: 24px;
+            overflow: hidden;
+            border: 1px solid #374151;
+            transition: all 0.4s ease;
+        }
+
+        .trainer-card:hover {
+            transform: translateY(-8px);
+            border-color: #8b5cf6;
+            box-shadow: 0 12px 40px rgba(139, 92, 246, 0.2);
+        }
+
+        .trainer-card .trainer-photo {
+            height: 320px;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            position: relative;
+        }
+
+        .trainer-card .trainer-photo .trainer-badge {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 50px;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .trainer-card .trainer-info {
+            padding: 24px 28px 28px;
+        }
+
+        .trainer-card .trainer-info h3 {
+            font-size: 24px;
+            font-weight: 700;
+            color: #f3f4f6;
+            margin-bottom: 4px;
+        }
+
+        .trainer-card .trainer-info .trainer-spec {
+            font-size: 14px;
+            color: #8b5cf6;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+
+        .trainer-card .trainer-info .trainer-desc {
+            color: #d1d5db;
+            font-size: 15px;
+            line-height: 1.7;
+            margin-bottom: 16px;
+        }
+
+        .trainer-card .trainer-info .trainer-stats {
+            display: flex;
+            gap: 24px;
+            padding-top: 16px;
+            border-top: 1px solid #374151;
+        }
+
+        .trainer-card .trainer-info .trainer-stats .stat {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .trainer-card .trainer-info .trainer-stats .stat .number {
+            font-size: 20px;
+            font-weight: 700;
+            color: #f3f4f6;
+        }
+
+        .trainer-card .trainer-info .trainer-stats .stat .label {
+            font-size: 12px;
+            color: #9ca3af;
+            font-weight: 500;
+        }
+
+        /* ====================================================
+        АДАПТИВ ДЛЯ ТРЕНЕРОВ
+        ==================================================== */
+        @media (max-width: 992px) {
+            .trainers-grid {
+                grid-template-columns: 1fr;
+                max-width: 500px;
+            }
+            .trainer-card .trainer-photo {
+                height: 280px;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .trainers-section .section-header h2 {
+                font-size: 30px;
+            }
+            .trainers-section .section-header p {
+                font-size: 15px;
+            }
+            .trainer-card .trainer-photo {
+                height: 220px;
+            }
+            .trainer-card .trainer-info {
+                padding: 20px;
+            }
+            .trainer-card .trainer-info h3 {
+                font-size: 20px;
+            }
+            .trainer-card .trainer-info .trainer-stats {
+                flex-wrap: wrap;
+                gap: 16px;
+            }
+        }
+
+        /* ====================================================
+        АДАПТИВ ДЛЯ ГАЛЕРЕИ
+        ==================================================== */
+        @media (max-width: 992px) {
+            .gallery-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 20px;
+            }
+            .gallery-item {
+                height: 280px;
+            }
+            .gallery-item .overlay {
+                font-size: 15px;
+                padding: 18px;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .gallery-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 14px;
+            }
+            .gallery-item {
+                height: 180px;
+                border-radius: 14px;
+            }
+            .gallery-item .overlay {
+                font-size: 12px;
+                padding: 12px;
+            }
+            .gallery-section .section-header h2 {
+                font-size: 30px;
+            }
+            .gallery-section .section-header p {
+                font-size: 15px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .gallery-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 10px;
+            }
+            .gallery-item {
+                height: 140px;
+                border-radius: 12px;
+            }
+            .gallery-item .overlay {
+                font-size: 11px;
+                padding: 10px;
+            }
+        }
+
+        .price-section {
+            padding: 60px 0 80px;
+            background: #111827;
+        }
+
+        .price-section .section-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .price-section .section-header h2 {
+            font-size: 42px;
+            font-weight: 900;
+            color: #f3f4f6;
+            letter-spacing: -1px;
+        }
+
+        .price-section .section-header h2 span {
+            color: #8b5cf6;
+        }
+
+        .price-section .section-header p {
+            color: #9ca3af;
+            font-size: 18px;
+            margin-top: 8px;
+        }
+
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+
+        .pricing-card {
+            background: #1f2937;
+            border-radius: 24px;
+            padding: 40px 30px;
+            border: 1px solid #374151;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .pricing-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #8b5cf6, #6d28d9);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .pricing-card:hover::before {
+            opacity: 1;
+        }
+
+        .pricing-card:hover {
+            transform: translateY(-10px);
+            border-color: #8b5cf6;
+            box-shadow: 0 20px 50px rgba(139, 92, 246, 0.15);
+        }
+
+        .pricing-card.popular {
+            border-color: #8b5cf6;
+            background: linear-gradient(180deg, #1f2937 0%, #1a1f2e 100%);
+        }
+
+        .pricing-card.popular::after {
+            content: '🔥 ПОПУЛЯРНЫЙ';
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%);
+            color: white;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 4px 14px;
+            border-radius: 50px;
+            letter-spacing: 0.5px;
+        }
+
+        .pricing-card .card-icon {
+            font-size: 40px;
+            margin-bottom: 16px;
+            display: block;
+        }
+
+        .pricing-card .plan-name {
+            font-size: 22px;
+            font-weight: 700;
+            color: #f3f4f6;
+            margin-bottom: 4px;
+        }
+
+        .pricing-card .plan-type {
+            font-size: 13px;
+            color: #8b5cf6;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+        }
+
+        .pricing-card .price {
+            font-size: 42px;
+            font-weight: 900;
+            color: #8b5cf6;
+            margin: 8px 0 4px;
+        }
+
+        .pricing-card .price small {
+            font-size: 18px;
+            font-weight: 400;
+            color: #9ca3af;
+        }
+
+        .pricing-card .price-period {
+            font-size: 14px;
+            color: #6b7280;
+            margin-bottom: 20px;
+        }
+
+        .pricing-card .features {
+            list-style: none;
+            margin: 16px 0 30px;
+            padding: 0;
+            flex: 1;
+        }
+
+        .pricing-card .features li {
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #d1d5db;
+            font-size: 14px;
+        }
+
+        .pricing-card .features li::before {
+            content: '✓';
+            color: #8b5cf6;
+            font-weight: 700;
+            font-size: 16px;
+        }
+
+        .pricing-card .features li:last-child {
+            border-bottom: none;
+        }
+
+        .pricing-card .btn {
+            width: 100%;
+            padding: 14px;
+            font-size: 16px;
+            margin-top: auto;
+        }
+
+        .loader {
+            text-align: center;
+            padding: 40px 0;
+            color: #9ca3af;
+        }
+
+        .loader .spinner {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            border: 4px solid #374151;
+            border-top-color: #8b5cf6;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .site-footer {
+            background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
+            color: #9ca3af;
+            padding: 60px 0 40px;
+            border-top: 3px solid rgba(139, 92, 246, 0.2);
+            margin-top: 40px;
+        }
+
+        .site-footer .container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            gap: 40px;
+        }
+
+        .footer-info {
+            max-width: 400px;
+        }
+
+        .footer-info .footer-logo {
+            font-size: 24px;
+            font-weight: 800;
+            color: #f3f4f6;
+            margin-bottom: 16px;
+        }
+
+        .footer-info .footer-logo span {
+            color: #8b5cf6;
+        }
+
+        .footer-info p {
+            margin-bottom: 8px;
+            font-size: 15px;
+        }
+
+        .footer-info a {
+            color: #9ca3af;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .footer-info a:hover {
+            color: #f3f4f6;
+        }
+
+        .footer-info .footer-social {
+            display: flex;
+            gap: 16px;
+            margin-top: 16px;
+        }
+
+        .footer-info .footer-social a {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            transition: all 0.3s;
+            border: 2px solid #374151;
+            background: #1a1f2e;
+        }
+
+        .footer-info .footer-social a img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .footer-info .footer-social a:hover {
+            transform: translateY(-4px);
+            border-color: #8b5cf6;
+            box-shadow: 0 8px 30px rgba(139, 92, 246, 0.25);
+        }
+
+        .footer-links {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .footer-links a {
+            color: #9ca3af;
+            text-decoration: none;
+            font-size: 15px;
+            transition: color 0.2s;
+        }
+
+        .footer-links a:hover {
+            color: #f3f4f6;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 30px;
+            margin-top: 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            font-size: 14px;
+            color: #6b7280;
+        }
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(4px);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: #1f2937;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 480px;
+            width: 95%;
+            position: relative;
+            animation: modalIn 0.3s ease;
+            border: 1px solid #374151;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        @keyframes modalIn {
+            from {
+                transform: translateY(30px) scale(0.95);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0) scale(1);
+                opacity: 1;
+            }
+        }
+
+        .modal-content .close-modal {
+            position: absolute;
+            top: 16px;
+            right: 20px;
+            font-size: 28px;
+            cursor: pointer;
+            color: #6b7280;
+            transition: color 0.2s;
+            background: none;
+            border: none;
+        }
+
+        .modal-content .close-modal:hover {
+            color: #f3f4f6;
+        }
+
+        .modal-content h2 {
+            font-size: 24px;
+            font-weight: 700;
+            color: #f3f4f6;
+            margin-bottom: 8px;
+            text-align: center;
+        }
+
+        .modal-content p.sub {
+            text-align: center;
+            color: #9ca3af;
+            margin-bottom: 24px;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: #9ca3af;
+            margin-bottom: 4px;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #374151;
+            border-radius: 10px;
+            font-size: 15px;
+            outline: none;
+            transition: border-color 0.2s;
+            font-family: inherit;
+            background: #111827;
+            color: #f3f4f6;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            border-color: #8b5cf6;
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+        }
+
+        .form-group .hint {
+            font-size: 12px;
+            color: #6b7280;
+            margin-top: 4px;
+        }
+
+        .form-submit {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .form-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(139, 92, 246, 0.3);
+        }
+
+        .form-submit:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .form-agreement {
+            font-size: 11px;
+            color: #6b7280;
+            text-align: center;
+            margin-top: 12px;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            vertical-align: middle;
+            margin-right: 8px;
+        }
+
+        @media (max-width: 992px) {
+            .hero-content h1 {
+                font-size: 38px;
+            }
+            .hero-content {
+                max-width: 100%;
+                text-align: center;
+                margin-bottom: 30px;
+            }
+            .hero .container {
+                flex-direction: column;
+                text-align: center;
+            }
+            .hero-buttons {
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .main-navigation {
+                display: none;
+            }
+            .main-navigation.open {
+                display: block;
+                width: 100%;
+                padding-top: 16px;
+                border-top: 1px solid #374151;
+            }
+            .main-navigation.open ul {
+                flex-direction: column;
+                gap: 12px;
+                align-items: center;
+            }
+            .menu-toggle {
+                display: block;
+            }
+            .hero {
+                padding: 60px 0 80px;
+            }
+            .hero-content h1 {
+                font-size: 32px;
+            }
+            .pricing-grid {
+                grid-template-columns: 1fr;
+                max-width: 420px;
+                margin-left: auto;
+                margin-right: auto;
+            }
+            .site-footer .container {
+                flex-direction: column;
+                text-align: center;
+            }
+            .footer-info .footer-social {
+                justify-content: center;
+            }
+            .header-phone {
+                font-size: 14px;
+            }
+            .site-branding .logo-text {
+                font-size: 22px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero-content h1 {
+                font-size: 26px;
+            }
+            .btn {
+                padding: 12px 24px;
+                font-size: 14px;
+            }
+            .pricing-card {
+                padding: 30px 20px;
+            }
+            .pricing-card .price {
+                font-size: 34px;
+            }
+            .modal-content {
+                padding: 30px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ====================================================
+    ШАПКА
+    ==================================================== -->
+    <header class="site-header">
+        <div class="container">
+            <div class="site-branding">
+                <span class="logo-icon">🏋️</span>
+                <span class="logo-text">Fitness<span>Club</span></span>
+            </div>
+
+            <nav class="main-navigation" id="mainNav">
+                <ul>
+                    <li><a href="#gallery">Галерея</a></li>
+                    <li><a href="#trainers">Тренеры</a></li>
+                    <li><a href="#price">Абонементы</a></li>
+                    <li><a href="#contacts">Контакты</a></li>
+                </ul>
+            </nav>
+
+            <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
+                <a href="tel:+375291234567" class="header-phone">+375 (29) 644-93-73</a>
+                <a href="login.html" class="btn btn-primary" style="padding:10px 24px;font-size:14px;">Войти</a>
+                <button class="menu-toggle" onclick="toggleMenu()" aria-label="Меню">☰</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- ====================================================
+    ГЕРОЙ
+    ==================================================== -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1>Ваши результаты – <span>наша работа</span>.</h1>
+                <p class="subtitle">Современный тренажерный зал</p>
+                <p class="free-trial"><strong></strong></p>
+                <div class="hero-buttons">
+                    <button class="btn btn-primary" onclick="openModal('guest')">Записаться</button>
+                    <a href="#price" class="btn btn-outline">Смотреть абонементы</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ====================================================
+    ГАЛЕРЕЯ
+    ==================================================== -->
+    <section id="gallery" class="gallery-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Фото<span>галерея</span></h2>
+                <p>Фитнес клуб "Fitness Club" — это современный тренажерный зал в Гродно с лучшим профессиональным оборудованием, и большим выбором популярных групповых направлений с доступными ценами.</p>
+            </div>
+            <div class="gallery-grid">
+                <div class="gallery-item" style="background-image: url('/images/gym.webp');">
+                    <div class="overlay"> Тренажерный зал</div>
+                </div>
+                <div class="gallery-item" style="background-image: url('/images/power.webp');">
+                    <div class="overlay"> Силовая зона</div>
+                </div>
+                <div class="gallery-item" style="background-image: url('/images/cardio.jpg');">
+                    <div class="overlay"> Кардиозона</div>
+                </div>
+                <div class="gallery-item" style="background-image: url('/images/stretching.jpeg');">
+                    <div class="overlay"> Зона стретчинга</div>
+                </div>
+                <div class="gallery-item" style="background-image: url('/images/boxing.jpg');">
+                    <div class="overlay"> Зона единоборств</div>
+                </div>
+                <div class="gallery-item" style="background-image: url('/images/trophy.jpg');">
+                    <div class="overlay"> Достижения клуба</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ====================================================
+    ТРЕНЕРЫ
+    ==================================================== -->
+    <section id="trainers" class="trainers-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Наши <span>тренеры</span></h2>
+                <p>Профессиональные наставники, которые помогут вам достичь любых целей — от похудения до подготовки к соревнованиям. Каждый тренер имеет профильное образование и многолетний опыт работы.</p>
+            </div>
+            <div class="trainers-grid">
+
+                <!-- Тренер 1 -->
+                <div class="trainer-card">
+                    <div class="trainer-photo" style="background-image: url('/images/trainer1.jpg');">
+                        <div class="trainer-badge"> Топ-тренер</div>
+                    </div>
+                    <div class="trainer-info">
+                        <h3>Алексей Смирнов</h3>
+                        <div class="trainer-spec"> Мастер спорта по пауэрлифтингу</div>
+                        <p class="trainer-desc">
+                            Алексей — профессиональный тренер с 8-летним стажем. Специализируется на силовых тренировках, подготовке к соревнованиям и работе с травмами. Помогает клиентам любого уровня подготовки — от новичков до профессиональных спортсменов. Индивидуальный подход и авторская методика тренировок гарантируют быстрый и безопасный прогресс.
+                        </p>
+                        <div class="trainer-stats">
+                            <div class="stat">
+                                <span class="number">450+</span>
+                                <span class="label">Проведенных тренировок</span>
+                            </div>
+                            <div class="stat">
+                                <span class="number">120+</span>
+                                <span class="label">Довольных клиентов</span>
+                            </div>
+                            <div class="stat">
+                                <span class="number">15</span>
+                                <span class="label">Победителей соревнований</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Тренер 2 -->
+                <div class="trainer-card">
+                    <div class="trainer-photo" style="background-image: url('/images/trainer2.jpg');">
+                        <div class="trainer-badge"> Эксперт</div>
+                    </div>
+                    <div class="trainer-info">
+                        <h3>Дмитрий Ковалев</h3>
+                        <div class="trainer-spec"> Кандидат в мастера спорта по бодибилдингу</div>
+                        <p class="trainer-desc">
+                            Дмитрий — сертифицированный тренер с 7-летним опытом работы. Специализируется на функциональном тренинге, наборе мышечной массы и спортивном питании. Разрабатывает индивидуальные программы тренировок и питания для достижения максимальных результатов. Помогает клиентам трансформировать тело и улучшить физическую форму.
+                        </p>
+                        <div class="trainer-stats">
+                            <div class="stat">
+                                <span class="number">380+</span>
+                                <span class="label">Проведенных тренировок</span>
+                            </div>
+                            <div class="stat">
+                                <span class="number">150+</span>
+                                <span class="label">Довольных клиентов</span>
+                            </div>
+                            <div class="stat">
+                                <span class="number">10</span>
+                                <span class="label">Победителей соревнований</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- ====================================================
+    ПРАЙС (абонементы из БД)
+    ==================================================== -->
+    <section id="price" class="price-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Наши <span>абонементы</span></h2>
+                <p>Выберите тариф, который подходит именно вам</p>
+            </div>
+            <div id="pricingContainer">
+                <div class="loader">
+                    <div class="spinner"></div>
+                    <p style="margin-top:16px;">Загрузка абонементов...</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ====================================================
+    ПОДВАЛ
+    ==================================================== -->
+    <footer id="contacts" class="site-footer">
+        <div class="container">
+            <div class="footer-info">
+                <div class="footer-logo">Fitness<span>Club</span></div>
+                <p><strong>АДРЕС:</strong><br>Гаспадарчая ул., 23</p>
+                <p><strong>ГРАФИК РАБОТЫ:</strong><br>
+                    Пн-Пт: 8:00 — 23:00<br>
+                    Сб: 9:00 — 21:00<br>
+                    Вс: 11:00 — 20:00
+                </p>
+                <p><strong>ТЕЛЕФОН:</strong><br><a href="tel:+375291234567">+375 (29) 644-93-73</a></p>
+                <div class="footer-social">
+                    <a href="https://t.me/fitnessclub" target="_blank" aria-label="Telegram">
+                        <img src="/images/telegram.png" alt="Telegram">
+                    </a>
+                    <a href="https://instagram.com/fitnessclub" target="_blank" aria-label="Instagram">
+                        <img src="/images/instagram.jpg" alt="Instagram">
+                    </a>
+                    <a href="https://tiktok.com/@fitnessclub" target="_blank" aria-label="TikTok">
+                        <img src="/images/tiktok.jpg" alt="TikTok">
+                    </a>
+                </div>
+            </div>
+            <div class="footer-links">
+                <h4 style="color:#f3f4f6;margin-bottom:8px;">Навигация</h4>
+                <a href="#gallery">Галерея</a>
+                <a href="#trainers">Тренеры</a>
+                <a href="#price">Абонементы</a>
+                <a href="login.html">Войти в систему</a>
+            </div>
+            <div class="footer-links">
+                <h4 style="color:#f3f4f6;margin-bottom:8px;">Информация</h4>
+                <a href="#">Пользовательское соглашение</a>
+                <a href="#">Политика конфиденциальности</a>
+                <a href="#">Договор публичной оферты</a>
+            </div>
+        </div>
+        <div class="footer-bottom">© 2026 Fitness Club. Все права защищены.</div>
+    </footer>
+
+    <!-- ====================================================
+    МОДАЛЬНОЕ ОКНО: ЗАПИСЬ НА ТРЕНИРОВКУ
+    ==================================================== -->
+    <div class="modal-overlay" id="modalGuest">
+        <div class="modal-content">
+            <button class="close-modal" onclick="closeModal('guest')">✕</button>
+            <h2>📝 Запись на тренировку</h2>
+            <p class="sub">*Пробная персональная тренировка - бесплатно</p>
+            <form onsubmit="return submitGuestForm(event)">
+                <div class="form-group">
+                    <label for="guestName">Ваше имя</label>
+                    <input type="text" id="guestName" placeholder="Иван Иванов" required>
+                </div>
+                <div class="form-group">
+                    <label for="guestPhone">Номер телефона</label>
+                    <input type="tel" id="guestPhone" placeholder="+375 (29) 644-93-73" required>
+                </div>
+                <button type="submit" class="form-submit">Отправить заявку</button>
+                <div class="form-agreement">Нажимая на кнопку отправить, Вы даете свое согласие на обработку своих персональных данных и соглашаетесь с договором публичной оферты</div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ====================================================
+    МОДАЛЬНОЕ ОКНО: ЗАЯВКА НА АБОНЕМЕНТ
+    ==================================================== -->
+    <div class="modal-overlay" id="modalOrder">
+        <div class="modal-content">
+            <button class="close-modal" onclick="closeModal('order')">✕</button>
+            <h2>📝 Заявка на абонемент</h2>
+            <p class="sub">Введите ваше имя или email для поиска в системе</p>
+            <div id="applicationResult"></div>
+            <form id="applicationForm">
+                <div class="form-group">
+                    <label for="appIdentifier"> Ваше имя или email</label>
+                    <input type="text" id="appIdentifier" placeholder="Иванов Иван или ivan@mail.ru" required>
+                    <div class="hint">Введите ФИО или email, под которым вы зарегистрированы в клубе</div>
+                </div>
+                <div class="form-group">
+                    <label for="appTariff">Выберите тариф</label>
+                    <select id="appTariff" required>
+                        <option value="">Загрузка...</option>
+                    </select>
+                </div>
+                <button type="submit" class="form-submit" id="appSubmitBtn"> Отправить заявку</button>
+                <div class="form-agreement">Нажимая на кнопку, Вы подтверждаете, что зарегистрированы в клубе</div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ====================================================
+    JAVASCRIPT
+    ==================================================== -->
+    <script>
+        const API_BASE = "http://127.0.0.1:8000/api/v1";
+
+        function toggleMenu() {
+            var nav = document.getElementById('mainNav');
+            if (nav) nav.classList.toggle('open');
+        }
+
+        function openModal(type) {
+            if (type === 'guest') {
+                var modal = document.getElementById('modalGuest');
+                if (modal) modal.classList.add('active');
+            } else if (type === 'order') {
+                var modal = document.getElementById('modalOrder');
+                if (modal) {
+                    modal.classList.add('active');
+                    loadTariffsForApplication();
+                }
+            }
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal(type) {
+            if (type === 'guest') {
+                var modal = document.getElementById('modalGuest');
+                if (modal) modal.classList.remove('active');
+            } else if (type === 'order') {
+                var modal = document.getElementById('modalOrder');
+                if (modal) modal.classList.remove('active');
+            }
+            document.body.style.overflow = '';
+        }
+
+        document.querySelectorAll('.modal-overlay').forEach(function(modal) {
+            modal.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    this.classList.remove('active');
+                    document.body.style.overflow = '';
+                }
+            });
+        });
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                document.querySelectorAll('.modal-overlay.active').forEach(function(modal) {
+                    modal.classList.remove('active');
+                });
+                document.body.style.overflow = '';
+            }
+        });
+
+        function submitGuestForm(e) {
+            e.preventDefault();
+            alert('✅ Заявка отправлена! Мы свяжемся с вами в ближайшее время.');
+            closeModal('guest');
+            return false;
+        }
+
+        async function loadMemberships() {
+            const container = document.getElementById('pricingContainer');
+            if (!container) return;
+
+            try {
+                const response = await fetch(API_BASE + '/public/memberships');
+                const result = await response.json();
+
+                if (result.status === 'success' && result.data && result.data.length > 0) {
+                    const memberships = result.data;
+                    let html = '<div class="pricing-grid">';
+                    const icons = ['💪', '🎓', '🏋️', '📅', '🌟', '🎯'];
+
+                    memberships.forEach(function(m, index) {
+                        const isPopular = m.type && m.type.toLowerCase().includes('студент');
+                        const popularClass = isPopular ? 'popular' : '';
+                        const icon = icons[index % icons.length];
+
+                        let features = [];
+                        if (m.description) {
+                            features = m.description.split(',').map(function(f) { return f.trim(); });
+                        } else {
+                            features = ['Персонально с инструктором', 'Посещение клуба без ограничений', 'С 8:00 до 23:00'];
+                        }
+
+                        let period = 'в месяц';
+                        if (m.duration_days >= 180) period = 'на 6 месяцев';
+                        else if (m.duration_days >= 90) period = 'на 3 месяца';
+
+                        let featuresHtml = '';
+                        features.forEach(function(f) {
+                            if (f) featuresHtml += '<li>' + f + '</li>';
+                        });
+
+                        html += `
+                            <div class="pricing-card ${popularClass}">
+                                <span class="card-icon">${icon}</span>
+                                <div class="plan-name">${m.name}</div>
+                                <div class="plan-type">${m.type || 'Индивидуальные занятия'}</div>
+                                <div class="price">${m.price} <small>руб</small></div>
+                                <div class="price-period">${period}</div>
+                                <ul class="features">${featuresHtml}</ul>
+                                <button class="btn btn-primary" onclick="openModal('order')">Выбрать</button>
+                            </div>
+                        `;
+                    });
+
+                    html += '</div>';
+                    container.innerHTML = html;
+                } else {
+                    container.innerHTML = `
+                        <div style="text-align:center;padding:40px 0;color:#9ca3af;">
+                            <span style="font-size:48px;display:block;margin-bottom:16px;">📭</span>
+                            <p>Нет доступных абонементов</p>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                console.error('❌ Ошибка загрузки абонементов:', error);
+                container.innerHTML = `
+                    <div style="text-align:center;padding:40px 0;color:#ef4444;">
+                        <span style="font-size:48px;display:block;margin-bottom:16px;">❌</span>
+                        <p>Не удалось загрузить абонементы</p>
+                        <p style="font-size:14px;margin-top:8px;">Проверьте подключение к серверу</p>
+                    </div>
+                `;
+            }
+        }
+
+        async function loadTariffsForApplication() {
+            const select = document.getElementById('appTariff');
+            if (!select) return;
+
+            try {
+                const response = await fetch(API_BASE + '/public/memberships');
+                const result = await response.json();
+
+                if (result.status === 'success' && result.data && result.data.length > 0) {
+                    let html = '<option value="">-- Выберите тариф --</option>';
+                    result.data.forEach(function(m) {
+                        html += '<option value="' + m.name + '" data-price="' + m.price + '">' + m.name + ' — ' + m.price + ' руб</option>';
+                    });
+                    select.innerHTML = html;
+                } else {
+                    select.innerHTML = '<option value="">Нет доступных тарифов</option>';
+                }
+            } catch (error) {
+                console.error('❌ Ошибка загрузки тарифов:', error);
+                select.innerHTML = '<option value="">Ошибка загрузки</option>';
+            }
+        }
+
+        function showAppAlert(message, type) {
+            const container = document.getElementById('applicationResult');
+            if (!container) return;
+
+            const colors = {
+                success: '#d1fae5',
+                error: '#fee2e2',
+                info: '#dbeafe'
+            };
+            const textColors = {
+                success: '#065f46',
+                error: '#991b1b',
+                info: '#1e40af'
+            };
+
+            container.style.display = 'block';
+            container.style.background = colors[type] || '#dbeafe';
+            container.style.color = textColors[type] || '#1e40af';
+            container.style.padding = '12px 16px';
+            container.style.borderRadius = '10px';
+            container.style.marginBottom = '16px';
+            container.style.fontWeight = '500';
+            container.innerHTML = message;
+
+            if (type !== 'error') {
+                setTimeout(function() {
+                    container.style.display = 'none';
+                }, 5000);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🔍 Проверка элементов формы...');
+            
+            const form = document.getElementById('applicationForm');
+            const identifierInput = document.getElementById('appIdentifier');
+            const tariffSelect = document.getElementById('appTariff');
+            const submitBtn = document.getElementById('appSubmitBtn');
+
+            if (!form) console.error('❌ Форма applicationForm не найдена');
+            if (!identifierInput) console.error('❌ Поле appIdentifier не найдено');
+            if (!tariffSelect) console.error('❌ Select appTariff не найден');
+            if (!submitBtn) console.error('❌ Кнопка appSubmitBtn не найдена');
+
+            if (!form || !identifierInput || !tariffSelect || !submitBtn) {
+                console.error('❌ Не все элементы формы найдены!');
+                return;
+            }
+
+            form.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                console.log('🔵 Форма отправлена!');
+
+                const identifier = identifierInput.value.trim();
+                const membershipName = tariffSelect.value;
+                const membershipPrice = parseFloat(tariffSelect.options[tariffSelect.selectedIndex]?.getAttribute('data-price') || 0);
+
+                console.log('📝 Данные формы:', { identifier, membershipName, membershipPrice });
+
+                if (!identifier) {
+                    showAppAlert('⚠️ Введите ваше имя или email', 'error');
+                    return;
+                }
+
+                if (!membershipName) {
+                    showAppAlert('⚠️ Выберите тариф', 'error');
+                    return;
+                }
+
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<span class="spinner"></span> Отправка...';
+
+                try {
+                    const response = await fetch(API_BASE + '/public/apply-membership', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            identifier: identifier,
+                            membership_name: membershipName,
+                            membership_price: membershipPrice
+                        })
+                    });
+
+                    const result = await response.json();
+                    console.log('📦 Ответ сервера:', result);
+
+                    if (result.status === 'success') {
+                        showAppAlert('✅ ' + result.message, 'success');
+                        form.reset();
+                        setTimeout(function() {
+                            closeModal('order');
+                        }, 3000);
+                    } else {
+                        showAppAlert('❌ ' + (result.message || 'Ошибка'), 'error');
+                    }
+                } catch (error) {
+                    console.error('❌ Ошибка:', error);
+                    showAppAlert('❌ Не удалось отправить заявку. Проверьте подключение к серверу.', 'error');
+                } finally {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = ' Отправить заявку';
+                }
+            });
+
+            loadMemberships();
+            console.log('✅ Все элементы найдены, форма готова к работе!');
+        });
+    </script>
+
+</body>
+</html>
